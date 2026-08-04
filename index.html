@@ -3,20 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LexCorp Legislator | Zaawansowany System Lokalny</title>
+    <title>LexCorp Legislator | System Prawny V2.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .glass {
-            background: rgba(15, 23, 42, 0.75);
+            background: rgba(15, 23, 42, 0.65);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.08);
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
         .glass-inner {
-            background: rgba(3, 7, 18, 0.6);
+            background: rgba(3, 7, 18, 0.55);
             border: 1px solid rgba(255, 255, 255, 0.05);
             color: #f3f4f6;
+        }
+        .glass-input:focus {
+            border-color: rgba(99, 102, 241, 0.6);
+            outline: none;
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.15);
         }
         @keyframes gradientBG {
             0% { background-position: 0% 50%; }
@@ -26,150 +31,158 @@
         .animated-bg {
             background: linear-gradient(-45deg, #030712, #0f172a, #1e1b4b, #311042);
             background-size: 400% 400%;
-            animation: gradientBG 20s ease infinite;
+            animation: gradientBG 18s ease infinite;
         }
-        /* Pasek przewijania */
+        /* Customowy scrollbar */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.3); }
     </style>
 </head>
-<body class="animated-bg text-gray-100 min-h-screen font-sans flex flex-col selection:bg-indigo-500 selection:text-white">
+<body class="animated-bg text-gray-100 min-h-screen flex flex-col font-sans selection:bg-indigo-500 selection:text-white">
 
-    <!-- Efekty w tle -->
-    <div class="fixed top-[-10%] left-[-10%] w-[40vw] h-[40vw] bg-indigo-600/15 rounded-full blur-[120px] pointer-events-none"></div>
-    <div class="fixed bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-purple-600/15 rounded-full blur-[120px] pointer-events-none"></div>
+    <!-- Efektowne świecące kule w tle -->
+    <div class="fixed top-[-10%] left-[-10%] w-[40vw] h-[40vw] bg-indigo-600/20 rounded-full blur-[120px] pointer-events-none"></div>
+    <div class="fixed bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-cyan-600/20 rounded-full blur-[120px] pointer-events-none"></div>
 
-    <!-- Górny pasek nawigacyjny -->
-    <header class="border-b border-white/10 bg-slate-950/55 sticky top-0 z-50 backdrop-blur-xl">
+    <!-- Nagłówek -->
+    <header class="border-b border-white/10 bg-slate-950/40 sticky top-0 z-50 backdrop-blur-xl">
         <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
             <div class="flex items-center space-x-3">
-                <div class="bg-gradient-to-tr from-indigo-600 to-violet-600 p-2.5 rounded-2xl text-white font-bold shadow-lg shadow-indigo-500/20 border border-white/20">⚖️</div>
-                <div>
-                    <h1 class="text-lg font-extrabold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-300 to-cyan-400">LexCorp Legislator</h1>
-                    <p class="text-[10px] text-gray-400 font-mono tracking-widest uppercase">System Lokalny • Bez AI</p>
+                <div class="bg-gradient-to-tr from-indigo-600 to-violet-500 p-2.5 rounded-2xl text-white font-bold shadow-lg shadow-indigo-500/25 border border-white/20">⚖️</div>
+                <div class="flex items-end space-x-2">
+                    <span class="text-xl font-extrabold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-300 to-cyan-400">LexCorp Legislator</span>
+                    <span class="text-xs font-mono text-indigo-400 bg-indigo-500/10 px-1.5 py-0.5 rounded border border-indigo-500/20">V2.0</span>
                 </div>
             </div>
             <div class="flex items-center space-x-3">
-                <button onclick="eksportujBaze()" class="text-xs bg-slate-800/80 hover:bg-slate-700 text-gray-300 px-3.5 py-2 rounded-xl border border-white/10 transition flex items-center space-x-1.5 cursor-pointer">
-                    <span>💾 Eksportuj Dane</span>
+                <button onclick="eksportujBaze()" class="text-xs bg-slate-900/80 hover:bg-slate-800 text-gray-300 px-3.5 py-2 rounded-xl border border-white/10 transition cursor-pointer flex items-center space-x-1.5 shadow-sm">
+                    <span>💾 Eksportuj</span>
                 </button>
-                <label class="text-xs bg-slate-800/80 hover:bg-slate-700 text-gray-300 px-3.5 py-2 rounded-xl border border-white/10 transition flex items-center space-x-1.5 cursor-pointer">
-                    <span>📂 Importuj</span>
-                    <input type="file" id="importFile" onchange="importujBaze(event)" class="hidden" accept=".json">
-                </label>
+                <button onclick="resetujWszystko()" class="text-xs bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 px-3.5 py-2 rounded-xl border border-rose-800/30 transition cursor-pointer">
+                    <span>Reset danych</span>
+                </button>
             </div>
         </div>
     </header>
 
-    <!-- Główny układ -->
+    <!-- Główny kontener -->
     <main class="max-w-7xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-6 flex-grow w-full relative z-10">
         
-        <!-- Lewy panel: Rejestr aktów (4 kolumny) -->
-        <section class="lg:col-span-4 glass rounded-3xl p-6 flex flex-col h-[calc(100vh-140px)]">
-            <div class="flex justify-between items-center mb-5">
-                <h2 class="text-base font-bold text-white tracking-wide flex items-center space-x-2">
-                    <span>📁</span> <span>Rejestr Projektów</span>
+        <!-- Lewy panel: Rejestr (4 kolumny) -->
+        <section class="lg:col-span-4 glass rounded-3xl p-6 flex flex-col h-[calc(100vh-130px)]">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-sm font-bold text-white tracking-wide flex items-center space-x-2">
+                    <span>📁</span> <span>Rejestr Aktów Prawnych</span>
                 </h2>
-                <button onclick="nowyProjekt()" class="text-xs bg-indigo-600/80 hover:bg-indigo-500 text-white font-medium px-3.5 py-2 rounded-xl shadow-md shadow-indigo-600/30 transition cursor-pointer border border-indigo-400/20">
+                <button onclick="nowyAkt()" class="text-xs bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-medium px-3.5 py-2 rounded-xl shadow-lg shadow-indigo-600/30 transition cursor-pointer border border-indigo-400/20">
                     + Nowy Akt
                 </button>
             </div>
 
             <!-- Wyszukiwarka -->
             <div class="mb-4">
-                <input type="text" id="szukajInput" oninput="filtrujProjekty()" placeholder="Szukaj projektu..." class="glass-input w-full px-4 py-2.5 rounded-xl text-xs focus:outline-none focus:border-indigo-500 transition shadow-inner">
+                <input type="text" id="szukajInput" oninput="filtrujListe()" placeholder="Szukaj w rejestrze..." class="glass-input w-full px-4 py-2.5 rounded-xl text-xs transition shadow-inner">
             </div>
 
-            <!-- Lista -->
-            <div id="listaProjektow" class="space-y-2.5 flex-grow overflow-y-auto pr-1">
+            <!-- Lista projektów -->
+            <div id="listaAktow" class="space-y-2.5 flex-grow overflow-y-auto pr-1">
                 <!-- Generowane dynamicznie -->
             </div>
         </section>
 
-        <!-- Prawy panel: Edytor i Audyt (8 kolumn) -->
-        <section class="lg:col-span-8 grid grid-rows-1 gap-6 h-[calc(100vh-140px)]">
-            <div class="glass rounded-3xl p-6 flex flex-col h-full overflow-y-auto">
-                
-                <!-- Górny pasek edytora -->
-                <div class="flex flex-col md:flex-row gap-3 mb-4">
-                    <input type="text" id="tytulProjektu" placeholder="Tytuł / Sygnatura aktu prawnego..." class="glass-input flex-grow px-4 py-3 rounded-2xl text-sm font-semibold focus:outline-none focus:border-indigo-500 transition shadow-inner">
-                    <select id="statusProjektu" class="glass-input px-4 py-3 rounded-2xl text-xs font-medium focus:outline-none focus:border-indigo-500 transition cursor-pointer">
-                        <option value="Projekt roboczy" class="bg-slate-900">Projekt roboczy</option>
-                        <option value="Konsultacje" class="bg-slate-900">Konsultacje publiczne</option>
-                        <option value="Do audytu ZTP" class="bg-slate-900">Do audytu ZTP</option>
-                        <option value="Gotowy" class="bg-slate-900">Gotowy</option>
-                    </select>
-                </div>
-
-                <!-- Zakładki edytor / audyt -->
-                <div class="flex space-x-2 border-b border-white/10 pb-3 mb-4">
-                    <button onclick="zmienZakladke('tresc')" id="tabTrescBtn" class="px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 text-white transition cursor-pointer shadow-lg shadow-indigo-600/20">Treść Przepisów</button>
-                    <button onclick="zmienZakladke('audyt')" id="tabAudytBtn" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800/80 text-gray-300 hover:bg-slate-700 transition cursor-pointer">Ręczny Audyt ZTP i Uwagi</button>
-                </div>
-
-                <!-- Widok 1: Treść aktu -->
-                <div id="widokTresc" class="flex flex-col flex-grow">
-                    <textarea id="trescProjektu" placeholder="Wpisz lub wklej treść przepisów merytorycznych, przepisy przejściowe, wejście w życie..." class="glass-input w-full flex-grow p-4 rounded-2xl text-sm font-mono focus:outline-none focus:border-indigo-500 transition resize-none shadow-inner leading-relaxed min-h-[350px]"></textarea>
-                </div>
-
-                <!-- Widok 2: Audyt legislacyjny -->
-                <div id="widokAudyt" class="hidden flex flex-col flex-grow">
-                    <textarea id="audytProjektu" placeholder="Wpisz uwagi legislatora, wykryte luki prawne, niezgodności z ZTP, propozycje poprawek redakcyjnych..." class="glass-input w-full flex-grow p-4 rounded-2xl text-sm focus:outline-none focus:border-indigo-500 transition resize-none shadow-inner leading-relaxed min-h-[350px]"></textarea>
-                </div>
-
-                <!-- Przyciski akcji na dole -->
-                <div class="flex justify-between items-center mt-5 pt-4 border-t border-white/10">
-                    <button onclick="usunAkt()" id="btnUsun" class="text-xs text-rose-400 hover:text-rose-300 px-4 py-2 rounded-xl hover:bg-rose-500/10 transition cursor-pointer hidden">Usuń ten akt</button>
-                    <div class="flex space-x-3 ml-auto">
-                        <button onclick="zapiszProjekt()" class="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-medium px-6 py-3 rounded-2xl text-xs shadow-lg shadow-indigo-600/30 transition cursor-pointer border border-indigo-400/20">
-                            Zapisz zmiany
-                        </button>
-                    </div>
-                </div>
-
+        <!-- Prawy panel: Edytor i Sprawdzarka (8 kolumn) -->
+        <section class="lg:col-span-8 glass rounded-3xl p-6 flex flex-col h-[calc(100vh-130px)]">
+            
+            <!-- Górny pasek formularza -->
+            <div class="flex flex-col sm:flex-row gap-3 mb-4">
+                <input type="text" id="tytulAktu" placeholder="Tytuł / Nazwa aktu prawnego (np. Ustawa o...)" class="glass-input flex-grow px-4 py-3 rounded-2xl text-sm font-semibold transition shadow-inner">
+                <select id="statusAktu" class="glass-input px-4 py-3 rounded-2xl text-xs font-medium transition cursor-pointer">
+                    <option value="Projekt roboczy" class="bg-slate-900">Projekt roboczy</option>
+                    <option value="Do audytu ZTP" class="bg-slate-900">Do audytu ZTP</option>
+                    <option value="Zweryfikowany" class="bg-slate-900">Zweryfikowany</option>
+                </select>
             </div>
+
+            <!-- Zakładki przełączania -->
+            <div class="flex space-x-2 border-b border-white/10 pb-3 mb-4">
+                <button onclick="zmienZakladke('generator')" id="tabGenBtn" class="px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 text-white transition cursor-pointer shadow-lg shadow-indigo-600/25 border border-indigo-400/20">📝 Pisanie Ustawy</button>
+                <button onclick="zmienZakladke('audyt')" id="tabAudytBtn" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800/80 text-gray-300 hover:bg-slate-700 transition cursor-pointer">🔍 Sprawdzarka i Audyt ZTP</button>
+            </div>
+
+            <!-- Widok 1: Generator / Pisanie ustaw -->
+            <div id="widokGenerator" class="flex flex-col flex-grow space-y-3">
+                <p class="text-xs text-gray-400">Twórz i edytuj strukturę przepisów merytorycznych, przejściowych oraz końcowych.</p>
+                <textarea id="trescAktu" placeholder="Wpisz treść przepisów (Rozdział 1, Art. 1. ...)..." class="glass-input w-full flex-grow p-4 rounded-2xl text-sm font-mono transition resize-none shadow-inner leading-relaxed min-h-[320px]"></textarea>
+            </div>
+
+            <!-- Widok 2: Sprawdzarka i Audyt ZTP -->
+            <div id="widokAudyt" class="hidden flex flex-col flex-grow space-y-3">
+                <div class="flex justify-between items-center">
+                    <p class="text-xs text-gray-400">Sprawdź projekt pod kątem reguł techniki prawodawczej lub użyj automatycznej autokorekty.</p>
+                    <button onclick="uruchomSprawdzarke()" class="text-xs bg-cyan-600/80 hover:bg-cyan-500 text-white font-medium px-3 py-1.5 rounded-xl transition cursor-pointer shadow-md shadow-cyan-600/20 border border-cyan-400/20">⚡ Szybki Test ZTP</button>
+                </div>
+                <textarea id="audytAktu" placeholder="Wpisz uwagi z audytu, luki prawne, niezgodności z ZTP lub użyj Szybkiego Testu..." class="glass-input w-full flex-grow p-4 rounded-2xl text-sm transition resize-none shadow-inner leading-relaxed min-h-[320px]"></textarea>
+            </div>
+
+            <!-- Stopka edytora -->
+            <div class="flex justify-between items-center mt-5 pt-4 border-t border-white/10">
+                <button onclick="usunAkt()" id="btnUsun" class="text-xs text-rose-400 hover:text-rose-300 px-4 py-2 rounded-xl hover:bg-rose-500/10 transition cursor-pointer hidden">Usuń ten akt</button>
+                <div class="flex space-x-3 ml-auto">
+                    <button onclick="zapiszAkt()" class="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-medium px-6 py-3 rounded-2xl text-xs shadow-lg shadow-indigo-600/30 transition cursor-pointer border border-indigo-400/20">
+                        Zapisz Projekt
+                    </button>
+                </div>
+            </div>
+
         </section>
 
     </main>
 
-    <!-- Skrypty logiki lokalnej -->
+    <!-- Skrypt logiki -->
     <script>
-        let bazyDanych = JSON.parse(localStorage.getItem('lexcorp_akty')) || [];
+        let bazaAktow = [];
         let aktywnyId = null;
 
+        try {
+            const zczytane = localStorage.getItem('lexcorp_baza_v2');
+            if (zczytane) bazaAktow = JSON.parse(zczytane);
+        } catch(e) {
+            bazaAktow = [];
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
-            if (bazyDanych.length > 0) {
-                wybierzAkt(bazyDanych[0].id);
+            if (bazaAktow.length > 0) {
+                wybierzAkt(bazaAktow[0].id);
             } else {
-                nowyProjekt();
+                nowyAkt();
             }
             odswiezListe();
         });
 
-        function odswiezListe(filtrowane = null) {
-            const kontener = document.getElementById('listaProjektow');
-            const dane = filtrowane || bazyDanych;
+        function odswiezListe(daneDoWyswietlenia = null) {
+            const kontener = document.getElementById('listaAktow');
+            const lista = daneDoWyswietlenia || bazaAktow;
 
-            if (dane.length === 0) {
-                kontener.innerHTML = '<div class="text-center py-8 text-xs text-gray-500 italic">Brak zapisanych projektów w pamięci lokalnej.</div>';
+            if (lista.length === 0) {
+                kontener.innerHTML = '<div class="text-center py-10 text-xs text-gray-500 italic">Brak zapisanych projektów.</div>';
                 return;
             }
 
             kontener.innerHTML = '';
-            dane.forEach(akt => {
+            lista.forEach(akt => {
                 const div = document.createElement('div');
                 div.className = `p-3.5 rounded-2xl cursor-pointer border transition flex flex-col space-y-1.5 ${akt.id === aktywnyId ? 'bg-indigo-600/20 border-indigo-500/50 shadow-md' : 'bg-slate-900/40 border-white/5 hover:border-white/15'}`;
                 div.onclick = () => wybierzAkt(akt.id);
                 
                 div.innerHTML = `
                     <div class="flex justify-between items-center">
-                        <span class="text-xs font-bold text-gray-200 truncate max-w-[160px]">${akt.tytul || 'Bez tytułu'}</span>
+                        <span class="text-xs font-bold text-gray-200 truncate max-w-[160px]">${akt.tytul || 'Nowy projekt'}</span>
                         <span class="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-indigo-300 border border-white/5">${akt.status}</span>
                     </div>
                     <div class="text-[10px] text-gray-500 flex justify-between">
-                        <span>Ostatnia zmiana:</span>
+                        <span>Aktualizacja:</span>
                         <span>${new Date(akt.data).toLocaleDateString()}</span>
                     </div>
                 `;
@@ -177,44 +190,43 @@
             });
         }
 
-        function nowyProjekt() {
+        function nowyAkt() {
             aktywnyId = Date.now();
-            document.getElementById('tytulProjektu').value = '';
-            document.getElementById('statusProjektu').value = 'Projekt roboczy';
-            document.getElementById('trescProjektu').value = '';
-            document.getElementById('audytProjektu').value = '';
+            document.getElementById('tytulAktu').value = '';
+            document.getElementById('statusAktu').value = 'Projekt roboczy';
+            document.getElementById('trescAktu').value = '';
+            document.getElementById('audytAktu').value = '';
             document.getElementById('btnUsun').classList.add('hidden');
-            zmienZakladke('tresc');
+            zmienZakladke('generator');
             odswiezListe();
         }
 
         function wybierzAkt(id) {
             aktywnyId = id;
-            const akt = bazyDanych.find(a => a.id === id);
+            const akt = bazaAktow.find(a => a.id === id);
             if (!akt) return;
 
-            document.getElementById('tytulProjektu').value = akt.tytul;
-            document.getElementById('statusProjektu').value = akt.status;
-            document.getElementById('trescProjektu').value = akt.tresc;
-            document.getElementById('audytProjektu').value = akt.audyt;
+            document.getElementById('tytulAktu').value = akt.tytul || '';
+            document.getElementById('statusAktu').value = akt.status || 'Projekt roboczy';
+            document.getElementById('trescAktu').value = akt.tresc || '';
+            document.getElementById('audytAktu').value = akt.audyt || '';
             document.getElementById('btnUsun').classList.remove('hidden');
             
-            zmienZakladke('tresc');
+            zmienZakladke('generator');
             odswiezListe();
         }
 
-        function zapiszProjekt() {
-            const tytul = document.getElementById('tytulProjektu').value.trim();
-            const status = document.getElementById('statusProjektu').value;
-            const tresc = document.getElementById('trescProjektu').value;
-            const audyt = document.getElementById('audytProjektu').value;
+        function zapiszAkt() {
+            const tytul = document.getElementById('tytulAktu').value.trim();
+            const status = document.getElementById('statusAktu').value;
+            const tresc = document.getElementById('trescAktu').value;
+            const audyt = document.getElementById('audytAktu').value;
 
             if (!tytul) {
-                alert("Wprowadź tytuł projektu aktu prawnego.");
+                alert("Wprowadź tytuł aktu prawnego.");
                 return;
             }
 
-            const index = bazyDanych.findIndex(a => a.id === aktywnyId);
             const nowyWpis = {
                 id: aktywnyId,
                 tytul,
@@ -224,87 +236,107 @@
                 data: new Date().toISOString()
             };
 
+            const index = bazaAktow.findIndex(a => a.id === aktywnyId);
             if (index !== -1) {
-                bazyDanych[index] = nowyWpis;
+                bazaAktow[index] = nowyWpis;
             } else {
-                bazyDanych.unshift(nowyWpis);
+                bazaAktow.unshift(nowyWpis);
             }
 
-            localStorage.setItem('lexcorp_akty', JSON.stringify(bazyDanych));
+            localStorage.setItem('lexcorp_baza_v2', JSON.stringify(bazaAktow));
             odswiezListe();
-            alert("Zmiany zostały zapisane lokalnie.");
+            alert("Projekt został zapisany pomyślnie!");
         }
 
         function usunAkt() {
             if (!confirm("Czy na pewno chcesz usunąć ten projekt?")) return;
-            bazyDanych = bazyDanych.filter(a => a.id !== aktywnyId);
-            localStorage.setItem('lexcorp_akty', JSON.stringify(bazyDanych));
+            bazaAktow = bazaAktow.filter(a => a.id !== aktywnyId);
+            localStorage.setItem('lexcorp_baza_v2', JSON.stringify(bazaAktow));
             
-            if (bazyDanych.length > 0) {
-                wybierzAkt(bazyDanych[0].id);
+            if (bazaAktow.length > 0) {
+                wybierzAkt(bazaAktow[0].id);
             } else {
-                nowyProjekt();
+                nowyAkt();
             }
             odswiezListe();
         }
 
-        function filtrujProjekty() {
-            const query = document.getElementById('szukajInput').value.toLowerCase();
-            const przefiltrowane = bazyDanych.filter(a => a.tytul.toLowerCase().includes(query) || a.tresc.toLowerCase().includes(query));
-            odswiezListe(przefiltrowane);
+        function filtrujListe() {
+            const fraza = document.getElementById('szukajInput').value.toLowerCase();
+            const wynik = bazaAktow.filter(a => a.tytul.toLowerCase().includes(fraza) || a.tresc.toLowerCase().includes(fraza));
+            odswiezListe(wynik);
         }
 
         function zmienZakladke(ktora) {
-            const btnTresc = document.getElementById('tabTrescBtn');
+            const btnGen = document.getElementById('tabGenBtn');
             const btnAudyt = document.getElementById('tabAudytBtn');
-            const widokTresc = document.getElementById('widokTresc');
+            const widokGen = document.getElementById('widokGenerator');
             const widokAudyt = document.getElementById('widokAudyt');
 
-            if (ktora === 'tresc') {
-                btnTresc.className = "px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 text-white transition cursor-pointer shadow-lg shadow-indigo-600/20";
+            if (ktora === 'generator') {
+                btnGen.className = "px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 text-white transition cursor-pointer shadow-lg shadow-indigo-600/25 border border-indigo-400/20";
                 btnAudyt.className = "px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800/80 text-gray-300 hover:bg-slate-700 transition cursor-pointer";
-                widokTresc.classList.remove('hidden');
+                widokGen.classList.remove('hidden');
                 widokAudyt.classList.add('hidden');
             } else {
-                btnAudyt.className = "px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 text-white transition cursor-pointer shadow-lg shadow-indigo-600/20";
-                btnTresc.className = "px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800/80 text-gray-300 hover:bg-slate-700 transition cursor-pointer";
+                btnAudyt.className = "px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 text-white transition cursor-pointer shadow-lg shadow-indigo-600/25 border border-indigo-400/20";
+                btnGen.className = "px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800/80 text-gray-300 hover:bg-slate-700 transition cursor-pointer";
                 widokAudyt.classList.remove('hidden');
-                widokTresc.classList.add('hidden');
+                widokGen.classList.add('hidden');
             }
         }
 
-        function eksportujBaze() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(bazyDanych, null, 2));
-            const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", "lexcorp_baza_aktow.json");
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click();
-            downloadAnchor.remove();
+        function uruchomSprawdzarke() {
+            const tresc = document.getElementById('trescAktu').value;
+            const poleAudytu = document.getElementById('audytAktu');
+            zmienZakladke('audyt');
+
+            if (!tresc.trim()) {
+                poleAudytu.value = "⚠️ Brak treści przepisów do sprawdzenia. Wpisz najpierw projekt w zakładce 'Pisanie Ustawy'.";
+                return;
+            }
+
+            let raport = "--- RAPORT ZE SPRAWDZARKI ZTP (Algorytm lokalny) ---\n\n";
+            let bledy = 0;
+
+            // Proste heurystyki sprawdzające Zasady Techniki Prawodawczej
+            if (!tresc.toLowerCase().includes("ustawa")) {
+                raport += "• [Zalecenie] Brak słowa kluczowego 'Ustawa' w treści lub nagłówku.\n";
+                bledy++;
+            }
+            if (!tresc.toLowerCase().includes("art.")) {
+                raport += "• [Błąd] Nie wykryto skrótu 'Art.' oznaczającego artykuły w tekście.\n";
+                bledy++;
+            }
+            if (!tresc.toLowerCase().includes("wchodzi w życie")) {
+                raport += "• [Uwaga ZTP] Brak klauzuli o wejściu w życie aktu prawnego.\n";
+                bledy++;
+            }
+
+            if (bledy === 0) {
+                raport += "✅ Nie wykryto podstawowych uchybień strukturalnych w tekście przepisów.\n";
+            } else {
+                raport += `\nZnaleziono potencjalne uchybienia: ${bledy}. Wprowadź korektę redakcyjną.`;
+            }
+
+            poleAudytu.value = raport;
         }
 
-        function importujBaze(event) {
-            const file = event.target.files[0];
-            if (!file) return;
+        function eksportujBaze() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(bazaAktow, null, 2));
+            const anchor = document.createElement('a');
+            anchor.setAttribute("href", dataStr);
+            anchor.setAttribute("download", "lexcorp_baza_aktow.json");
+            document.body.appendChild(anchor);
+            anchor.click();
+            anchor.remove();
+        }
 
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const imported = JSON.parse(e.target.result);
-                    if (Array.isArray(imported)) {
-                        bazyDanych = imported;
-                        localStorage.setItem('lexcorp_akty', JSON.stringify(bazyDanych));
-                        if (bazyDanych.length > 0) wybierzAkt(bazyDanych[0].id);
-                        odswiezListe();
-                        alert("Pomyślnie zaimportowano bazę danych.");
-                    } else {
-                        alert("Nieprawidłowy format pliku.");
-                    }
-                } catch (err) {
-                    alert("Błąd podczas odczytu pliku JSON.");
-                }
-            };
-            reader.readAsText(file);
+        function resetujWszystko() {
+            if (confirm("Czy na pewno chcesz wyczyścić wszystkie lokalne projekty?")) {
+                localStorage.removeItem('lexcorp_baza_v2');
+                location.reload();
+            }
         }
     </script>
 </body>
