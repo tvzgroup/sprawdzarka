@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LexCorp Legislator | Zaawansowany System Lokalny</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .glass {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+        .glass-inner {
+            background: rgba(3, 7, 18, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: #f3f4f6;
+        }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .animated-bg {
+            background: linear-gradient(-45deg, #030712, #0f172a, #1e1b4b, #311042);
+            background-size: 400% 400%;
+            animation: gradientBG 20s ease infinite;
+        }
+        /* Pasek przewijania */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.3); }
+    </style>
+</head>
+<body class="animated-bg text-gray-100 min-h-screen font-sans flex flex-col selection:bg-indigo-500 selection:text-white">
+
+    <!-- Efekty w tle -->
+    <div class="fixed top-[-10%] left-[-10%] w-[40vw] h-[40vw] bg-indigo-600/15 rounded-full blur-[120px] pointer-events-none"></div>
+    <div class="fixed bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-purple-600/15 rounded-full blur-[120px] pointer-events-none"></div>
+
+    <!-- Górny pasek nawigacyjny -->
+    <header class="border-b border-white/10 bg-slate-950/55 sticky top-0 z-50 backdrop-blur-xl">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-gradient-to-tr from-indigo-600 to-violet-600 p-2.5 rounded-2xl text-white font-bold shadow-lg shadow-indigo-500/20 border border-white/20">⚖️</div>
+                <div>
+                    <h1 class="text-lg font-extrabold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-300 to-cyan-400">LexCorp Legislator</h1>
+                    <p class="text-[10px] text-gray-400 font-mono tracking-widest uppercase">System Lokalny • Bez AI</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button onclick="eksportujBaze()" class="text-xs bg-slate-800/80 hover:bg-slate-700 text-gray-300 px-3.5 py-2 rounded-xl border border-white/10 transition flex items-center space-x-1.5 cursor-pointer">
+                    <span>💾 Eksportuj Dane</span>
+                </button>
+                <label class="text-xs bg-slate-800/80 hover:bg-slate-700 text-gray-300 px-3.5 py-2 rounded-xl border border-white/10 transition flex items-center space-x-1.5 cursor-pointer">
+                    <span>📂 Importuj</span>
+                    <input type="file" id="importFile" onchange="importujBaze(event)" class="hidden" accept=".json">
+                </label>
+            </div>
+        </div>
+    </header>
+
+    <!-- Główny układ -->
+    <main class="max-w-7xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-6 flex-grow w-full relative z-10">
+        
+        <!-- Lewy panel: Rejestr aktów (4 kolumny) -->
+        <section class="lg:col-span-4 glass rounded-3xl p-6 flex flex-col h-[calc(100vh-140px)]">
+            <div class="flex justify-between items-center mb-5">
+                <h2 class="text-base font-bold text-white tracking-wide flex items-center space-x-2">
+                    <span>📁</span> <span>Rejestr Projektów</span>
+                </h2>
+                <button onclick="nowyProjekt()" class="text-xs bg-indigo-600/80 hover:bg-indigo-500 text-white font-medium px-3.5 py-2 rounded-xl shadow-md shadow-indigo-600/30 transition cursor-pointer border border-indigo-400/20">
+                    + Nowy Akt
+                </button>
+            </div>
+
+            <!-- Wyszukiwarka -->
+            <div class="mb-4">
+                <input type="text" id="szukajInput" oninput="filtrujProjekty()" placeholder="Szukaj projektu..." class="glass-input w-full px-4 py-2.5 rounded-xl text-xs focus:outline-none focus:border-indigo-500 transition shadow-inner">
+            </div>
+
+            <!-- Lista -->
+            <div id="listaProjektow" class="space-y-2.5 flex-grow overflow-y-auto pr-1">
+                <!-- Generowane dynamicznie -->
+            </div>
+        </section>
+
+        <!-- Prawy panel: Edytor i Audyt (8 kolumn) -->
+        <section class="lg:col-span-8 grid grid-rows-1 gap-6 h-[calc(100vh-140px)]">
+            <div class="glass rounded-3xl p-6 flex flex-col h-full overflow-y-auto">
+                
+                <!-- Górny pasek edytora -->
+                <div class="flex flex-col md:flex-row gap-3 mb-4">
+                    <input type="text" id="tytulProjektu" placeholder="Tytuł / Sygnatura aktu prawnego..." class="glass-input flex-grow px-4 py-3 rounded-2xl text-sm font-semibold focus:outline-none focus:border-indigo-500 transition shadow-inner">
+                    <select id="statusProjektu" class="glass-input px-4 py-3 rounded-2xl text-xs font-medium focus:outline-none focus:border-indigo-500 transition cursor-pointer">
+                        <option value="Projekt roboczy" class="bg-slate-900">Projekt roboczy</option>
+                        <option value="Konsultacje" class="bg-slate-900">Konsultacje publiczne</option>
+                        <option value="Do audytu ZTP" class="bg-slate-900">Do audytu ZTP</option>
+                        <option value="Gotowy" class="bg-slate-900">Gotowy</option>
+                    </select>
+                </div>
+
+                <!-- Zakładki edytor / audyt -->
+                <div class="flex space-x-2 border-b border-white/10 pb-3 mb-4">
+                    <button onclick="zmienZakladke('tresc')" id="tabTrescBtn" class="px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 text-white transition cursor-pointer shadow-lg shadow-indigo-600/20">Treść Przepisów</button>
+                    <button onclick="zmienZakladke('audyt')" id="tabAudytBtn" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800/80 text-gray-300 hover:bg-slate-700 transition cursor-pointer">Ręczny Audyt ZTP i Uwagi</button>
+                </div>
+
+                <!-- Widok 1: Treść aktu -->
+                <div id="widokTresc" class="flex flex-col flex-grow">
+                    <textarea id="trescProjektu" placeholder="Wpisz lub wklej treść przepisów merytorycznych, przepisy przejściowe, wejście w życie..." class="glass-input w-full flex-grow p-4 rounded-2xl text-sm font-mono focus:outline-none focus:border-indigo-500 transition resize-none shadow-inner leading-relaxed min-h-[350px]"></textarea>
+                </div>
+
+                <!-- Widok 2: Audyt legislacyjny -->
+                <div id="widokAudyt" class="hidden flex flex-col flex-grow">
+                    <textarea id="audytProjektu" placeholder="Wpisz uwagi legislatora, wykryte luki prawne, niezgodności z ZTP, propozycje poprawek redakcyjnych..." class="glass-input w-full flex-grow p-4 rounded-2xl text-sm focus:outline-none focus:border-indigo-500 transition resize-none shadow-inner leading-relaxed min-h-[350px]"></textarea>
+                </div>
+
+                <!-- Przyciski akcji na dole -->
+                <div class="flex justify-between items-center mt-5 pt-4 border-t border-white/10">
+                    <button onclick="usunAkt()" id="btnUsun" class="text-xs text-rose-400 hover:text-rose-300 px-4 py-2 rounded-xl hover:bg-rose-500/10 transition cursor-pointer hidden">Usuń ten akt</button>
+                    <div class="flex space-x-3 ml-auto">
+                        <button onclick="zapiszProjekt()" class="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-medium px-6 py-3 rounded-2xl text-xs shadow-lg shadow-indigo-600/30 transition cursor-pointer border border-indigo-400/20">
+                            Zapisz zmiany
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Skrypty logiki lokalnej -->
+    <script>
+        let bazyDanych = JSON.parse(localStorage.getItem('lexcorp_akty')) || [];
+        let aktywnyId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (bazyDanych.length > 0) {
+                wybierzAkt(bazyDanych[0].id);
+            } else {
+                nowyProjekt();
+            }
+            odswiezListe();
+        });
+
+        function odswiezListe(filtrowane = null) {
+            const kontener = document.getElementById('listaProjektow');
+            const dane = filtrowane || bazyDanych;
+
+            if (dane.length === 0) {
+                kontener.innerHTML = '<div class="text-center py-8 text-xs text-gray-500 italic">Brak zapisanych projektów w pamięci lokalnej.</div>';
+                return;
+            }
+
+            kontener.innerHTML = '';
+            dane.forEach(akt => {
+                const div = document.createElement('div');
+                div.className = `p-3.5 rounded-2xl cursor-pointer border transition flex flex-col space-y-1.5 ${akt.id === aktywnyId ? 'bg-indigo-600/20 border-indigo-500/50 shadow-md' : 'bg-slate-900/40 border-white/5 hover:border-white/15'}`;
+                div.onclick = () => wybierzAkt(akt.id);
+                
+                div.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-bold text-gray-200 truncate max-w-[160px]">${akt.tytul || 'Bez tytułu'}</span>
+                        <span class="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-indigo-300 border border-white/5">${akt.status}</span>
+                    </div>
+                    <div class="text-[10px] text-gray-500 flex justify-between">
+                        <span>Ostatnia zmiana:</span>
+                        <span>${new Date(akt.data).toLocaleDateString()}</span>
+                    </div>
+                `;
+                kontener.appendChild(div);
+            });
+        }
+
+        function nowyProjekt() {
+            aktywnyId = Date.now();
+            document.getElementById('tytulProjektu').value = '';
+            document.getElementById('statusProjektu').value = 'Projekt roboczy';
+            document.getElementById('trescProjektu').value = '';
+            document.getElementById('audytProjektu').value = '';
+            document.getElementById('btnUsun').classList.add('hidden');
+            zmienZakladke('tresc');
+            odswiezListe();
+        }
+
+        function wybierzAkt(id) {
+            aktywnyId = id;
+            const akt = bazyDanych.find(a => a.id === id);
+            if (!akt) return;
+
+            document.getElementById('tytulProjektu').value = akt.tytul;
+            document.getElementById('statusProjektu').value = akt.status;
+            document.getElementById('trescProjektu').value = akt.tresc;
+            document.getElementById('audytProjektu').value = akt.audyt;
+            document.getElementById('btnUsun').classList.remove('hidden');
+            
+            zmienZakladke('tresc');
+            odswiezListe();
+        }
+
+        function zapiszProjekt() {
+            const tytul = document.getElementById('tytulProjektu').value.trim();
+            const status = document.getElementById('statusProjektu').value;
+            const tresc = document.getElementById('trescProjektu').value;
+            const audyt = document.getElementById('audytProjektu').value;
+
+            if (!tytul) {
+                alert("Wprowadź tytuł projektu aktu prawnego.");
+                return;
+            }
+
+            const index = bazyDanych.findIndex(a => a.id === aktywnyId);
+            const nowyWpis = {
+                id: aktywnyId,
+                tytul,
+                status,
+                tresc,
+                audyt,
+                data: new Date().toISOString()
+            };
+
+            if (index !== -1) {
+                bazyDanych[index] = nowyWpis;
+            } else {
+                bazyDanych.unshift(nowyWpis);
+            }
+
+            localStorage.setItem('lexcorp_akty', JSON.stringify(bazyDanych));
+            odswiezListe();
+            alert("Zmiany zostały zapisane lokalnie.");
+        }
+
+        function usunAkt() {
+            if (!confirm("Czy na pewno chcesz usunąć ten projekt?")) return;
+            bazyDanych = bazyDanych.filter(a => a.id !== aktywnyId);
+            localStorage.setItem('lexcorp_akty', JSON.stringify(bazyDanych));
+            
+            if (bazyDanych.length > 0) {
+                wybierzAkt(bazyDanych[0].id);
+            } else {
+                nowyProjekt();
+            }
+            odswiezListe();
+        }
+
+        function filtrujProjekty() {
+            const query = document.getElementById('szukajInput').value.toLowerCase();
+            const przefiltrowane = bazyDanych.filter(a => a.tytul.toLowerCase().includes(query) || a.tresc.toLowerCase().includes(query));
+            odswiezListe(przefiltrowane);
+        }
+
+        function zmienZakladke(ktora) {
+            const btnTresc = document.getElementById('tabTrescBtn');
+            const btnAudyt = document.getElementById('tabAudytBtn');
+            const widokTresc = document.getElementById('widokTresc');
+            const widokAudyt = document.getElementById('widokAudyt');
+
+            if (ktora === 'tresc') {
+                btnTresc.className = "px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 text-white transition cursor-pointer shadow-lg shadow-indigo-600/20";
+                btnAudyt.className = "px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800/80 text-gray-300 hover:bg-slate-700 transition cursor-pointer";
+                widokTresc.classList.remove('hidden');
+                widokAudyt.classList.add('hidden');
+            } else {
+                btnAudyt.className = "px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 text-white transition cursor-pointer shadow-lg shadow-indigo-600/20";
+                btnTresc.className = "px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800/80 text-gray-300 hover:bg-slate-700 transition cursor-pointer";
+                widokAudyt.classList.remove('hidden');
+                widokTresc.classList.add('hidden');
+            }
+        }
+
+        function eksportujBaze() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(bazyDanych, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", "lexcorp_baza_aktow.json");
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        function importujBaze(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (Array.isArray(imported)) {
+                        bazyDanych = imported;
+                        localStorage.setItem('lexcorp_akty', JSON.stringify(bazyDanych));
+                        if (bazyDanych.length > 0) wybierzAkt(bazyDanych[0].id);
+                        odswiezListe();
+                        alert("Pomyślnie zaimportowano bazę danych.");
+                    } else {
+                        alert("Nieprawidłowy format pliku.");
+                    }
+                } catch (err) {
+                    alert("Błąd podczas odczytu pliku JSON.");
+                }
+            };
+            reader.readAsText(file);
+        }
+    </script>
+</body>
+</html>
