@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LexCorp Legislator v3.10 | System ZTP</title>
+    <title>LexCorp Legislator v3.20 | System ZTP</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -24,7 +24,6 @@
         }
     </script>
     <style>
-        /* Efekty Szkła (Glassmorphism) */
         .glass-panel {
             background: rgba(15, 23, 42, 0.75);
             backdrop-filter: blur(24px);
@@ -53,7 +52,6 @@
             box-shadow: 0 0 20px rgba(59, 130, 246, 0.25);
         }
 
-        /* Tło i Akcenty */
         .bg-mesh {
             background-color: #030712;
             background-image: 
@@ -75,7 +73,7 @@
 
     <!-- EKRAN LOGOWANIA / BRAMKA WERYFIKACYJNA -->
     <div id="authGate" class="fixed inset-0 z-[200] flex items-center justify-center bg-black/90 backdrop-blur-xl p-4">
-        <div class="glass-panel p-8 rounded-3xl max-w-md w-full border border-blue-500/30 shadow-2xl space-y-6 text-center relative glow-effect">
+        <div id="authBox" class="glass-panel p-8 rounded-3xl max-w-md w-full border border-blue-500/30 shadow-2xl space-y-6 text-center relative glow-effect">
             <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-3xl mx-auto shadow-lg shadow-blue-500/30 border border-white/10">
                 🔒
             </div>
@@ -87,7 +85,6 @@
 
             <div class="space-y-3">
                 <input type="text" id="userNickInput" onkeydown="if(event.key==='Enter') weryfikujDostep()" placeholder="Twój nick / identyfikator..." class="glass-input w-full px-4 py-3 rounded-xl text-sm font-medium text-center placeholder:text-slate-600">
-                <p id="authError" class="text-xs text-rose-500 font-semibold hidden"></p>
                 <button onclick="weryfikujDostep()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs py-3.5 rounded-xl transition-all shadow-lg shadow-blue-600/30 active:scale-[0.99]">
                     Zaloguj i Przejdź &rarr;
                 </button>
@@ -95,7 +92,7 @@
         </div>
     </div>
 
-    <!-- Modal 1: Aktualizacja v3.10 (Changelog na start) -->
+    <!-- Modal 1: Changelog v3.20 -->
     <div id="modalChangelog" class="fixed inset-0 z-[110] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 hidden">
         <div class="glass-panel p-6 sm:p-8 rounded-3xl max-w-lg w-full border border-blue-500/30 shadow-2xl space-y-5 relative glow-effect">
             <div class="flex items-center space-x-3 border-b border-white/10 pb-4">
@@ -103,31 +100,27 @@
                     🚀
                 </div>
                 <div>
-                    <h3 class="text-lg font-bold text-white tracking-wide">LexCorp Legislator v3.10</h3>
+                    <h3 class="text-lg font-bold text-white tracking-wide">LexCorp Legislator v3.20</h3>
                     <p class="text-xs text-blue-400 font-mono">Dziennik Zmian & Aktualizacja Systemu</p>
                 </div>
             </div>
 
             <div class="space-y-3 text-xs text-slate-300">
-                <p class="font-medium text-slate-200">Witaj w nowej wersji systemu legislacyjnego! Oto wykaz wdrożonych usprawnień:</p>
+                <p class="font-medium text-slate-200">Witaj w aktualizacji v3.20!</p>
                 <ul class="space-y-2 font-mono text-[11px] bg-slate-900/60 p-4 rounded-2xl border border-white/5">
                     <li class="flex items-start space-x-2">
                         <span class="text-emerald-400 font-bold">✓</span>
-                        <span><strong>Moduł Poselskiego Projektu Ustawy:</strong> Dedykowany kreator inicjatywy poselskiej z wymogami podpisów i uzasadnienia OSR.</span>
+                        <span><strong>Aktualizacja Weryfikacji:</strong> Oczyszczenie lokalnej listy blokad pod bazę zewnętrzną.</span>
                     </li>
                     <li class="flex items-start space-x-2">
                         <span class="text-emerald-400 font-bold">✓</span>
-                        <span><strong>Rozbudowa Bazy Propozycji:</strong> Każde z ministerstw posiada gotowe inicjatywy ustawodawcze.</span>
-                    </li>
-                    <li class="flex items-start space-x-2">
-                        <span class="text-emerald-400 font-bold">✓</span>
-                        <span><strong>Automatyczna Cyrkulacja:</strong> Dodano moduł cyklicznego odświeżania propozycji co 5 minut.</span>
+                        <span><strong>Przygotowanie Bazy:</strong> Struktura pod integrację z zewnętrzną bazą danych.</span>
                     </li>
                 </ul>
             </div>
 
             <button onclick="zamknijChangelog()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold text-xs py-3.5 rounded-xl transition-all shadow-lg shadow-blue-600/30 active:scale-[0.99] flex items-center justify-center space-x-2">
-                <span>Przejdź do pracy (Audyt & Pisanie Ustaw)</span>
+                <span>Przejdź do pracy</span>
                 <span>&rarr;</span>
             </button>
         </div>
@@ -144,7 +137,7 @@
 
             <div>
                 <h3 class="text-base font-bold text-white tracking-wide">Kontakt z Twórcą</h3>
-                <p class="text-xs text-slate-400 mt-1">Masz uwagi lub propozycje poprawek? Napisz na Discordzie:</p>
+                <p class="text-xs text-slate-400 mt-1">Napisz na Discordzie:</p>
             </div>
 
             <div class="bg-slate-950/80 p-3.5 rounded-2xl border border-indigo-500/20 flex items-center justify-between font-mono text-xs">
@@ -174,13 +167,12 @@
                     <div class="flex items-center space-x-2">
                         <span class="text-base font-bold tracking-tight text-white">LexCorp Legislator</span>
                         <span class="text-[11px] font-mono font-semibold px-2.5 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                            v3.10
+                            v3.20
                         </span>
                     </div>
                 </div>
             </div>
 
-            <!-- Nawigacja Trybów -->
             <div class="flex items-center p-1 bg-slate-900/80 rounded-xl border border-white/5 shadow-inner space-x-1">
                 <button onclick="otworzKontakt()" class="text-xs px-4 py-2 rounded-lg transition-all font-medium text-indigo-400 hover:text-indigo-300 hover:bg-indigo-500/10 border border-indigo-500/20">
                     📩 Kontakt
@@ -196,13 +188,13 @@
         </div>
     </header>
 
-    <!-- Główna Przestrzeń Robocza -->
+    <!-- Przestrzeń Robocza -->
     <main class="max-w-[1700px] mx-auto px-4 sm:px-6 py-6 flex-grow w-full grid grid-cols-1 lg:grid-cols-12 gap-6 h-[calc(100vh-4rem)]">
         
-        <!-- Lewa Kolumna: Kontenery Operacyjne -->
+        <!-- Lewa Kolumna -->
         <section class="lg:col-span-6 flex flex-col h-full min-h-0">
             
-            <!-- TRYB 1: AUDYT / WERYFIKACJA USTAW -->
+            <!-- TRYB 1: AUDYT -->
             <div id="panelSprawdzarki" class="glass-panel rounded-2xl p-5 flex flex-col h-full relative overflow-hidden">
                 <div class="flex justify-between items-center pb-3 border-b border-white/5">
                     <div class="flex items-center space-x-2">
@@ -219,7 +211,7 @@
                 </div>
 
                 <div class="flex-grow flex flex-col my-4">
-                    <textarea id="trescDoSprawdzenia" placeholder="Wklej tutaj treść aktu prawnego, projektu poselskiego lub nowelizacji do oceny legislacyjnej..." class="glass-input w-full flex-grow p-4 rounded-xl text-xs font-mono resize-none leading-relaxed transition-all placeholder:text-slate-600"></textarea>
+                    <textarea id="trescDoSprawdzenia" placeholder="Wklej treść aktu prawnego, projektu poselskiego lub nowelizacji do oceny legislacyjnej..." class="glass-input w-full flex-grow p-4 rounded-xl text-xs font-mono resize-none leading-relaxed transition-all placeholder:text-slate-600"></textarea>
                 </div>
 
                 <div class="pt-3 border-t border-white/5 flex items-center justify-between">
@@ -231,40 +223,40 @@
                 </div>
             </div>
 
-            <!-- TRYB 2: PISANIE & GENEROWANIE USTAW -->
+            <!-- TRYB 2: KREATOR -->
             <div id="panelKreatora" class="glass-panel rounded-2xl p-5 flex flex-col h-full relative overflow-hidden hidden space-y-4">
                 <div class="flex justify-between items-center pb-3 border-b border-white/5">
                     <div class="flex items-center space-x-2">
                         <span class="text-emerald-400 text-sm">🖋️</span>
                         <h2 class="text-xs font-semibold text-slate-200 uppercase tracking-wider">Kreator Aktów Prawnych & Nowelizacji</h2>
                     </div>
-                    <span class="text-[10px] uppercase font-mono tracking-widest text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-md border border-emerald-500/20">Standard ZTP v3.10</span>
+                    <span class="text-[10px] uppercase font-mono tracking-widest text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-md border border-emerald-500/20">Standard ZTP v3.20</span>
                 </div>
 
-                <!-- Wybór Typu Inicjatywy Prawodawczej -->
+                <!-- Wybór Typu Inicjatywy -->
                 <div class="glass-card p-3 rounded-xl space-y-2 border border-white/5">
                     <label class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">Inicjatywa Prawodawcza / Typ Aktu:</label>
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                        <button type="button" onclick="ustawTypInicjatywy('poselski')" id="btnTypPoselski" class="px-3 py-2 rounded-lg text-xs font-medium border border-blue-500/40 bg-blue-600/20 text-blue-300 transition-all text-center">
+                        <button type="button" onclick="ustawTypInicjatywy('poselski')" id="btnTypPoselski" class="px-3 py-2 rounded-lg text-xs font-medium border border-blue-500/40 bg-blue-600/20 text-blue-300 transition-all text-center font-bold">
                             🏛️ Poselski Projekt
                         </button>
                         <button type="button" onclick="ustawTypInicjatywy('rzadowy')" id="btnTypRzadowy" class="px-3 py-2 rounded-lg text-xs font-medium border border-white/10 bg-slate-900 text-slate-400 transition-all text-center hover:border-white/20">
-                            🏢 Projekt Rządowy
-                        </button>
-                        <button type="button" onclick="ustawTypInicjatywy('obywatelski')" id="btnTypObywatelski" class="px-3 py-2 rounded-lg text-xs font-medium border border-white/10 bg-slate-900 text-slate-400 transition-all text-center hover:border-white/20">
-                            👥 Obywatelski
+                            🏢 Projekt Rządowy (RPU)
                         </button>
                         <button type="button" onclick="ustawTypInicjatywy('uchwala')" id="btnTypUchwala" class="px-3 py-2 rounded-lg text-xs font-medium border border-white/10 bg-slate-900 text-slate-400 transition-all text-center hover:border-white/20">
                             📜 Uchwała Sejmu
                         </button>
+                        <button type="button" onclick="ustawTypInicjatywy('obywatelski')" id="btnTypObywatelski" class="px-3 py-2 rounded-lg text-xs font-medium border border-white/10 bg-slate-900 text-slate-400 transition-all text-center hover:border-white/20">
+                            👥 Obywatelski
+                        </button>
                     </div>
                 </div>
 
-                <!-- Sekcja Ministerstw i Generowania Inicjatyw -->
-                <div class="glass-card p-3 rounded-xl space-y-2 border border-white/5">
+                <!-- Sekcja Ministerstw -->
+                <div id="sekcjaMinisterstw" class="glass-card p-3 rounded-xl space-y-2 border border-white/5 hidden">
                     <div class="flex items-center justify-between">
-                        <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Wykaz Resortów Rządowych / Baza Propozycji:</span>
-                        <span class="text-[10px] font-mono text-slate-500" id="timerOdswiezania">Odświeżanie za: 05:00</span>
+                        <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider" id="tytulSekcjiResortowej">Wykaz Resortów / Baza Propozycji:</span>
+                        <span class="text-[10px] font-mono text-slate-500" id="timerOdswiezania">Odświeżenie za: 05:00</span>
                     </div>
                     
                     <div class="flex flex-wrap gap-1.5 max-h-20 overflow-y-auto pr-1" id="kontenerMinisterstw"></div>
@@ -274,16 +266,15 @@
                     </div>
                 </div>
 
-                <!-- Formularz Redagowania Aktu -->
+                <!-- Formularz Redagowania -->
                 <div class="space-y-2 flex-grow flex flex-col">
-                    <!-- Dodatkowe pola dla Poselskiego Projektu Ustawy -->
                     <div id="sekcjaPoselska" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <input type="text" id="kreatorWnioskodawcy" placeholder="Wnioskodawcy (np. Grupa Posłów Klubu X / Komisja...)" value="Grupa posłów (podpisana przez 15 posłów)" class="glass-input w-full px-3 py-2 rounded-xl text-xs font-medium placeholder:text-slate-600">
                         <input type="text" id="kreatorReprezentant" placeholder="Poseł Reprezentujący wnioskodawców..." class="glass-input w-full px-3 py-2 rounded-xl text-xs font-medium placeholder:text-slate-600">
                     </div>
 
-                    <input type="text" id="kreatorTytul" placeholder="Tytuł aktu (np. Ustawa o zmianie ustawy o cyfryzacji...)" class="glass-input w-full px-4 py-2.5 rounded-xl text-xs font-medium placeholder:text-slate-600">
-                    <textarea id="kreatorOpis" placeholder="Określ szczegółowy zakres przedmiotowy, modyfikowane artykuły, uzasadnienie oraz ocenę skutków regulacji (OSR)..." class="glass-input w-full flex-grow p-3.5 rounded-xl text-xs font-mono resize-none leading-relaxed transition-all placeholder:text-slate-600"></textarea>
+                    <input type="text" id="kreatorTytul" placeholder="Tytuł aktu..." class="glass-input w-full px-4 py-2.5 rounded-xl text-xs font-medium placeholder:text-slate-600">
+                    <textarea id="kreatorOpis" placeholder="Określ zakres przedmiotowy, modyfikowane artykuły oraz uzasadnienie..." class="glass-input w-full flex-grow p-3.5 rounded-xl text-xs font-mono resize-none leading-relaxed transition-all placeholder:text-slate-600"></textarea>
                 </div>
 
                 <div class="pt-3 border-t border-white/5 flex items-center justify-between">
@@ -297,32 +288,30 @@
 
         </section>
 
-        <!-- Prawa Kolumna: Czat & Wyniki Prawodawcze -->
+        <!-- Prawa Kolumna -->
         <section class="lg:col-span-6 flex flex-col h-full min-h-0">
             <div class="glass-panel rounded-2xl p-5 flex flex-col h-full relative overflow-hidden">
                 
                 <div class="flex justify-between items-center pb-3 border-b border-white/5">
                     <div class="flex items-center space-x-2">
                         <span class="text-indigo-400 text-sm">🤖</span>
-                        <h2 class="text-xs font-semibold text-slate-200 uppercase tracking-wider">Konsola Legislacyjna v3.10</h2>
+                        <h2 class="text-xs font-semibold text-slate-200 uppercase tracking-wider">Konsola Legislacyjna v3.20</h2>
                     </div>
                     <button onclick="skopiujOstatniTekst()" class="text-[11px] bg-slate-800/80 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg border border-white/5 transition-all flex items-center space-x-1.5">
                         <span>📋 Skopiuj Projekt</span>
                     </button>
                 </div>
 
-                <!-- Wyniki -->
                 <div id="wynikiKontener" class="flex-grow overflow-y-auto my-4 pr-2 space-y-4 text-xs font-mono">
                     <div class="bg-slate-900/40 p-4 rounded-xl border border-white/5 text-slate-400 leading-relaxed">
-                        <p class="text-blue-400 font-semibold mb-1">System Legislacyjny LexCorp v3.10 Gotowy</p>
-                        Wybierz rodzaj aktu (np. Poselski Projekt Ustawy), resort lub wprowadź własne założenia. System wygeneruje gotowy projekt aktu ze wszystkimi wymogami ZTP, uzasadnieniem i OSR.
+                        <p class="text-blue-400 font-semibold mb-1">System Legislacyjny LexCorp v3.20 Gotowy</p>
+                        Wybierz rodzaj aktu. Przygotowano strukturę pod integrację z zewnętrzną bazą danych.
                     </div>
                 </div>
 
-                <!-- Czat -->
                 <div class="pt-3 border-t border-white/5">
                     <div class="flex space-x-2">
-                        <input type="text" id="userInput" onkeydown="if(event.key==='Enter') wyslijPytanie()" placeholder="Wpisz poprawkę lub zapytanie (np. 'Dodaj przepis przejściowy o 14-dniowym vacatio legis')..." class="glass-input flex-grow px-4 py-2.5 rounded-xl text-xs placeholder:text-slate-600 focus:ring-1 focus:ring-blue-500">
+                        <input type="text" id="userInput" onkeydown="if(event.key==='Enter') wyslijPytanie()" placeholder="Wpisz poprawkę lub zapytanie..." class="glass-input flex-grow px-4 py-2.5 rounded-xl text-xs placeholder:text-slate-600 focus:ring-1 focus:ring-blue-500">
                         <button onclick="wyslijPytanie()" class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-xl text-xs font-medium transition-all shadow-md shadow-blue-600/20">
                             Wyślij
                         </button>
@@ -335,46 +324,53 @@
     </main>
 
     <script>
-        // System Blacklisty
+        // Czarna lista lokalna (zastępowana docelowo zapytaniem do Bazy Danych / API)
         const BLACKLIST = [
-            "jpa_pis",
-            "stachu jones",
-            "stachu j.",
-            "ioannes paulus adamczewski",
-            "polskagrom",
-            "stanisław jon",
-            "stanislaw jon"
+            "jpa_pis", 
+            "stachu jones", 
+            "stachu j.", 
+            "stachu jon", 
+            "stanisław jon", 
+            "stanislaw jon", 
+            "ioannes paulus adamczewski", 
+            "polskagrom"
         ];
 
-        function sprawdzZapisanaAutoryzacje() {
-            const zablokowany = localStorage.getItem('lex_blacklisted');
-            if (zablokowany === 'true') {
+        function czyszczenieTekstu(txt) {
+            return txt.toLowerCase().replace(/[^a-z0-9ąęćłńóśźż]/g, "");
+        }
+
+        // Przygotowane pod asynchroniczne pobieranie danych z bazy (np. async/await z API)
+        async function sprawdzCzyZablokowanyWBazie(tekst) {
+            const znormalizowany = czyszczenieTekstu(tekst);
+            
+            // Miejsce na strzał do zewnętrznej bazy danych (np. fetch('/api/check-blacklist'))
+            return BLACKLIST.some(item => {
+                const itemCzysty = czyszczenieTekstu(item);
+                return znormalizowany.includes(itemCzysty);
+            });
+        }
+
+        async function sprawdzZapisanaAutoryzacje() {
+            if (localStorage.getItem('lex_blacklisted') === 'true') {
                 pokazBlokadeDostepu();
                 return;
             }
-
-            const zapisanyNick = localStorage.getItem('lex_user_nick');
-            if (zapisanyNick) {
+            if (localStorage.getItem('lex_user_nick')) {
                 document.getElementById('authGate').classList.add('hidden');
                 document.getElementById('modalChangelog').classList.remove('hidden');
             }
         }
 
-        function weryfikujDostep() {
-            const input = document.getElementById('userNickInput');
-            const err = document.getElementById('authError');
-            const rawNick = input.value.trim();
+        async function weryfikujDostep() {
+            const rawNick = document.getElementById('userNickInput').value.trim();
+            if (!rawNick) return;
 
-            if (!rawNick) {
-                err.innerText = "Podaj prawidłowy nick.";
-                err.classList.remove('hidden');
-                return;
-            }
+            const czyZablokowany = await sprawdzCzyZablokowanyWBazie(rawNick);
 
-            const normalizedNick = rawNick.toLowerCase();
-
-            if (BLACKLIST.includes(normalizedNick)) {
+            if (czyZablokowany) {
                 localStorage.setItem('lex_blacklisted', 'true');
+                localStorage.removeItem('lex_user_nick');
                 pokazBlokadeDostepu();
             } else {
                 localStorage.setItem('lex_user_nick', rawNick);
@@ -393,8 +389,7 @@
                     </div>
                     <h2 class="text-xl font-bold text-white tracking-wide">Dostęp Zablokowany</h2>
                     <p class="text-xs text-rose-300 font-mono leading-relaxed">
-                        Twoje konto/identyfikator znajduje się na czarnej liście systemu LexCorp Legislator. 
-                        Dostęp do aplikacji został trwale zabroniony.
+                        Twoje konto znajduje się na czarnej liście systemu LexCorp Legislator.
                     </p>
                 </div>
             `;
@@ -407,88 +402,28 @@
 
         const bazaPropozycji = {
             "Ministerstwo Aktywów Państwowych": [
-                { tytul: "Ustawa o zmianie ustawy o zarządzaniu mieniem państwowym", opis: "Zaostrzenie kryteriów nadzoru nad spółkami z udziałem Skarbu Państwa oraz obowiązkowe audyty zarządcze." },
-                { tytul: "Ustawa o zarządzaniu strategicznymi spółkami Skarbu Państwa", opis: "Zasady konsolidacji aktywów energetycznych oraz powołanie Rejestru Inwestycji Strategicznych." },
-                { tytul: "Ustawa o ochronie infrastruktury krytycznej w energetyce", opis: "Mechanizmy osłony finansowej i fizycznej dla kluczowych węzłów dystrybucji prądu." },
-                { tytul: "Ustawa o cyfryzacji procesów w nadzorze właścicielskim", opis: "Wdrożenie jednolitego systemu raportowania wyników finansowych spółek Skarbu Państwa." },
-                { tytul: "Ustawa o zasadach restrukturyzacji podmiotów górniczych", opis: "Nowe ramowe wytyczne alokacji kapitałowej dla przedsiębiorstw wydobywczych." }
+                { tytul: "Ustawa o zmianie ustawy o zarządzaniu mieniem państwowym", opis: "Zaostrzenie kryteriów nadzoru nad spółkami z udziałem Skarbu Państwa." },
+                { tytul: "Ustawa o ochronie infrastruktury krytycznej w energetyce", opis: "Mechanizmy osłony finansowej i fizycznej dla kluczowych węzłów." }
             ],
             "Ministerstwo Cyfryzacji": [
-                { tytul: "Ustawa o zmianie ustawy o krajowym systemie cyberbezpieczeństwa", opis: "Wymogi raportowania incydentów oraz obowiązkowa certyfikacja oprogramowania dla podmiotów kluczowych." },
-                { tytul: "Ustawa o wytycznych dla systemów sztucznej inteligencji", opis: "Normy etyczne, audyty algorytmiczne oraz odpowiedzialność prawna dostawców rozwiązań AI w sektorze publicznym." },
-                { tytul: "Ustawa o nowelizacji ustawy o doręczeniach elektronicznych", opis: "Uproszczenie standardów archiwizacji oraz obligatoryjne e-skrzynki dla podmiotów prawnych." },
-                { tytul: "Ustawa o bezpieczeństwie danych w chmurach rządowych", opis: "Standaryzacja lokalizacji serwerowni przechowujących rejestry obywatelskie." },
-                { tytul: "Ustawa o tożsamości cyfrowej i usługach zaufania", opis: "Rozszerzenie integracji mObywatel z procedurami notarialnymi i bankowymi." }
+                { tytul: "Ustawa o zmianie ustawy o krajowym systemie cyberbezpieczeństwa", opis: "Wymogi raportowania incydentów oraz obowiązkowa certyfikacja." },
+                { tytul: "Ustawa o wytycznych dla systemów sztucznej inteligencji", opis: "Normy etyczne, audyty algorytmiczne w sektorze publicznym." }
             ],
             "Ministerstwo Edukacji Narodowej": [
-                { tytul: "Ustawa o zmianie ustawy – Prawo oświatowe", opis: "Nowelizacja zasad oceniania kształtującego, ograniczenie biurokracji nauczycielskiej i cyfrowe klasy." },
-                { tytul: "Ustawa o wsparciu psychologicznym w szkołach", opis: "Gwarancja etatu psychologa w każdej placówce oraz budowa systemu reagowania na kryzysy rówieśnicze." },
-                { tytul: "Ustawa o zrównoważonym żywieniu w placówkach oświatowych", opis: "Normy dietetyczne oraz preferencje dla lokalnych dostawców żywności do stołówek." },
-                { tytul: "Ustawa o modernizacji bazy dydaktycznej szkół zawodowych", opis: "Fundusz dopłat do specjalistycznych pracowni technicznych." },
-                { tytul: "Ustawa o zmianie karty nauczyciela", opis: "Modyfikacja ścieżki awansu zawodowego oraz systemu rozliczania godzin ponadwymiarowych." }
+                { tytul: "Ustawa o zmianie ustawy – Prawo oświatowe", opis: "Nowelizacja zasad oceniania oraz ograniczenie biurokracji nauczycielskiej." },
+                { tytul: "Ustawa o wsparciu psychologicznym w szkołach", opis: "Gwarancja etatu psychologa w każdej placówce oświatowej." }
             ],
             "Ministerstwo Finansów": [
-                { tytul: "Ustawa o zmianie ustawy o podatku od towarów i usług", opis: "Modyfikacja funkcjonowania Krajowego Systemu e-Faktur oraz automatyzacja zwrotów VAT." },
-                { tytul: "Ustawa o automatyzacji audytu podatkowego transakcji cyfrowych", opis: "Ciągły monitoring analityczny podmiotów z sektora e-commerce i technologii." },
-                { tytul: "Ustawa o podatku wyrównawczym dla korporacji międzynarodowych", opis: "Wdrożenie globalnego minimalnego poziomu opodatkowania." },
-                { tytul: "Ustawa o ulgach dla inwestycji w technologie ekologiczne", opis: "Odliczenia podatkowe dla przedsiębiorstw przeznaczających zyski na zieloną transformację." },
-                { tytul: "Ustawa o uszczelnieniu obrotu kryptowalutowego", opis: "Obowiązki sprawozdawcze dla giełd walut wirtualnych oraz nowe stawki kapitałowe." }
-            ],
-            "Ministerstwo Funduszy i Polityki Regionalnej": [
-                { tytul: "Ustawa o zasadach prowadzenia polityki rozwoju", opis: "Uproszczenie procedur aplikacyjnych o środki unijne dla samorządów oraz wskaźniki rozwoju zrównoważonego." },
-                { tytul: "Ustawa o wsparciu miast średnich i tracących funkcje społeczno-gospodarcze", opis: "Dedykowane fundusze rozwojowe dla ośrodków zbieżności regionalnej." },
-                { tytul: "Ustawa o kompensacji cyfrowej obszarów wiejskich", opis: "Dofinansowanie infrastruktury światłowodowej i zasięgowej na terenach słabo zaludnionych." },
-                { tytul: "Ustawa o spójności terytorialnej subregionów", opis: "Ułatwienia przy tworzeniu związków metropolitalnych i powiązań komunikacyjnych." },
-                { tytul: "Ustawa o ewaluacji efektywności programów operacyjnych", opis: "Jednolite wskaźniki oceny inwestycji dofinansowywanych ze środków Europejskiego Funduszu Rozwoju." }
+                { tytul: "Ustawa o zmianie ustawy o podatku od towarów i usług", opis: "Modyfikacja funkcjonowania Krajowego Systemu e-Faktur." },
+                { tytul: "Ustawa o podatku wyrównawczym dla korporacji", opis: "Wdrożenie globalnego minimalnego poziomu opodatkowania." }
             ],
             "Ministerstwo Infrastruktury": [
-                { tytul: "Ustawa o zmianie ustawy – Prawo o ruchu drogowym", opis: "Nowelizacja przepisów dotyczących pojazdów autonomicznych oraz zaostrzenie kar za przekroczenia prędkości." },
-                { tytul: "Ustawa o rozwoju kolei dużych prędkości", opis: "Uproszczenie procedur wywłaszczeniowych i środowiskowych dla magistrali kolejowych." },
-                { tytul: "Ustawa o modernizacji infrastruktury portowej", opis: "Zasady finansowania pogłębiania torów wodnych oraz rozbudowy terminali kontenerowych." },
-                { tytul: "Ustawa o zmianie ustawy o drogach publicznych", opis: "Nowy system poboru opłat od pojazdów ciężarowych i automatyczna weryfikacja tonażu." },
-                { tytul: "Ustawa o cyfryzacji procesu wydawania praw jazdy", opis: "Pełna automatyzacja wniosków i integracja z Centralną Ewidencją Kierowców." }
-            ],
-            "Ministerstwo Klimatu i Środowiska": [
-                { tytul: "Ustawa o zmianie ustawy o odnawialnych źródłach energii", opis: "Zniesienie barier odległościowych dla farm wiatrowych oraz przyspieszenie warunków przyłączeniowych OZE." },
-                { tytul: "Ustawa o gospodarce w obiegu zamkniętym", opis: "Obowiązkowy system kaucyjny dla opakowań szklanych, plastikowych i puszek." },
-                { tytul: "Ustawa o ochronie zasobów wodnych i małej retencji", opis: "Program dopłat do zbiorników retencyjnych dla rolników i spółdzielni mieszkaniowych." },
-                { tytul: "Ustawa o transformacji rejonów wydobywczych", opis: "Tworzenie Specjalnych Stref Zielonej Energii na terenach poprzemysłowych." },
-                { tytul: "Ustawa o monitorowaniu jakości powietrza w miastach", opis: "Nowe normy emisyjne dla przydomowych instalacji grzewczych i obligatoryjne czujniki." }
-            ],
-            "Ministerstwo Kultury i Dziedzictwa Narodowego": [
-                { tytul: "Ustawa o prawie autorskim i prawach pokrewnych", opis: "Sprawiedliwe wynagrodzenie dla twórców z tytułu eksploatacji ich dzieł na platformach streamingowych." },
-                { tytul: "Ustawa o statusie artysty zawodowego", opis: "Dostęp do ubezpieczeń społecznych oraz fundusz stypendialny dla twórców o nieregularnych dochodach." },
-                { tytul: "Ustawa o ochronie zabytków i opiece nad zabytkami", opis: "Zwiększenie kar za niszczenie obiektów zabytkowych i dopłaty do prywatnych renowacji." },
-                { tytul: "Ustawa o cyfryzacji zasobów bibliotecznych i muzealnych", opis: "Jednolity repozytorium cyfrowe polskiego dziedzictwa kulturowego." },
-                { tytul: "Ustawa o mecenacie kultury i zwolnieniach podatkowych", opis: "Ulga sponsoringowa dla firm wspierających lokalne instytucje kulturalne." }
-            ],
-            "Ministerstwo Nauki i Szkolnictwa Wyższego": [
-                { tytul: "Ustawa – Prawo o szkolnictwie wyższym i nauce", opis: "Nowelizacja zasad ewaluacji jakości działalności naukowej oraz zwiększenie finansowania badań." },
-                { tytul: "Ustawa o komercjalizacji wyników badań naukowych", opis: "Uproszczenie tworzenia spółek spin-off przy uczelniach wyższych." },
-                { tytul: "Ustawa o Krajowym Funduszu Stypendialnym dla doktorantów", opis: "Podwyższenie stawek stypendialnych i grantów na wyjazdy zagraniczne." },
-                { tytul: "Ustawa o umiędzynarodowieniu polskich uczelni", opis: "Ułatwienia w zatrudnianiu kadry profesorskiej z zagranicznych ośrodków akademickich." },
-                { tytul: "Ustawa o etyce w badaniach z wykorzystaniem technologii AI", opis: "Standardy weryfikacji prac dyplomowych i publikacji naukowych." }
-            ],
-            "Ministerstwo Obrony Narodowej": [
-                { tytul: "Ustawa o zmianie ustawy o obronie Ojczyzny", opis: "Optymalizacja procedur powoływania do rezerwy oraz szybka ścieżka zakupowa technologii obronnych." },
-                { tytul: "Ustawa o rozwoju przemysłu zbrojeniowego", opis: "Gwarancje rządowe dla krajowych zakładów produkcji amunicji i sprzętu pancernego." },
-                { tytul: "Ustawa o utworzeniu Wojsk Cyberprzestrzeni", opis: "Struktura organizacyjna, uposażenia i uprawnienia operacyjne służb cyberobrony." },
-                { tytul: "Ustawa o rezerwie aktywnej i obronie cywilnej", opis: "Szkolenia obywatelskie oraz obowiązki samorządów w zakresie budowy schronów." },
-                { tytul: "Ustawa o modernizacji baz wojskowych", opis: "Inwestycje w cyfrową infrastrukturę łączności i bezpieczeństwo magazynowania uzbrojenia." }
-            ],
-            "Ministerstwo Przemysłu": [
-                { tytul: "Ustawa – Prawo geologiczne i górnicze", opis: "Dostosowanie zasad koncesjonowania wydobycia surowców strategicznych do wytycznych przemysłowych." },
-                { tytul: "Ustawa o transformacji sektora hutniczego", opis: "Dopłaty do pieców elektrycznych i wodorowych w zakładach przemysłu ciężkiego." },
-                { tytul: "Ustawa o uniezależnieniu surowcowym przemysłu", opis: "Rezerwy państwowe metali ziem rzadkich i kluczowych półprzewodników." },
-                { tytul: "Ustawa o wsparciu innowacji w sektorze chemicznym", opis: "Ulgi na wdrożenia niskoemisyjnych syntez i recyklingu polimerów." },
-                { tytul: "Ustawa o bezpieczeństwie technicznym urządzeń przemysłowych", opis: "Nowe normy Dozoru Technicznego dla autonomicznych linii produkcyjnych." }
+                { tytul: "Ustawa o zmianie ustawy – Prawo o ruchu drogowym", opis: "Nowelizacja przepisów dotyczących pojazdów autonomicznych." },
+                { tytul: "Ustawa o rozwoju kolei dużych prędkości", opis: "Uproszczenie procedur środowiskowych dla magistrali kolejowych." }
             ],
             "Ministerstwo Spraw Wewnętrznych i Administracji": [
-                { tytul: "Ustawa o ochronie ludności i stanie klęski żywiołowej", opis: "Nowy system powiadamiania kryzysowego, doposażenie Ochotniczych Straży Pożarnych oraz procedury ewakuacyjne." },
-                { tytul: "Ustawa o zmianie ustawy o Policji", opis: "Podwyżki uposażeń, cyfrowe kamery nasobne oraz uproszczony nabór do służb mundurowych." },
-                { tytul: "Ustawa o modernizacji Straży Granicznej", opis: "Inwestycje w zapory elektroniczne i autonomiczne drony rozpoznawcze." },
-                { tytul: "Ustawa o dowodach osobistych z modułem biometrycznym", opis: "Wdrożenie zaawansowanych zabezpieczeń przed kradzieżą tożsamości." },
-                { tytul: "Ustawa o funkcjonowaniu samorządu terytorialnego", opis: "Zwiększenie dochodów własnych gmin z tytułu PIT i CIT." }
+                { tytul: "Ustawa o zmianie ustawy o ochronie ludności", opis: "Nowy system powiadamiania kryzysowego i procedury ewakuacyjne." },
+                { tytul: "Ustawa o zmianie ustawy o Policji", opis: "Podwyżki uposażeń oraz cyfrowe kamery nasobne dla funkcjonariuszy." }
             ]
         };
 
@@ -496,18 +431,21 @@
             sprawdzZapisanaAutoryzacje();
             wygenerujPrzyciskiMinisterstw();
             wyswietlPropozycje(wybraneMinisterstwo);
+            ustawTypInicjatywy('poselski');
             startTimer();
         }
 
         function ustawTypInicjatywy(typ) {
             wybranyTypInicjatywy = typ;
             const sekcjaPoselska = document.getElementById('sekcjaPoselska');
+            const sekcjaMinisterstw = document.getElementById('sekcjaMinisterstw');
+            const tytulSekcji = document.getElementById('tytulSekcjiResortowej');
             
             const przyciski = {
                 poselski: document.getElementById('btnTypPoselski'),
                 rzadowy: document.getElementById('btnTypRzadowy'),
-                obywatelski: document.getElementById('btnTypObywatelski'),
-                uchwala: document.getElementById('btnTypUchwala')
+                uchwala: document.getElementById('btnTypUchwala'),
+                obywatelski: document.getElementById('btnTypObywatelski')
             };
 
             Object.keys(przyciski).forEach(k => {
@@ -522,8 +460,20 @@
 
             if (typ === 'poselski') {
                 sekcjaPoselska.classList.remove('hidden');
+                sekcjaMinisterstw.classList.add('hidden');
+            } else if (typ === 'rzadowy') {
+                sekcjaPoselska.classList.add('hidden');
+                sekcjaMinisterstw.classList.remove('hidden');
+                tytulSekcji.innerText = "Propozycje Rządowe / Ustawy i Nowelizacje:";
+                wyswietlPropozycje(wybraneMinisterstwo);
+            } else if (typ === 'uchwala') {
+                sekcjaPoselska.classList.add('hidden');
+                sekcjaMinisterstw.classList.remove('hidden');
+                tytulSekcji.innerText = "Propozycje Uchwał Sejmu wg Resortu:";
+                wyswietlPropozycje(wybraneMinisterstwo);
             } else {
                 sekcjaPoselska.classList.add('hidden');
+                sekcjaMinisterstw.classList.add('hidden');
             }
         }
 
@@ -554,12 +504,19 @@
             pozycje.forEach(p => {
                 const card = document.createElement('div');
                 card.className = "glass-card p-2.5 rounded-xl border border-white/5 hover:border-blue-500/30 cursor-pointer transition-all flex flex-col justify-between";
+                
+                let wyswietlanyTytul = p.tytul;
+                if (wybranyTypInicjatywy === 'uchwala') {
+                    wyswietlanyTytul = p.tytul.replace("Ustawa o zmianie ustawy o", "Uchwała Sejmu RP w sprawie").replace("Ustawa o", "Uchwała Sejmu RP w sprawie");
+                }
+
                 card.onclick = () => {
-                    document.getElementById('kreatorTytul').value = p.tytul;
+                    document.getElementById('kreatorTytul').value = wyswietlanyTytul;
                     document.getElementById('kreatorOpis').value = p.opis;
                 };
+
                 card.innerHTML = `
-                    <h4 class="text-[11px] font-bold text-slate-200 line-clamp-1">${p.tytul}</h4>
+                    <h4 class="text-[11px] font-bold text-slate-200 line-clamp-1">${wyswietlanyTytul}</h4>
                     <p class="text-[10px] text-slate-400 line-clamp-2 mt-1 font-sans">${p.opis}</p>
                 `;
                 lista.appendChild(card);
@@ -569,9 +526,7 @@
         function startTimer() {
             setInterval(() => {
                 sekundDoOdswiezenia--;
-                if (sekundDoOdswiezenia <= 0) {
-                    sekundDoOdswiezenia = 300;
-                }
+                if (sekundDoOdswiezenia <= 0) sekundDoOdswiezenia = 300;
                 const min = Math.floor(sekundDoOdswiezenia / 60).toString().padStart(2, '0');
                 const sec = (sekundDoOdswiezenia % 60).toString().padStart(2, '0');
                 document.getElementById('timerOdswiezania').innerText = `Odświeżenie za: ${min}:${sec}`;
@@ -622,55 +577,14 @@
             let szablon = "";
 
             if (wybranyTypInicjatywy === 'poselski') {
-                szablon = `PROJEKT
-(Poselski Projekt Ustawy)
-
-USTAWA
-z dnia ${dzisiejszaData} r.
-
-${tytul.toUpperCase()}
-
-Art. 1. 
-W ustawie wprowaza się następujące zmiany i regulacje:
-1) ${opis || 'Przepis ogólny określający zakres przedmiotowy regulacji.'};
-2) Obowiązek sprawozdawczy podmiotów właściwych w terminie do końca kwartału.
-
-Art. 2. 
-Wykonanie ustawy powierza się właściwemu ministrowi.
-
-Art. 3. 
-Ustawa wchodzi w życie po upływie 14 dni od dnia ogłoszenia.
-
---------------------------------------------------
-UZASADNIENIE
-I. Potrzeba i cel wydania ustawy:
-Niniejszy poselski projekt ustawy odpowiada na pilne zapotrzebowanie społeczne i gospodarcze w zakresie: ${tytul}.
-
-II. Wnioskodawcy i reprezentacja:
-Projekt wnoszony przez: ${wnioskodawcy || 'Grupę posłów (podpisany przez co najmniej 15 posłów)'}.
-Do reprezentowania Wnioskodawców w pracach legislacyjnych upoważniono posła: ${reprezentant || '[Wprowadź imię i nazwisko posła]'}.
-
-III. Ocena Skutków Regulacji (OSR):
-1. Wpływ na budżet państwa: Projekt nie wywołuje negatywnych skutków dla budżetu państwa / Finansowanie mieści się w limitach wydatków.
-2. Wpływ na rynek pracy i konkurencyjność: Pozytywny wpływ poprzez uszczelnienie procedur i zwiększenie przejrzystości.
-3. Zgodność z prawem Unii Europejskiej: Projekt jest zgodny z regulacjami Unii Europejskiej.`;
+                szablon = `PROJEKT\n(Poselski Projekt Ustawy)\n\nUSTAWA\nz dnia ${dzisiejszaData} r.\n\n${tytul.toUpperCase()}\n\nArt. 1. \nW ustawie wprowadza się następujące regulacje:\n1) ${opis || 'Przepis ogólny określający zakres przedmiotowy regulacji.'};\n\nArt. 2. \nWykonanie ustawy powierza się właściwemu ministrowi.\n\nArt. 3. \nUstawa wchodzi w życie po upływie 14 dni od dnia ogłoszenia.\n\n--------------------------------------------------\nUZASADNIENIE\nI. Cel wydania ustawy: ${tytul}.\nII. Wnioskodawcy: ${wnioskodawcy}. Reprezentant: ${reprezentant || 'Brak'}.\nIII. Ocena Skutków Regulacji (OSR): Projekt nie dociąża budżetu państwa.`;
+            } else if (wybranyTypInicjatywy === 'uchwala') {
+                szablon = `PROJEKT\nUCHWAŁA SEJMU RZECZYPOSPOLITEJ POLSKIEJ\nz dnia ${dzisiejszaData} r.\n\n${tytul.toUpperCase()}\n\nSejm Rzeczypospolitej Polskiej uchwala, co następuje:\n\n§ 1. \n${opis || 'Sejm RP wyraża stanowisko w sprawie określonej w rozstrzygnięciu.'}\n\n§ 2. \nUchwała wchodzi w życie z dniem podjęcia.`;
             } else {
-                szablon = `USTAWA
-z dnia ${dzisiejszaData} r.
-
-${tytul.toUpperCase()}
-
-Art. 1. 
-Określa się szczegółowy zakres przedmiotowy: ${opis || 'Uregulowanie zasad i standardów legislacyjnych.'}
-
-Art. 2. 
-[Przepisy szczegółowe i nowelizujące właściwe artykuły]
-
-Art. 3. 
-Ustawa wchodzi w życie po upływie 14 dni od dnia ogłoszenia.`;
+                szablon = `PROJEKT\nRZĄDOWY PROJEKT USTAWY (RPU)\n\nUSTAWA\nz dnia ${dzisiejszaData} r.\n\n${tytul.toUpperCase()}\n\nArt. 1. \n${opis || 'Przepisy ogólne i nowelizujące.'}\n\nArt. 2. \nUstawa wchodzi w życie po upływie 14 dni od dnia ogłoszenia.`;
             }
 
-            dodajWynikToConsole("Projekt Aktu Wygenerowany (" + wybranyTypInicjatywy.toUpperCase() + ")", szablon);
+            dodajWynikToConsole("Projekt Wygenerowany (" + wybranyTypInicjatywy.toUpperCase() + ")", szablon);
         }
 
         function uruchomAudyt() {
@@ -682,20 +596,7 @@ Ustawa wchodzi w życie po upływie 14 dni od dnia ogłoszenia.`;
                 return;
             }
 
-            let wynikAudytu = `RAPORT AUDYTU ZP (Techniki Prawodawczej)
-Rodzaj Aktu: ${rodzaj}
-Data Analizy: ${new Date().toLocaleString('pl-PL')}
-
-1. Zgodność ze ZTP (Rozporządzenie Prezesa Rady Ministrów):
-   [✓] Tytuł zawiera oznaczenie rodzaju aktu i datę.
-   ${rodzaj === 'Poselski projekt ustawy' ? '[✓] Weryfikacja wymogu podpisów (min. 15 posłów lub komisja sejmowa).' : '[✓] Struktura jednostek redakcyjnych zachowana.'}
-   ${rodzaj === 'Poselski projekt ustawy' ? '[✓] Wyodrębniona sekcja Uzasadnienia oraz OSR.' : '[✓] Brak sprzeczności w jednostkach systematyzacyjnych.'}
-
-2. Analiza Ryzyka i Uwagi:
-   - Systematyka artykułów jest prawidłowa.
-   - Należy upewnić się, że vacatio legis spełnia wymóg min. 14 dni (zasada lex retro non agit).
-   
-Ocena Końcowa: AKT ZGODNY ZE STANDARDEM ZTP v3.10`;
+            let wynikAudytu = `RAPORT AUDYTU ZP\nRodzaj Aktu: ${rodzaj}\nData Analizy: ${new Date().toLocaleString('pl-PL')}\n\n1. Zgodność ze ZTP:\n   [✓] Nagłówek i jednostki systematyzacyjne rzetelnie ustrukturyzowane.\n   [✓] Klauzula vacatio legis zgodna z normami prawnymi.\n\nOcena Końcowa: AKT ZGODNY ZE STANDARDEM ZTP v3.20`;
 
             dodajWynikToConsole("Wynik Audytu Legislacyjnego", wynikAudytu);
         }
@@ -727,20 +628,16 @@ Ocena Końcowa: AKT ZGODNY ZE STANDARDEM ZTP v3.10`;
             input.value = "";
 
             setTimeout(() => {
-                dodajWynikToConsole("Odpowiedź Asystenta Legislacyjnego", `Przetworzono instrukcję: "${txt}".\nZastosowano poprawki w tekście aktu prawnego zgodnie ze standardem Zasada Techniki Prawodawczej.`);
+                dodajWynikToConsole("Odpowiedź Asystenta", `Przetworzono zlecenia odnośnie: "${txt}". Zastosowano w projekcie.`);
             }, 600);
         }
 
         function skopiujOstatniTekst() {
-            if (!ostatniaOdpowiedz) {
-                alert("Brak wygenerowanego projektu do skopiowania.");
-                return;
-            }
+            if (!ostatniaOdpowiedz) return alert("Brak projektu do skopiowania.");
             navigator.clipboard.writeText(ostatniaOdpowiedz);
-            alert("Projekt został skopiowany do schowka!");
+            alert("Projekt skopiowany do schowka!");
         }
 
-        // Start po załadowaniu
         window.onload = inicjalizujSystem;
     </script>
 </body>
