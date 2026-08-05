@@ -1,148 +1,192 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="pl" class="dark h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LexCorp Legislator | Gemini 3.6 Flash</title>
+    <title>LexCorp Legislator | System ZTP</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                            950: '#172554',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        .glass {
-            background: rgba(15, 23, 42, 0.75);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
         }
         .glass-input {
-            background: rgba(3, 7, 18, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(3, 7, 18, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             color: #f3f4f6;
         }
         .glass-input:focus {
-            border-color: rgba(59, 130, 246, 0.7);
+            border-color: rgba(59, 130, 246, 0.6);
             outline: none;
-            box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.15);
         }
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        .bg-mesh {
+            background-color: #030712;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(30, 58, 138, 0.3) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(15, 23, 42, 0.8) 0px, transparent 50%),
+                radial-gradient(at 50% 50%, rgba(17, 24, 39, 1) 0px, transparent 100%);
         }
-        .animated-bg {
-            background: linear-gradient(-45deg, #030712, #0f172a, #172554, #1e3a8a);
-            background-size: 400% 400%;
-            animation: gradientBG 20s ease infinite;
-        }
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.3); }
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: rgba(3, 7, 18, 0.2); }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(59, 130, 246, 0.4); }
     </style>
 </head>
-<body class="animated-bg text-gray-100 min-h-screen flex flex-col font-sans selection:bg-blue-500 selection:text-white">
+<body class="bg-mesh text-slate-100 h-full flex flex-col font-sans antialiased selection:bg-blue-500 selection:text-white">
 
-    <!-- Efekty tła -->
-    <div class="fixed top-[-10%] left-[-10%] w-[45vw] h-[45vw] bg-blue-600/15 rounded-full blur-[130px] pointer-events-none"></div>
-    <div class="fixed bottom-[-10%] right-[-10%] w-[45vw] h-[45vw] bg-indigo-600/15 rounded-full blur-[130px] pointer-events-none"></div>
-
-    <!-- Nagłówek -->
-    <header class="border-b border-white/10 bg-slate-950/50 sticky top-0 z-50 backdrop-blur-xl">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+    <!-- Pasek nawigacyjny -->
+    <header class="border-b border-white/5 bg-slate-950/60 sticky top-0 z-50 backdrop-blur-md">
+        <div class="max-w-[1600px] mx-auto px-4 sm:px-6 h-16 flex justify-between items-center">
             <div class="flex items-center space-x-3">
-                <div class="bg-gradient-to-tr from-blue-600 to-indigo-500 p-2.5 rounded-2xl text-white font-bold shadow-lg shadow-blue-500/25 border border-white/20">🏛️</div>
-                <div class="flex items-end space-x-2">
-                    <span class="text-xl font-extrabold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-300 to-sky-400">LexCorp Legislator</span>
-                    <span class="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">Gemini 3.6 Flash</span>
+                <div class="h-9 w-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white font-bold shadow-lg shadow-blue-500/20 border border-white/10">
+                    🏛️
+                </div>
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-base font-bold tracking-tight text-white">LexCorp Legislator</span>
+                        <span class="text-[10px] font-mono font-medium text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">Gemini 3.6 Flash</span>
+                    </div>
                 </div>
             </div>
-            <div class="flex items-center space-x-2">
-                <button onclick="zmienTryb('sprawdzarka')" id="btnSprawdzarka" class="text-xs bg-blue-600 text-white px-4 py-2 rounded-xl transition cursor-pointer font-medium shadow-md shadow-blue-600/30">Sprawdzarka ZTP</button>
-                <button onclick="zmienTryb('kreator')" id="btnKreator" class="text-xs bg-slate-900/80 hover:bg-slate-800 text-gray-300 px-4 py-2 rounded-xl border border-white/10 transition cursor-pointer font-medium">Kreator Aktów</button>
+
+            <!-- Przełącznik trybów -->
+            <div class="flex items-center p-1 bg-slate-900/80 rounded-xl border border-white/5">
+                <button onclick="zmienTryb('sprawdzarka')" id="btnSprawdzarka" class="text-xs px-4 py-1.5 rounded-lg transition-all font-medium bg-blue-600 text-white shadow-md shadow-blue-600/25">
+                    Audyt ZTP
+                </button>
+                <button onclick="zmienTryb('kreator')" id="btnKreator" class="text-xs px-4 py-1.5 rounded-lg transition-all font-medium text-slate-400 hover:text-slate-200">
+                    Kreator Aktu
+                </button>
             </div>
         </div>
     </header>
 
-    <!-- Główna zawartość -->
-    <main class="max-w-7xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-6 flex-grow w-full relative z-10">
+    <!-- Główna przestrzeń robocza -->
+    <main class="max-w-[1600px] mx-auto px-4 sm:px-6 py-6 flex-grow w-full grid grid-cols-1 lg:grid-cols-12 gap-6 h-[calc(100vh-4rem)]">
         
-        <!-- Lewy panel (Edytor / Generator) -->
-        <section class="lg:col-span-6 glass rounded-3xl p-6 flex flex-col h-[calc(100vh-130px)]">
-            
-            <!-- TRYB SPRAWDZARKI -->
-            <div id="panelSprawdzarki" class="flex flex-col h-full">
-                <div class="flex justify-between items-center mb-3">
-                    <h2 class="text-sm font-bold text-white tracking-wide flex items-center space-x-2">
-                        <span>📄</span> <span>Projekt do Audytu ZTP</span>
-                    </h2>
-                    <select id="rodzajAktuDoSprawdzenia" class="glass-input px-2.5 py-1.5 rounded-xl text-xs font-medium cursor-pointer">
-                        <option value="Ustawa" class="bg-slate-900">Ustawa</option>
-                        <option value="Uchwała" class="bg-slate-900">Uchwała</option>
-                        <option value="Rozporządzenie" class="bg-slate-900">Rozporządzenie</option>
-                    </select>
-                </div>
-                <textarea id="trescDoSprawdzenia" placeholder="Wklej tutaj treść aktu, którą Gemini ma przeanalizować pod kątem ZTP, wskazać artykuły do zmiany i poprawić..." class="glass-input w-full flex-grow p-4 rounded-2xl text-xs font-mono transition resize-none shadow-inner leading-relaxed mb-4"></textarea>
-                <div class="pt-3 border-t border-white/10 flex justify-between items-center">
-                    <span class="text-[11px] text-gray-400">Analiza autonomiczna AI.</span>
-                    <button onclick="uruchomAudytGemini()" class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-medium px-5 py-2.5 rounded-xl text-xs shadow-lg shadow-blue-600/30 transition cursor-pointer border border-blue-400/20">
-                        ⚡ Przeprowadź Audyt ZTP
-                    </button>
-                </div>
-            </div>
+        <!-- Lewa kolumna: Formularze i Edytor -->
+        <section class="lg:col-span-6 flex flex-col h-full min-h-0">
+            <div class="glass-panel rounded-2xl p-5 flex flex-col h-full relative overflow-hidden">
+                
+                <!-- Tryb Audytu ZTP -->
+                <div id="panelSprawdzarki" class="flex flex-col h-full space-y-4">
+                    <div class="flex justify-between items-center pb-3 border-b border-white/5">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-blue-400 text-sm">📋</span>
+                            <h2 class="text-xs font-semibold text-slate-200 uppercase tracking-wider">Projekt do Weryfikacji ZTP</h2>
+                        </div>
+                        <select id="rodzajAktuDoSprawdzenia" class="glass-input px-3 py-1.5 rounded-lg text-xs font-medium cursor-pointer focus:ring-1 focus:ring-blue-500">
+                            <option value="Ustawa" class="bg-slate-900">Ustawa</option>
+                            <option value="Uchwała" class="bg-slate-900">Uchwała</option>
+                            <option value="Rozporządzenie" class="bg-slate-900">Rozporządzenie</option>
+                        </select>
+                    </div>
 
-            <!-- TRYB KREATORA -->
-            <div id="panelKreatora" class="flex flex-col h-full hidden">
-                <div class="flex justify-between items-center mb-3">
-                    <h2 class="text-sm font-bold text-white tracking-wide flex items-center space-x-2">
-                        <span>✍️</span> <span>Kreator Nowego Aktu Prawnego</span>
-                    </h2>
-                    <select id="rodzajTworzonegoAktu" class="glass-input px-2.5 py-1.5 rounded-xl text-xs font-medium cursor-pointer">
-                        <option value="Ustawa" class="bg-slate-900">Ustawa</option>
-                        <option value="Uchwała" class="bg-slate-900">Uchwała</option>
-                    </select>
-                </div>
-                <input type="text" id="kreatorTytul" placeholder="Tytuł aktu..." class="glass-input w-full px-4 py-2.5 rounded-xl text-xs font-semibold mb-3 shadow-inner">
-                <textarea id="kreatorOpis" placeholder="Opisz co akt ma regulować, jakie cele osiągnąć lub jakie przepisy zmienić..." class="glass-input w-full flex-grow p-4 rounded-2xl text-xs font-mono transition resize-none shadow-inner leading-relaxed mb-4"></textarea>
-                <div class="pt-3 border-t border-white/10 flex justify-between items-center">
-                    <span class="text-[11px] text-gray-400">Generowanie profesjonalnego projektu od zera.</span>
-                    <button onclick="generujAktGemini()" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-medium px-5 py-2.5 rounded-xl text-xs shadow-lg shadow-emerald-600/30 transition cursor-pointer border border-emerald-400/20">
-                        ✨ Utwórz Projekt Aktu
-                    </button>
-                </div>
-            </div>
+                    <div class="flex-grow flex flex-col">
+                        <textarea id="trescDoSprawdzenia" placeholder="Wklej tutaj projekt uchwały, ustawy lub rozporządzenia..." class="glass-input w-full flex-grow p-4 rounded-xl text-xs font-mono resize-none leading-relaxed transition-all placeholder:text-slate-600"></textarea>
+                    </div>
 
+                    <div class="pt-3 border-t border-white/5 flex items-center justify-between">
+                        <span class="text-[11px] text-slate-500 font-mono">Standard ZTP | Rozdziały 1–6</span>
+                        <button onclick="uruchomAudytGemini()" class="bg-blue-600 hover:bg-blue-500 text-white font-medium px-4 py-2 rounded-xl text-xs transition-all flex items-center space-x-2 shadow-lg shadow-blue-600/20 active:scale-[0.98]">
+                            <span>Przeprowadź Audyt ZTP</span>
+                            <span>⚡</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tryb Kreatora -->
+                <div id="panelKreatora" class="flex flex-col h-full space-y-4 hidden">
+                    <div class="flex justify-between items-center pb-3 border-b border-white/5">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-emerald-400 text-sm">✍️</span>
+                            <h2 class="text-xs font-semibold text-slate-200 uppercase tracking-wider">Kreator Aktu Prawnego</h2>
+                        </div>
+                        <select id="rodzajTworzonegoAktu" class="glass-input px-3 py-1.5 rounded-lg text-xs font-medium cursor-pointer focus:ring-1 focus:ring-blue-500">
+                            <option value="Ustawa" class="bg-slate-900">Ustawa</option>
+                            <option value="Uchwała" class="bg-slate-900">Uchwała</option>
+                        </select>
+                    </div>
+
+                    <div class="space-y-3 flex-grow flex flex-col">
+                        <input type="text" id="kreatorTytul" placeholder="Tytuł aktu prawno-legislacyjnego..." class="glass-input w-full px-4 py-2.5 rounded-xl text-xs font-medium placeholder:text-slate-600">
+                        <textarea id="kreatorOpis" placeholder="Opisz wytyczne, zakres przedmiotowy i podmiotowy oraz założenia aktu..." class="glass-input w-full flex-grow p-4 rounded-xl text-xs font-mono resize-none leading-relaxed transition-all placeholder:text-slate-600"></textarea>
+                    </div>
+
+                    <div class="pt-3 border-t border-white/5 flex items-center justify-between">
+                        <span class="text-[11px] text-slate-500 font-mono">Struktura artykułowa ZTP</span>
+                        <button onclick="generujAktGemini()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-4 py-2 rounded-xl text-xs transition-all flex items-center space-x-2 shadow-lg shadow-emerald-600/20 active:scale-[0.98]">
+                            <span>Wygeneruj Akt</span>
+                            <span>✨</span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
         </section>
 
-        <!-- Prawy panel: Odpowiedź i Schowek -->
-        <section class="lg:col-span-6 glass rounded-3xl p-6 flex flex-col h-[calc(100vh-130px)]">
-            <div class="flex justify-between items-center mb-3 border-b border-white/10 pb-3">
-                <h2 class="text-sm font-bold text-blue-300 tracking-wide flex items-center space-x-2">
-                    <span>🤖</span> <span>Raport i Projekt AI</span>
-                </h2>
-                <button onclick="skopiujOstatniTekst()" class="text-[11px] bg-slate-800 hover:bg-slate-700 text-cyan-300 px-3 py-1 rounded-lg border border-cyan-500/20 transition cursor-pointer">
-                    📋 Skopiuj wynik do schowka
-                </button>
-            </div>
-
-            <!-- Okno konwersacji / raportu -->
-            <div id="wynikiKontener" class="flex-grow overflow-y-auto space-y-3 pr-2 mb-4 text-xs font-mono">
-                <div class="bg-slate-900/60 p-4 rounded-2xl border border-white/5 text-gray-300 leading-relaxed">
-                    👋 Aplikacja skonsolidowana z modelem **Gemini 3.6 Flash**.<br><br>
-                    Wklej projekt ustawy lub uchwały po lewej stronie i kliknij <strong class="text-blue-400">"Przeprowadź Audyt ZTP"</strong> lub skorzystaj z Kreatora, aby AI przeanalizowało strukturę, wskazało konkretne artykuły do zmiany i wygenerowało w pełni poprawny akt prawny.
+        <!-- Prawa kolumna: Czat i Wyniki -->
+        <section class="lg:col-span-6 flex flex-col h-full min-h-0">
+            <div class="glass-panel rounded-2xl p-5 flex flex-col h-full relative overflow-hidden">
+                
+                <!-- Nagłówek wyników -->
+                <div class="flex justify-between items-center pb-3 border-b border-white/5">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-indigo-400 text-sm">🤖</span>
+                        <h2 class="text-xs font-semibold text-slate-200 uppercase tracking-wider">Wyniki & Analiza AI</h2>
+                    </div>
+                    <button onclick="skopiujOstatniTekst()" class="text-[11px] bg-slate-800/80 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg border border-white/5 transition-all flex items-center space-x-1.5">
+                        <span>📋 Skopiuj wynik</span>
+                    </button>
                 </div>
-            </div>
 
-            <!-- Pasek czatu -->
-            <div class="flex space-x-2 pt-2 border-t border-white/10">
-                <input type="text" id="userInput" onkeydown="if(event.key==='Enter') wyslijPytanieGemini()" placeholder="Napisz do AI (np. 'Zmień art. 1, aby dopisać...')..." class="glass-input flex-grow px-4 py-3 rounded-2xl text-xs transition shadow-inner">
-                <button onclick="wyslijPytanieGemini()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-3 rounded-2xl text-xs font-semibold transition cursor-pointer shadow-md">
-                    Wyślij
-                </button>
+                <!-- Kontener wiadomości / konsola -->
+                <div id="wynikiKontener" class="flex-grow overflow-y-auto my-4 pr-2 space-y-4 text-xs font-mono">
+                    <div class="bg-slate-900/40 p-4 rounded-xl border border-white/5 text-slate-400 leading-relaxed">
+                        <p class="text-blue-400 font-semibold mb-1">Gotowość systemu legislacyjnego</p>
+                        Wklej treść projektu aktu po lewej stronie, aby rozpocząć proces weryfikacji ZTP lub skorzystaj z Kreatora. System wskazuje błędy strukturalne, jednostki redakcyjne i generuje poprawne zapisy.
+                    </div>
+                </div>
+
+                <!-- Input konwersacyjny -->
+                <div class="pt-3 border-t border-white/5">
+                    <div class="flex space-x-2">
+                        <input type="text" id="userInput" onkeydown="if(event.key==='Enter') wyslijPytanieGemini()" placeholder="Polecenie dla AI (np. 'Skoryguj art. 3 ust. 2 według ZTP')..." class="glass-input flex-grow px-4 py-2.5 rounded-xl text-xs placeholder:text-slate-600 focus:ring-1 focus:ring-blue-500">
+                        <button onclick="wyslijPytanieGemini()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2.5 rounded-xl text-xs font-medium transition-all shadow-md shadow-blue-600/20">
+                            Wyślij
+                        </button>
+                    </div>
+                </div>
+
             </div>
         </section>
 
     </main>
 
-    <!-- Skrypt z obsługą Gemini 3.6 Flash -->
+    <!-- Skrypt funkcjonalny -->
     <script>
         const API_KEY = "AQ.Ab8RN6KoCiu6evIvJ1qAkq5dcquqN7MkXQOU8m1nqrRED-CDfg";
         let ostatniaOdpowiedz = "";
@@ -155,13 +199,13 @@
             const pK = document.getElementById('panelKreatora');
 
             if (tryb === 'sprawdzarka') {
-                btnS.className = "text-xs bg-blue-600 text-white px-4 py-2 rounded-xl transition cursor-pointer font-medium shadow-md shadow-blue-600/30";
-                btnK.className = "text-xs bg-slate-900/80 hover:bg-slate-800 text-gray-300 px-4 py-2 rounded-xl border border-white/10 transition cursor-pointer font-medium";
+                btnS.className = "text-xs px-4 py-1.5 rounded-lg transition-all font-medium bg-blue-600 text-white shadow-md shadow-blue-600/25";
+                btnK.className = "text-xs px-4 py-1.5 rounded-lg transition-all font-medium text-slate-400 hover:text-slate-200";
                 pS.classList.remove('hidden');
                 pK.classList.add('hidden');
             } else {
-                btnK.className = "text-xs bg-blue-600 text-white px-4 py-2 rounded-xl transition cursor-pointer font-medium shadow-md shadow-blue-600/30";
-                btnS.className = "text-xs bg-slate-900/80 hover:bg-slate-800 text-gray-300 px-4 py-2 rounded-xl border border-white/10 transition cursor-pointer font-medium";
+                btnK.className = "text-xs px-4 py-1.5 rounded-lg transition-all font-medium bg-blue-600 text-white shadow-md shadow-blue-600/25";
+                btnS.className = "text-xs px-4 py-1.5 rounded-lg transition-all font-medium text-slate-400 hover:text-slate-200";
                 pK.classList.remove('hidden');
                 pS.classList.add('hidden');
             }
@@ -172,12 +216,12 @@
             const div = document.createElement('div');
             
             if (nadawca === 'AI') {
-                div.className = "bg-blue-950/30 border border-blue-500/20 p-4 rounded-2xl text-blue-100 leading-relaxed shadow-lg";
-                div.innerHTML = `<div class="font-bold text-blue-400 mb-2">🤖 Ekspert Legislacyjny AI (Gemini 3.6 Flash):</div><div class="whitespace-pre-wrap">${tresc}</div>`;
+                div.className = "bg-blue-950/20 border border-blue-500/20 p-4 rounded-xl text-slate-200 leading-relaxed";
+                div.innerHTML = `<div class="font-semibold text-blue-400 mb-2 flex items-center space-x-2"><span>🤖</span> <span>Ekspert Legislacyjny AI</span></div><div class="whitespace-pre-wrap leading-relaxed">${tresc}</div>`;
                 ostatniaOdpowiedz = tresc;
             } else {
-                div.className = "bg-slate-900/80 border border-white/10 p-3.5 rounded-2xl text-gray-200 ml-6 leading-relaxed";
-                div.innerHTML = `<div class="font-bold text-gray-400 mb-1">Ty:</div><div>${tresc}</div>`;
+                div.className = "bg-slate-900/60 border border-white/5 p-3 rounded-xl text-slate-300 ml-6";
+                div.innerHTML = `<div class="font-semibold text-slate-500 mb-1">Użytkownik:</div><div>${tresc}</div>`;
             }
             
             kontener.appendChild(div);
@@ -189,7 +233,7 @@
 
             const payload = {
                 system_instruction: {
-                    parts: [{ text: "Jesteś wybitnym ekspertem ds. legislacji oraz Zasad Techniki Prawodawczej (ZTP). Analizujesz projekty ustaw, uchwał i rozporządzeń, wyłapujesz błędy, precyzyjnie wskazujesz konkretne artykuły lub paragrafy do zmiany oraz przygotowujesz pełny, skorygowany tekst prawny gotowy do skopiowania w przejrzystym formacie." }]
+                    parts: [{ text: "Jesteś ekspertem ds. legislacji oraz Zasad Techniki Prawodawczej (ZTP). Analizujesz projekty aktów prawnych (ustaw, uchwał, rozporządzeń), weryfikujesz poprawność jednostek redakcyjnych (artykuły, paragrafy, ustępy, punkty, litery), wskazujesz błędne zapisy i formułujesz poprawne brzmienie przepisów." }]
                 },
                 contents: historiaKonwersacji
             };
@@ -216,7 +260,7 @@
                 return odpowiedzAI;
 
             } catch (error) {
-                alert("Błąd połączenia z serwerem API: " + error.message);
+                alert("Błąd połączenia z API: " + error.message);
                 historiaKonwersacji.pop();
                 return null;
             }
@@ -227,13 +271,13 @@
             const rodzaj = document.getElementById('rodzajAktuDoSprawdzenia').value;
 
             if (!tresc) {
-                alert("Wklej treść projektu do audytu.");
+                alert("Wklej treść aktu do analizy.");
                 return;
             }
 
-            const prompt = `Przeprowadź surowy audyt ZTP dla poniższego projektu typu: ${rodzaj}.\n1. Wskaż błędy strukturalne i formalne.\n2. Wskaż konkretne artykuły lub paragrafy do zmiany.\n3. Przygotuj pełny, skorygowany tekst prawny gotowy do skopiowania.\n\nTreść projektu:\n${tresc}`;
+            const prompt = `Przeprowadź audyt ZTP dla poniższego projektu typu: ${rodzaj}.\n1. Wskaż błędy strukturalne i techniczno-prawodawcze.\n2. Wskaż konkretne przepisy (artykuły/paragrafy) wymagające poprawy.\n3. Przygotuj skorygowaną treść projektu.\n\nTreść:\n${tresc}`;
             
-            dodajWiadomoscDoOkna('Ty', `[Audyt ZTP (${rodzaj})]\n${tresc.substring(0, 100)}...`);
+            dodajWiadomoscDoOkna('Ty', `[Audyt ZTP: ${rodzaj}]\n${tresc.substring(0, 80)}...`);
             
             const wynik = await wywolajAPI(prompt);
             if (wynik) {
@@ -251,7 +295,7 @@
                 return;
             }
 
-            const prompt = `Napisz profesjonalny projekt ${rodzaj} (pełna treść od zera, zgodna z ZTP, z uwzględnieniem przepisów końcowych i struktury artykułowej lub paragrafowej).\nTytuł: ${tytul}\nZałożenia: ${opis}`;
+            const prompt = `Napisz pełny projekt ${rodzaj} zgodny z ZTP.\nTytuł: ${tytul}\nZałożenia i regulacje: ${opis}`;
             
             dodajWiadomoscDoOkna('Ty', `[Kreator: ${rodzaj}] ${tytul}`);
 
@@ -281,7 +325,7 @@
                 return;
             }
             navigator.clipboard.writeText(ostatniaOdpowiedz);
-            alert("Skopiowano tekst do schowka!");
+            alert("Skopiowano tekst do schowka.");
         }
     </script>
 </body>
