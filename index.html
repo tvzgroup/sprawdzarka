@@ -111,7 +111,7 @@
                     <div class="flex items-center space-x-2">
                         <span class="text-base font-bold tracking-tight text-white">LexCorp Legislator</span>
                         <span class="text-[11px] font-mono font-semibold px-2.5 py-0.5 rounded-full gradient-border-animated text-white bg-slate-900/80">
-                            <span class="gradient-text-animated">Gemini 3.6 Flash Engine</span>
+                            <span class="gradient-text-animated">v2.0</span>
                         </span>
                     </div>
                 </div>
@@ -144,13 +144,14 @@
                     </div>
                     <select id="rodzajAktuDoSprawdzenia" class="glass-input px-3 py-1.5 rounded-lg text-xs font-medium cursor-pointer">
                         <option value="Ustawa" class="bg-slate-900">Ustawa</option>
+                        <option value="Ustawa o zmianie ustawy" class="bg-slate-900">Ustawa o zmianie ustawy (Nowelizacja)</option>
                         <option value="Uchwała" class="bg-slate-900">Uchwała</option>
                         <option value="Rozporządzenie" class="bg-slate-900">Rozporządzenie</option>
                     </select>
                 </div>
 
                 <div class="flex-grow flex flex-col my-4">
-                    <textarea id="trescDoSprawdzenia" placeholder="Wklej tutaj treść aktu prawnego do oceny legislacyjnej..." class="glass-input w-full flex-grow p-4 rounded-xl text-xs font-mono resize-none leading-relaxed transition-all placeholder:text-slate-600"></textarea>
+                    <textarea id="trescDoSprawdzenia" placeholder="Wklej tutaj treść aktu prawnego lub nowelizacji do oceny legislacyjnej..." class="glass-input w-full flex-grow p-4 rounded-xl text-xs font-mono resize-none leading-relaxed transition-all placeholder:text-slate-600"></textarea>
                 </div>
 
                 <div class="pt-3 border-t border-white/5 flex items-center justify-between">
@@ -167,20 +168,20 @@
                 <div class="flex justify-between items-center pb-3 border-b border-white/5">
                     <div class="flex items-center space-x-2">
                         <span class="text-emerald-400 text-sm">🖋️</span>
-                        <h2 class="text-xs font-semibold text-slate-200 uppercase tracking-wider">Kreator Nowych Ustaw</h2>
+                        <h2 class="text-xs font-semibold text-slate-200 uppercase tracking-wider">Kreator Aktów Prawnych & Nowelizacji</h2>
                     </div>
-                    <span class="text-[10px] uppercase font-mono tracking-widest text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-md border border-emerald-500/20">Wysoki Standard Legislacyjny</span>
+                    <span class="text-[10px] uppercase font-mono tracking-widest text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-md border border-emerald-500/20">Wysoki Standard ZTP</span>
                 </div>
 
                 <!-- Sekcja Ministerstw i Generowania Inicjatyw -->
                 <div class="glass-card p-3 rounded-xl space-y-2 border border-white/5">
                     <div class="flex items-center justify-between">
-                        <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Inicjatywy Rządowe wg Resortów:</span>
-                        <span class="text-[10px] text-slate-500 font-mono">Rotacja propozycji w wybranym resorcie</span>
+                        <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Wykaz Resortów Rządowych (19 Ministerstw):</span>
+                        <span class="text-[10px] text-slate-500 font-mono">Rotacja w wybranym resorcie</span>
                     </div>
                     
                     <!-- Przyciski Ministerstw -->
-                    <div class="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto pr-1" id="kontenerMinisterstw">
+                    <div class="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto pr-1" id="kontenerMinisterstw">
                         <!-- Generowane dynamicznie w JS -->
                     </div>
 
@@ -194,14 +195,14 @@
 
                 <!-- Formularz Redagowania Aktu -->
                 <div class="space-y-3 flex-grow flex flex-col">
-                    <input type="text" id="kreatorTytul" placeholder="Tytuł ustawy (np. Ustawa o zmianie ustawy o cyfryzacji...)" class="glass-input w-full px-4 py-2.5 rounded-xl text-xs font-medium placeholder:text-slate-600">
-                    <textarea id="kreatorOpis" placeholder="Określ szczegółowy zakres przedmiotowy, cele i założenia nowej regulacji legislacyjnej..." class="glass-input w-full flex-grow p-4 rounded-xl text-xs font-mono resize-none leading-relaxed transition-all placeholder:text-slate-600"></textarea>
+                    <input type="text" id="kreatorTytul" placeholder="Tytuł aktu (np. Ustawa o zmianie ustawy o cyfryzacji...)" class="glass-input w-full px-4 py-2.5 rounded-xl text-xs font-medium placeholder:text-slate-600">
+                    <textarea id="kreatorOpis" placeholder="Określ szczegółowy zakres przedmiotowy, modyfikowane artykuły i założenia nowej regulacji..." class="glass-input w-full flex-grow p-4 rounded-xl text-xs font-mono resize-none leading-relaxed transition-all placeholder:text-slate-600"></textarea>
                 </div>
 
                 <div class="pt-3 border-t border-white/5 flex items-center justify-between">
-                    <span class="text-[11px] text-slate-500 font-mono">Formatowanie: Artykuły, Ustępy, Punkty, Litery</span>
+                    <span class="text-[11px] text-slate-500 font-mono">Struktura: Tytuł, Zmiany (w ust. X nadaje się brzmienie...), Przejściowe, Wejście w życie</span>
                     <button onclick="generujAktGemini()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-5 py-2.5 rounded-xl text-xs transition-all flex items-center space-x-2 shadow-lg shadow-emerald-600/20 active:scale-[0.98]">
-                        <span>Sporządź Projekt Ustawy</span>
+                        <span>Sporządź Projekt Aktu</span>
                         <span>✨</span>
                     </button>
                 </div>
@@ -227,14 +228,14 @@
                 <div id="wynikiKontener" class="flex-grow overflow-y-auto my-4 pr-2 space-y-4 text-xs font-mono">
                     <div class="bg-slate-900/40 p-4 rounded-xl border border-white/5 text-slate-400 leading-relaxed">
                         <p class="text-blue-400 font-semibold mb-1">System Legislacyjny Gotowy do Pracy (Gemini 3.6 Flash)</p>
-                        Wybierz tryb pracy po lewej stronie. Wybierz ministerstwo, aby wyświetlić dedykowane propozycje inicjatyw ustawodawczych. Wybrane ministerstwo pozostaje stałe podczas odświeżania propozycji.
+                        Wybierz resort spośród 19 oficjalnych ministerstw. Możesz tworzyć zarówno nowe ustawy, jak i ustawy o zmianie ustaw (nowelizacje) w pełnym rygorze Zasad Techniki Prawodawczej. Wybrane ministerstwo pozostaje stałe podczas odświeżania.
                     </div>
                 </div>
 
                 <!-- Czat -->
                 <div class="pt-3 border-t border-white/5">
                     <div class="flex space-x-2">
-                        <input type="text" id="userInput" onkeydown="if(event.key==='Enter') wyslijPytanieGemini()" placeholder="Wpisz poprawkę lub zapytanie legislacyjne (np. 'Dopisz przepis przejściowy')..." class="glass-input flex-grow px-4 py-2.5 rounded-xl text-xs placeholder:text-slate-600 focus:ring-1 focus:ring-blue-500">
+                        <input type="text" id="userInput" onkeydown="if(event.key==='Enter') wyslijPytanieGemini()" placeholder="Wpisz poprawkę lub zapytanie (np. 'Zmień art. 3 pkt 2 i dodaj przepis przejściowy')..." class="glass-input flex-grow px-4 py-2.5 rounded-xl text-xs placeholder:text-slate-600 focus:ring-1 focus:ring-blue-500">
                         <button onclick="wyslijPytanieGemini()" class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-xl text-xs font-medium transition-all shadow-md shadow-blue-600/20">
                             Wyślij
                         </button>
@@ -250,49 +251,108 @@
         const API_KEY = "AQ.Ab8RN6KoCiu6evIvJ1qAkq5dcquqN7MkXQOU8m1nqrRED-CDfg";
         let ostatniaOdpowiedz = "";
         let historiaKonwersacji = [];
-        let wybraneMinisterstwo = "MSWiA";
+        let wybraneMinisterstwo = "Ministerstwo Spraw Wewnętrznych i Administracji";
 
-        // Baza Rozbudowanych Ministerstw i Propozycji Ustaw
+        // Kompleksowa Baza 19 Ministerstw z Zestawem Projektów Nowych Ustaw oraz Ustaw o Zmianie Ustaw
         const bazaPropozycji = {
-            "MSWiA": [
-                { tytul: "Ustawa o wzmocnieniu ochrony granic i infrastruktury krytycznej", opis: "Wprowadza nowe normy prawne dotyczące cyfryzacji nadzoru granicznego oraz zwiększenia uprawnień służb podległych w strefach przygranicznych." },
-                { tytul: "Ustawa o modernizacji Krajowego Systemu Ratowniczego", opis: "Zapewnia automatyzację przydziału zasobów ratowniczych przy użyciu algorytmów analitycznych oraz standaryzację wyposażenia." },
-                { tytul: "Ustawa o bezpieczeństwie imprez masowych i cyfryzacji nadzoru", opis: "Wprowadza obowiązek centralnej weryfikacji tożsamości uczestników wydarzających się w strefach wysokiego ryzyka." },
-                { tytul: "Ustawa o ochronie ludności oraz stanie klęski żywiołowej", opis: "Określa zasady budowy schronów, rezerw strategicznych oraz systemów ostrzegania mieszkańców." }
+            "Ministerstwo Aktywów Państwowych": [
+                { tytul: "Ustawa o zmianie ustawy o zarządzaniu mieniem państwowym", opis: "Wprowadza zaostrzone kryteria nadzoru nad spółkami z udziałem Skarbu Państwa oraz obowiązkowe audyty efektywności zarządczej." },
+                { tytul: "Ustawa o transformatywnym zarządzaniu strategicznymi spółkami Skarbu Państwa", opis: "Określa zasady konsolidacji aktywów energetycznych oraz powołuje Rejestr Inwestycji Strategicznych." },
+                { tytul: "Ustawa o zmianie ustawy o komercjalizacji i niektórych uprawnieniach pracowników", opis: "Zmienia zasady reprezentacji pracowników w radach nadzorczych spółek państwowych." },
+                { tytul: "Ustawa o wzmocnieniu ochrony surowców strategicznych i infrastruktury surowcowej", opis: "Ustanawia państwowy nadzór nad wydobyciem oraz magazynowaniem kluczowych metali i minerałów." }
             ],
             "Ministerstwo Cyfryzacji": [
-                { tytul: "Ustawa o wytycznych dla systemów autonomicznych i AI", opis: "Reguluje odpowiedzialność prawną dostawców rozwiązań sztucznej inteligencji wykorzystywanych w administracji publicznej." },
-                { tytul: "Ustawa o zmianie ustawy o krajowym systemie cyberbezpieczeństwa", opis: "Wprowadza zaostrzone wymogi raportowania incydentów dla podmiotów kluczowych oraz wysokie kary administracyjne." },
-                { tytul: "Ustawa o centralnej tożsamości cyfrowej i usługach zaufania", opis: "Ujednolica standardy uwierzytelniania w rejestrach państwowych z uwzględnieniem pełnego szyfrowania." },
-                { tytul: "Ustawa o udostępnianiu danych sektora publicznego i otwartych danych", opis: "Reguluje standardy API dla komercyjnego i naukowego ponownego wykorzystywania baz państwowych." }
+                { tytul: "Ustawa o zmianie ustawy o krajowym systemie cyberbezpieczeństwa", opis: "Wprowadza surowe wymogi raportowania incydentów oraz obowiązkową certyfikację oprogramowania dla podmiotów kluczowych." },
+                { tytul: "Ustawa o wytycznych dla systemów sztucznej inteligencji w sektorze publicznym", opis: "Reguluje normy etyczne, audyty algorytmiczne oraz odpowiedzialność prawną dostawców rozwiązań AI." },
+                { tytul: "Ustawa o zmianie ustawy o informatyzacji działalności podmiotów realizujących zadania publiczne", opis: "Wprowadza standard otwartych interfejsów API dla rejestrów państwowych oraz obowiązkowy cyfrowy obieg akt." },
+                { tytul: "Ustawa o centralnej tożsamości cyfrowej i portfelu cyfrowym", opis: "Ujednolica standardy uwierzytelniania transakcji prawnych za pomocą aplikacji mObywatel." }
             ],
-            "Ministerstwo Sprawiedliwości": [
-                { tytul: "Ustawa o digitalizacji akt sądowych i doręczeń elektronicznych", opis: "Eliminuje papierowy obieg dokumentów w postępowaniach cywilnych i karnych na rzecz dedykowanego portalu sądowego." },
-                { tytul: "Ustawa o zmianie Kodeksu Karnego w zakresie przestępczości gospodarczej", opis: "Podwyższa sankcje za przestępstwa finansowe z użyciem nowoczesnych technologii oraz ułatwia zabezpieczanie mienia." },
-                { tytul: "Ustawa o usprawnieniu procedur arbitrażowych i mediacji", opis: "Wprowadza obowiązkową e-mediację przed skierowaniem sprawy gospodarczej na drogę sądową." },
-                { tytul: "Ustawa o nadzorze nad biegłymi sądowymi i cyfryzacji opinii", opis: "Powołuje centralną bazę certyfikowanych ekspertów sądowych oraz określa terminy wydawania ekspertyz." }
+            "Ministerstwo Edukacji Narodowej": [
+                { tytul: "Ustawa o zmianie ustawy – Prawo oświatowe", opis: "Nowelizuje zasady oceniania kształtującego, ogranicza biurokrację nauczycielską oraz wprowadza cyfrowe standardy klasowe." },
+                { tytul: "Ustawa o wsparciu psychologicznym i bezpieczeństwie w szkołach", opis: "Gwarantuje etat psychologa w każdej placówce oraz budowę zintegrowanego systemu reagowania na kryzysy rówieśnicze." },
+                { tytul: "Ustawa o zmianie ustawy o Systemie Informacji Oświatowej", opis: "Wprowadza automatyczną weryfikację obowiązku szkolnego i integrację danych o frekwencji." },
+                { tytul: "Ustawa o cyfryzacji materiałów dydaktycznych i bezpłatnych podręcznikach cyfrowych", opis: "Nakłada obowiązek dostarczania interaktywnych wersji podręczników z licencją otwartą." }
             ],
             "Ministerstwo Finansów": [
-                { tytul: "Ustawa o automatyzacji raportowania podatkowego spółek technologicznych", opis: "Wprowadza jednolity cyfrowy standard audytu transakcji międzynarodowych w czasie rzeczywistym." },
-                { tytul: "Ustawa o uszczelnieniu systemu obrotu kryptowalutami", opis: "Nakłada obowiązek rejestracji giełd oraz raportowania transakcji powyżej określonych progów wartościowych." },
-                { tytul: "Ustawa o funduszach rozwoju innowacji gospodarczych", opis: "System ulg podatkowych dla przedsiębiorstw inwestujących powyżej 15% przychodu w badania i rozwój." },
-                { tytul: "Ustawa o elektronicznym fakturowaniu w obrocie B2B", opis: "Standaryzuje centralny rejestr faktur oraz procedury automatycznego zwrotu podatku VAT." }
+                { tytul: "Ustawa o zmianie ustawy o podatku od towarów i usług", opis: "Modyfikuje zasady funkcjonowania Krajowego Systemu e-Faktur (KSeF) oraz automatyzuje zwroty podatku VAT." },
+                { tytul: "Ustawa o automatyzacji audytu podatkowego transakcji cyfrowych", opis: "Wprowadza ciągły monitoring analityczny podmiotów z sektora e-commerce i technologii." },
+                { tytul: "Ustawa o zmianie ustawy – Ordynacja podatkowa", opis: "Wprowadza wiążące interpretacje podatkowe w trybie uproszczonym oraz zmienia terminy przedawnienia zobowiązań." },
+                { tytul: "Ustawa o opodatkowaniu aktywów wirtualnych i kryptoaktywów", opis: "Ujednolica stawki podatkowe od dochodów z kryptowalut oraz nakłada obowiązek raportowania przez giełdy." }
             ],
-            "Ministerstwo Obrony Narodowej": [
-                { tytul: "Ustawa o rozwoju obrony cyfrowej i Wojsk Obrony Cyberprzestrzeni", opis: "Tworzy dedykowany program finansowania kadr oraz zakupów technologii obronnych w domenie cyber." },
-                { tytul: "Ustawa o rezerwach strategicznych sprzętu wojskowego", opis: "Reguluje zasady pozyskiwania i utrzymywania zasobów obronnych przez podmioty prywatne na rzecz MON." }
-            ],
-            "Ministerstwo Klimatu i Środowiska": [
-                { tytul: "Ustawa o sprawiedliwej transformacji energetycznej i OZE", opis: "Wprowadza ułatwienia w wydawaniu decyzji środowiskowych dla wielkoskalowych magazynów energii." },
-                { tytul: "Ustawa o systemie monitorowania emisji i czystości powietrza", opis: "Narzuca samorządom instalację ciągłego cyfrowego opomiarowania zanieczyszczeń." }
-            ],
-            "Ministerstwo Zdrowia": [
-                { tytul: "Ustawa o centralnej Recepturze i e-Zdrowiu 2.0", opis: "Automatyzuje analizę interakcji leków przy pomocy algorytmów analitycznych w systemach szpitalnych." },
-                { tytul: "Ustawa o państwowym ratownictwie medycznym i telemedycynie", opis: "Standardyzuje zdalną diagnostykę w karetkach pogotowia oraz e-konsultacje specjalistyczne." }
+            "Ministerstwo Funduszy i Polityki Regionalnej": [
+                { tytul: "Ustawa o zmianie ustawy o zasadach prowadzenia polityki rozwoju", opis: "Upraszcza procedury aplikacyjne o środki unijne dla samorządów oraz wprowadza wskaźniki rozwoju zrównoważonego." },
+                { tytul: "Ustawa o Krajowym Funduszu Spójności Regionalnej", opis: "Redystrybuuje środki na rzecz powiatów o niskim stopniu zurbanizowania i infrastruktury lokalnej." },
+                { tytul: "Ustawa o zmianie ustawy o partnerstwie publiczno-prywatnym", opis: "Wprowadza ułatwienia proceduralne dla inwestycji proekologicznych realizowanych w formule PPP." }
             ],
             "Ministerstwo Infrastruktury": [
-                { tytul: "Ustawa o cyfryzacji procesów budowlanych i planowania przestrzennego", opis: "Cyfryzuje składanie wniosków o pozwolenia na budowę i standardyzuje plany zagospodarowania." },
-                { tytul: "Ustawa o autonomicznych pojazdach i nowej mobilności", opis: "Duszcza testy i eksploatację transportu bezzałogowego na drogach publicznych." }
+                { tytul: "Ustawa o zmianie ustawy – Prawo o ruchu drogowym", opis: "Nowelizuje przepisy dotyczące poruszania się autonomicznych pojazdów oraz zaostrza kary za przekroczenie prędkości." },
+                { tytul: "Ustawa o cyfryzacji procesu inwestycyjnego w budownictwie infrastrukturalnym", opis: "Skraca terminy wydawania decyzji ZRID i wprowadza cyfrowy model informacji o budynku (BIM)." },
+                { tytul: "Ustawa o zmianie ustawy o transporcie kolejowym", opis: "Zwiększa standardy bezpieczeństwa na przejazdach kolejowo-drogowych oraz modernizuje systemy sterowania ruchem." }
+            ],
+            "Ministerstwo Klimatu i Środowiska": [
+                { tytul: "Ustawa o zmianie ustawy o odnawialnych źródłach energii", opis: "Znosi bariery odległościowe dla farm wiatrowych oraz przyspiesza wydawanie warunków przyłączeniowych dla OZE." },
+                { tytul: "Ustawa o systemie kaucyjnym i opakowaniach w obiegu zamkniętym", opis: "Wprowadza obowiązkową zbiórkę butelek i puszek oraz nakłada opłaty recyklingowe na producentów." },
+                { tytul: "Ustawa o zmianie ustawy – Prawo ochrony środowiska", opis: "Zaostrza normy emisji przemysłowych oraz wprowadza ciągły monitoring czystości wód i powietrza." }
+            ],
+            "Ministerstwo Kultury i Dziedzictwa Narodowego": [
+                { tytul: "Ustawa o zmianie ustawy o prawie autorskim i prawach pokrewnych", opis: "Wprowadza sprawiedliwe wynagrodzenie (tantiemy) dla twórców z tytułu eksploatacji ich dzieł na platformach streamingowych." },
+                { tytul: "Ustawa o statusie artysty zawodowego i funduszu wsparcia twórców", opis: "Gwarantuje prawa socjalne, dostęp do ubezpieczeń oraz wsparcie dla niezależnych ludzi kultury." },
+                { tytul: "Ustawa o ochronie cyfrowego dziedzictwa kulturowego", opis: "Reguluje archiwizację polskich zasobów cyfrowych oraz digitalizację muzealiów." }
+            ],
+            "Ministerstwo Nauki i Szkolnictwa Wyższego": [
+                { tytul: "Ustawa o zmianie ustawy – Prawo o szkolnictwie wyższym i nauce", opis: "Nowelizuje zasady ewaluacji jakości działalności naukowej oraz zwiększa finansowanie badań przełomowych." },
+                { tytul: "Ustawa o wsparciu komercjalizacji wynalazków akademickich", opis: "Ułatwia zakładanie spółek spin-off przez badaczy oraz przekazywanie praw do patentów." },
+                { tytul: "Ustawa o zmianie ustawy o Narodowym Centrum Nauki", opis: "Modyfikuje strukturę przyznawania grantów badawczych dla młodych naukowców." }
+            ],
+            "Ministerstwo Obrony Narodowej": [
+                { tytul: "Ustawa o zmianie ustawy o obronie Ojczyzny", opis: "Optymalizuje procedury powoływania do rezerwy oraz wprowadza szybkie ścieżki zakupowe technologii obronnych." },
+                { tytul: "Ustawa o utworzeniu Wojsk Rozwoju Technologii Autonomicznych i Cybernetycznych", opis: "Tworzy osobną komponent sił zbrojnych dedykowaną bezzałogowcom i działaniom w cyberprzestrzeni." },
+                { tytul: "Ustawa o wspieraniu przemysłu obronnego i rezerwach materiałowych", opis: "Narzuca obowiązek utrzymywania surowców i komponentów do produkcji amunicji na terenie RP." }
+            ],
+            "Ministerstwo Przemysłu": [
+                { tytul: "Ustawa o zmianie ustawy – Prawo geologiczne i górnicze", opis: "Dostosowuje zasady koncesjonowania wydobycia surowców do wymogów transformacji przemysłowej." },
+                { tytul: "Ustawa o rozwoju przemysłu wodorowego i paliw alternatywnych", opis: "Tworzy ramy prawne dla budowy sieci wodorociągów oraz certyfikacji czystego wodoru." },
+                { tytul: "Ustawa o wsparciu reindustrializacji i automatyzacji zakładów przemysłowych", opis: "System ulg inwestycyjnych dla fabryk wdrażających robotyzację i druk 3D." }
+            ],
+            "Ministerstwo Rodziny, Pracy i Polityki Społecznej": [
+                { tytul: "Ustawa o zmianie ustawy – Kodeks pracy", opis: "Reguluje stosowanie algorytmów analitycznych przy ocenie pracowników oraz wprowadza elastyczne czasoprzestrzenie pracy." },
+                { tytul: "Ustawa o wsparciu aktywności zawodowej opiekunów osób z niepełnosprawnościami", opis: "Umożliwia łączenie świadczeń pielęgnacyjnych z pracą w niepełnym wymiarze godzin." },
+                { tytul: "Ustawa o zmianie ustawy o promocji zatrudnienia i instytucjach rynku pracy", opis: "Modernizuje urzędy pracy poprzez cyfrowe dopasowywanie ofert i bon rekwalifikacyjny." }
+            ],
+            "Ministerstwo Rolnictwa i Rozwoju Wsi": [
+                { tytul: "Ustawa o zmianie ustawy o kształtowaniu ustroju rolnego", opis: "Zabezpiecza ziemię rolną przed wykupem spekulacyjnym oraz upraszcza przekazywanie gospodarstw." },
+                { tytul: "Ustawa o cyfryzacji łańcucha dostaw żywności i znakowaniu produktów lokalnych", opis: "Wprowadza obowiązkowe paszporty cyfrowe dla produktów rolno-spożywczych (od pola do stołu)." },
+                { tytul: "Ustawa o ubezpieczeniach upraw rolnych i zwierząt gospodarskich", opis: "Gwarantuje dopłaty państwowe do polis od klęsk żywiołowych i suszy." }
+            ],
+            "Ministerstwo Rozwoju i Technologii": [
+                { tytul: "Ustawa o zmianie ustawy – Kodeks spółek handlowych", opis: "Wprowadza prostą spółkę akcyjną w wersji cyfrowej oraz ułatwia przeprowadzanie e-zgromadzeń." },
+                { tytul: "Ustawa o ułatwieniach w lokalizacji inwestycji mieszkaniowych i infrastruktury towarzyszącej", opis: "Skraca procedury planistyczne i wprowadza cyfrowy plan ogólny gminy." },
+                { tytul: "Ustawa o wspieraniu rozwoju piaskownic regulacyjnych dla start-upów", opis: "Umożliwia testowanie innowacyjnych usług bez natychmiastowych obciążeń regulacyjnych." }
+            ],
+            "Ministerstwo Sportu i Turystyki": [
+                { tytul: "Ustawa o zmianie ustawy o sporcie", opis: "Wprowadza równe zasady finansowania sportu kobiet i mężczyzn oraz zaostrza normy etyczne w związkach sportowych." },
+                { tytul: "Ustawa o wsparciu rozwoju turystyki zrównoważonej i Cyfrowym Rejestrze Obiektów", opis: "Ujednolica opłatę turystyczną i przeciwdziała szarej strefie najmu krótkoterminowego." },
+                { tytul: "Ustawa o narodowym programie stypendialnym dla utalentowanej młodzieży sportowej", opis: "Zapewnia wsparcie finansowe i medyczne dla młodych reprezentantów kraju." }
+            ],
+            "Ministerstwo Spraw Wewnętrznych i Administracji": [
+                { tytul: "Ustawa o zmianie ustawy o Policji oraz niektórych innych ustaw", opis: "Wprowadza cyfrowe rejestratory obrazu w standardzie szyfrowanym oraz modernizuje wyposażenie służb." },
+                { tytul: "Ustawa o wzmocnieniu ochrony granic i infrastruktury krytycznej", opis: "Zwiększa uprawnienia Straży Granicznej w strefach przygranicznych oraz wprowadza systemy autonomicznego nadzoru." },
+                { tytul: "Ustawa o zmianie ustawy o ochronie przeciwpożarowej", opis: "Zapewnia finansowanie jednostek Ochotniczych Straży Pożarnych w zakresie zakupu dronów i sprzętu specjalistycznego." }
+            ],
+            "Ministerstwo Spraw Zagranicznych": [
+                { tytul: "Ustawa o zmianie ustawy o służbie zagranicznej", opis: "Nowelizuje zasady naboru dyplomatów, wymogi językowe oraz procedury awansów w placówkach Dyplomatycznych." },
+                { tytul: "Ustawa o ochronie obywateli RP w sytuacjach kryzysowych za granicą", opis: "Tworzy automatyczny system ewakuacji cyfrowej i Rejestr Obywateli w Rejonach Zagrożonych." },
+                { tytul: "Ustawa o dyplomacji publicznej i promowaniu polskiej gospodarki za granicą", opis: "Powołuje Agencję Promocji RP zintegrowaną z przedstawicielstwami handlowymi." }
+            ],
+            "Ministerstwo Sprawiedliwości": [
+                { tytul: "Ustawa o zmianie ustawy – Kodeks postępowania cywilnego", opis: "Wprowadza pełne e-doręczenia, e-rozprawy oraz obowiązkowy elektroniczny obieg pism procesowych." },
+                { tytul: "Ustawa o zmianie ustawy – Kodeks karny", opis: "Zaostrza kary za przestępstwa komputerowe, oszustwa finansowe z użyciem sztucznej inteligencji i kradzież tożsamości." },
+                { tytul: "Ustawa o ustroju sądów powszechnych i cyfryzacji orzecznictwa", opis: "Wprowadza automatyczny przydział spraw dla sędziów oraz ogólnopolski portal wyroków." }
+            ],
+            "Ministerstwo Zdrowia": [
+                { tytul: "Ustawa o zmianie ustawy o świadczeniach opieki zdrowotnej finansowanych ze środków publicznych", opis: "Zmienia zasady wyceny świadczeń oraz automatyzuje rozliczenia szpitali z NFZ." },
+                { tytul: "Ustawa o centralnej Recepturze i e-Zdrowiu 2.0", opis: "Reguluje wykorzystanie sztucznej inteligencji w diagnostyce obrazowej oraz interakcjach leków." },
+                { tytul: "Ustawa o zmianie ustawy o Państwowym Ratownictwie Medycznym", opis: "Wprowadza standardy telemedycyny w ambulansach i automatyczne przydzielanie najszybszego zespołu." }
             ]
         };
 
@@ -322,7 +382,7 @@
             kontener.innerHTML = "";
 
             const lista = bazaPropozycji[wybraneMinisterstwo] || [];
-            // Losowe mieszanie ustaw w obrębie CIĄGLE TEGO SAMEGO ministerstwa
+            // Losowe mieszanie ustaw w obrębie TEGO SAMEGO ministerstwa
             const przetasowana = [...lista].sort(() => 0.5 - Math.random());
 
             przetasowana.slice(0, 2).forEach(prop => {
@@ -330,13 +390,20 @@
                 card.className = "glass-card p-2.5 rounded-xl border border-white/5 hover:border-blue-500/40 cursor-pointer transition-all flex flex-col justify-between group";
                 card.onclick = () => przeniesDoKreatora(prop.tytul, prop.opis);
 
+                const jestNowelizacja = prop.tytul.toLowerCase().includes("zmianie ustawy");
+
                 card.innerHTML = `
                     <div>
+                        <div class="flex items-center space-x-1.5 mb-1">
+                            <span class="text-[9px] font-mono px-1.5 py-0.2 rounded ${jestNowelizacja ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'}">
+                                ${jestNowelizacja ? 'NOWELIZACJA' : 'NOWA USTAWA'}
+                            </span>
+                        </div>
                         <div class="text-[11px] font-semibold text-slate-200 group-hover:text-blue-400 transition-colors line-clamp-1">${prop.tytul}</div>
                         <div class="text-[10px] text-slate-400 line-clamp-2 mt-1 leading-relaxed">${prop.opis}</div>
                     </div>
                     <div class="mt-2 flex items-center justify-between text-[9px] text-blue-400 font-medium">
-                        <span>Użyj tej ustawy</span>
+                        <span>Wstaw do kreatora</span>
                         <span>➔</span>
                     </div>
                 `;
@@ -350,7 +417,7 @@
             document.getElementById('kreatorOpis').value = opis;
         }
 
-        // Odświeżanie wyłącznie propozycji ustaw bez przełączania ministerstwa
+        // Odświeżanie propozycji co 12 sekund
         setInterval(() => {
             odswiezPropozycje();
         }, 12000);
@@ -385,8 +452,8 @@
                 div.className = "bg-blue-950/30 border border-blue-500/20 p-4 rounded-xl text-slate-200 leading-relaxed glass-card";
                 div.innerHTML = `<div class="font-semibold text-blue-400 mb-2 flex items-center justify-between">
                     <span class="flex items-center space-x-2"><span>🏛️</span> <span>Ekspert Legislacji Gemini 3.6 Flash</span></span>
-                    <span class="text-[9px] font-mono bg-blue-500/10 px-2 py-0.5 rounded text-blue-300 border border-blue-500/20">ZTP Standard</span>
-                </div><div class="whitespace-pre-wrap leading-relaxed">${tresc}</div>`;
+                    <span class="text-[9px] font-mono bg-blue-500/10 px-2 py-0.5 rounded text-blue-300 border border-blue-500/20">Standard ZTP</span>
+                </div><div class="whitespace-pre-wrap leading-relaxed font-mono">${tresc}</div>`;
                 ostatniaOdpowiedz = tresc;
             } else {
                 div.className = "bg-slate-900/60 border border-white/5 p-3 rounded-xl text-slate-300 ml-6";
@@ -403,7 +470,7 @@
 
             const payload = {
                 system_instruction: {
-                    parts: [{ text: "Jesteś najwyższej klasy polskim legislatorem, ekspertem Biura Analiz Sejmowych i znawcą Zasad Techniki Prawodawczej (ZTP). Zachowujesz bezwzględnie najwyższy poziom legislacyjny: stosujesz poprawną systematykę aktu (tytuł, przepisy ogólne, szczegółowe, epizodyczne, przejściowe, dostosowujące, końcowe), precyzyjną strukturę jednostek redakcyjnych (art., ust., pkt, lit.) oraz terminologię prawniczą. Twoim zadaniem jest ocena lub redagowanie aktów normatywnych." }]
+                    parts: [{ text: "Jesteś wybitnym polskim legislatorem, ekspertem Biura Analiz Sejmowych i bezwzględnym znawcą Zasad Techniki Prawodawczej (ZTP). Zachowujesz absolutnie najwyższy standard formalny i prawny.\n\nZasady przygotowywania projektów:\n1. Jeśli tytuł zawiera frazę 'o zmianie ustawy' (NOWELIZACJA), bezwzględnie stosuj strukturę z art. 1: 'W ustawy z dnia ... (Dz. U. z ... r. poz. ...) wprowadza się następujące zmiany:', a następnie wyliczaj zmieniane jednostki redakcyjne (np. '1) w art. 4 ust. 2 otrzymuje brzmienie...', '2) w art. 7 dodaje się ust. 3a w brzmieniu...').\n2. Jeśli jest to nowa ustawa pierwotna, stosuj pełną systematykę aktu (Rozdział 1 Przepisy ogólne, Rozdział 2 Przepisy szczegółowe, Przepisy przejściowe i końcowe).\n3. Zachowaj rygorystyczny, podniosły i precyzyjny język legislacyjny bez jakichkolwiek kolokwializmów czy ogólników." }]
                 },
                 contents: historiaKonwersacji
             };
@@ -439,16 +506,16 @@
             const rodzaj = document.getElementById('rodzajAktuDoSprawdzenia').value;
 
             if (!tresc) {
-                alert("Wklej treść aktu prawnego do oceny.");
+                alert("Wklej treść aktu prawnego lub nowelizacji do oceny.");
                 return;
             }
 
             const prompt = `Przeprowadź wyczerpujący i krytyczny audyt legislacyjny pod kątem ZTP dla aktu typu: ${rodzaj}.\n\n` +
                 `Wymagania audytu:\n` +
-                `1. Weryfikacja strukturalna (podział na artykuły, ustępy, punkty, litery).\n` +
-                `2. Zgodność z Dyrektywami ZTP (czy brak zwrotów ocennych, czy przepisy są jednoznaczne).\n` +
+                `1. Weryfikacja strukturalna (podział na artykuły, ustępy, punkty, litery oraz poprawność zwrotów nowelizacyjnych).\n` +
+                `2. Zgodność z Dyrektywami ZTP (czy brak zwrotów ocennych, czy przepisy są jednoznaczne i rygorystyczne).\n` +
                 `3. Wskazanie uchybień formalno-prawnych wraz z ich uzasadnieniem.\n` +
-                `4. Przygotowanie jednolitego, poprawionego tekstu aktu normatywnego.\n\n` +
+                `4. Przygotowanie jednolitego, w pełni poprawionego tekstu aktu normatywnego.\n\n` +
                 `Treść do audytu:\n${tresc}`;
             
             dodajWiadomoscDoOkna('Ty', `[Audyt ZTP: ${rodzaj}]\n${tresc.substring(0, 100)}...`);
@@ -462,20 +529,24 @@
             const opis = document.getElementById('kreatorOpis').value.trim();
 
             if (!tytul || !opis) {
-                alert("Podaj tytuł oraz opisz założenia nowej ustawy.");
+                alert("Podaj tytuł oraz opisz założenia aktu prawnego.");
                 return;
             }
 
-            const prompt = `Sporządź pełny, profesjonalny projekt Ustawy zgodnie z wytycznymi Zasady Techniki Prawodawczej (ZTP).\n` +
+            const czyNowelizacja = tytul.toLowerCase().includes("zmianie ustawy");
+
+            const prompt = `Sporządź pełny, oficjalny projekt normatywny najwyższej jakości legislacyjnej zgodnie z ZTP.\n` +
                 `Tytuł aktu: ${tytul}\n` +
-                `Resort / Wytyczne: ${wybraneMinisterstwo}\n` +
-                `Założenia merytoryczne: ${opis}\n\n` +
-                `Wymagania:\n` +
-                `- Zastosuj pełną strukturę (Przepisy ogólne, Szczegółowe, Zmiany w przepisach, Przejściowe i Końcowe).\n` +
-                `- Stosuj prawidłowe odesłania i jednostki redakcyjne (art., ust., pkt, lit.).\n` +
-                `- Zapewnij wysoki, oficjalny poziom języka prawnego.`;
+                `Wnioskodawca/Resort: ${wybraneMinisterstwo}\n` +
+                `Typ aktu: ${czyNowelizacja ? 'Ustawa o zmianie ustawy (Nowelizacja)' : 'Ustawa pierwotna'}\n` +
+                `Założenia merytoryczne i zakres zmian: ${opis}\n\n` +
+                `Wymagania formalne:\n` +
+                (czyNowelizacja ? 
+                `- Zastosuj pełną technikę nowelizacyjną (Art. 1 'W ustawie... wprowadza się następujące zmiany...', Art. 2 Przepis przejściowy, Art. 3 Przepis o wejściu w życie).\n` :
+                `- Zastosuj pełną strukturę ustawy pierwotnej z podziałem na rozdziały, przepisy ogólne, materialne oraz końcowe.\n`) +
+                `- Zapewnij bezwzględny rygor języka prawnego.`;
             
-            dodajWiadomoscDoOkna('Ty', `[Tworzenie Ustawy: ${wybraneMinisterstwo}] ${tytul}`);
+            dodajWiadomoscDoOkna('Ty', `[Tworzenie Aktu: ${wybraneMinisterstwo}] ${tytul}`);
 
             const wynik = await wywolajAPI(prompt);
             if (wynik) dodajWiadomoscDoOkna('AI', wynik);
@@ -499,7 +570,7 @@
                 return;
             }
             navigator.clipboard.writeText(ostatniaOdpowiedz);
-            alert("Skopiowano projekt ustawy do schowka.");
+            alert("Skopiowano projekt aktu legislacyjnego do schowka.");
         }
 
         // Startup
