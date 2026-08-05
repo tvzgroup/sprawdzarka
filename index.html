@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LexCorp Legislator v3.0 | System ZTP</title>
+    <title>LexCorp Legislator v3.10 | System ZTP</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -73,7 +73,7 @@
 </head>
 <body class="bg-mesh text-slate-100 h-full flex flex-col font-sans antialiased selection:bg-blue-500 selection:text-white">
 
-    <!-- Modal 1: Aktualizacja v3.0 (Changelog na start) -->
+    <!-- Modal 1: Aktualizacja v3.10 (Changelog na start) -->
     <div id="modalChangelog" class="fixed inset-0 z-[110] flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
         <div class="glass-panel p-6 sm:p-8 rounded-3xl max-w-lg w-full border border-blue-500/30 shadow-2xl space-y-5 relative glow-effect">
             <div class="flex items-center space-x-3 border-b border-white/10 pb-4">
@@ -81,7 +81,7 @@
                     🚀
                 </div>
                 <div>
-                    <h3 class="text-lg font-bold text-white tracking-wide">LexCorp Legislator v3.0</h3>
+                    <h3 class="text-lg font-bold text-white tracking-wide">LexCorp Legislator v3.10</h3>
                     <p class="text-xs text-blue-400 font-mono">Dziennik Zmian & Aktualizacja Systemu</p>
                 </div>
             </div>
@@ -91,15 +91,15 @@
                 <ul class="space-y-2 font-mono text-[11px] bg-slate-900/60 p-4 rounded-2xl border border-white/5">
                     <li class="flex items-start space-x-2">
                         <span class="text-emerald-400 font-bold">✓</span>
-                        <span><strong>Stabilność Generowania:</strong> Naprawiono błędy komunikacji i zoptymalizowano silnik przetwarzania projektów.</span>
+                        <span><strong>Rozbudowa Bazy Propozycji:</strong> Każde z 19 ministerstw posiada obecnie 5 gotowych inicjatyw ustawodawczych.</span>
                     </li>
                     <li class="flex items-start space-x-2">
                         <span class="text-emerald-400 font-bold">✓</span>
-                        <span><strong>Odświeżona Zakładka Kontakt:</strong> Nowa, estetyczna karta kontaktowa Discord.</span>
+                        <span><strong>Automatyczna Cyrkulacja:</strong> Dodano moduł cyklicznego odświeżania propozycji co 5 minut.</span>
                     </li>
                     <li class="flex items-start space-x-2">
                         <span class="text-emerald-400 font-bold">✓</span>
-                        <span><strong>Zgodność ZTP 3.0:</strong> Jeszcze dokładniejsze dopasowanie struktur artykułów i przepisów przejściowych.</span>
+                        <span><strong>Optymalizacja Silnika:</strong> Stabilizacja wywołań wersji v3.10 bez dodatkowego obciążenia API.</span>
                     </li>
                 </ul>
             </div>
@@ -153,7 +153,7 @@
                     <div class="flex items-center space-x-2">
                         <span class="text-base font-bold tracking-tight text-white">LexCorp Legislator</span>
                         <span class="text-[11px] font-mono font-semibold px-2.5 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                            v3.0
+                            v3.10
                         </span>
                     </div>
                 </div>
@@ -216,19 +216,20 @@
                         <span class="text-emerald-400 text-sm">🖋️</span>
                         <h2 class="text-xs font-semibold text-slate-200 uppercase tracking-wider">Kreator Aktów Prawnych & Nowelizacji</h2>
                     </div>
-                    <span class="text-[10px] uppercase font-mono tracking-widest text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-md border border-emerald-500/20">Standard ZTP v3.0</span>
+                    <span class="text-[10px] uppercase font-mono tracking-widest text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-md border border-emerald-500/20">Standard ZTP v3.10</span>
                 </div>
 
                 <!-- Sekcja Ministerstw i Generowania Inicjatyw -->
                 <div class="glass-card p-3 rounded-xl space-y-2 border border-white/5">
                     <div class="flex items-center justify-between">
-                        <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Wykaz Resortów Rządowych (19 Ministerstw):</span>
+                        <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Wykaz Resortów Rządowych (19 Ministerstw - 5 Propozycji):</span>
+                        <span class="text-[10px] font-mono text-slate-500" id="timerOdswiezania">Odświeżanie za: 05:00</span>
                     </div>
                     
-                    <div class="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto pr-1" id="kontenerMinisterstw"></div>
+                    <div class="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto pr-1" id="kontenerMinisterstw"></div>
 
                     <div class="pt-2">
-                        <div id="listaPropozycji" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
+                        <div id="listaPropozycji" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-1"></div>
                     </div>
                 </div>
 
@@ -256,7 +257,7 @@
                 <div class="flex justify-between items-center pb-3 border-b border-white/5">
                     <div class="flex items-center space-x-2">
                         <span class="text-indigo-400 text-sm">🤖</span>
-                        <h2 class="text-xs font-semibold text-slate-200 uppercase tracking-wider">Konsola Legislacyjna v3.0</h2>
+                        <h2 class="text-xs font-semibold text-slate-200 uppercase tracking-wider">Konsola Legislacyjna v3.10</h2>
                     </div>
                     <button onclick="skopiujOstatniTekst()" class="text-[11px] bg-slate-800/80 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg border border-white/5 transition-all flex items-center space-x-1.5">
                         <span>📋 Skopiuj Projekt</span>
@@ -266,7 +267,7 @@
                 <!-- Wyniki -->
                 <div id="wynikiKontener" class="flex-grow overflow-y-auto my-4 pr-2 space-y-4 text-xs font-mono">
                     <div class="bg-slate-900/40 p-4 rounded-xl border border-white/5 text-slate-400 leading-relaxed">
-                        <p class="text-blue-400 font-semibold mb-1">System Legislacyjny LexCorp v3.0 Gotowy</p>
+                        <p class="text-blue-400 font-semibold mb-1">System Legislacyjny LexCorp v3.10 Gotowy</p>
                         Wybierz resort lub wprowadź własne założenia. System wygeneruje gotowy projekt aktu ze wszystkimi wymogami prawodawczymi.
                     </div>
                 </div>
@@ -289,68 +290,141 @@
     <script>
         let ostatniaOdpowiedz = "";
         let wybraneMinisterstwo = "Ministerstwo Spraw Wewnętrznych i Administracji";
+        let sekundDoOdswiezenia = 300;
 
         const bazaPropozycji = {
             "Ministerstwo Aktywów Państwowych": [
-                { tytul: "Ustawa o zmianie ustawy o zarządzaniu mieniem państwowym", opis: "Wprowadza zaostrzone kryteria nadzoru nad spółkami z udziałem Skarbu Państwa oraz obowiązkowe audyty efektywności zarządczej." },
-                { tytul: "Ustawa o transformatywnym zarządzaniu strategicznymi spółkami Skarbu Państwa", opis: "Określa zasady konsolidacji aktywów energetycznych oraz powołuje Rejestr Inwestycji Strategicznych." }
+                { tytul: "Ustawa o zmianie ustawy o zarządzaniu mieniem państwowym", opis: "Zaostrzenie kryteriów nadzoru nad spółkami z udziałem Skarbu Państwa oraz obowiązkowe audyty zarządcze." },
+                { tytul: "Ustawa o zarządzaniu strategicznymi spółkami Skarbu Państwa", opis: "Zasady konsolidacji aktywów energetycznych oraz powołanie Rejestru Inwestycji Strategicznych." },
+                { tytul: "Ustawa o ochronie infrastruktury krytycznej w energetyce", opis: "Mechanizmy osłony finansowej i fizycznej dla kluczowych węzłów dystrybucji prądu." },
+                { tytul: "Ustawa o cyfryzacji procesów w nadzorze właścicielskim", opis: "Wdrożenie jednolitego systemu raportowania wyników finansowych spółek Skarbu Państwa." },
+                { tytul: "Ustawa o zasadach restrukturyzacji podmiotów górniczych", opis: "Nowe ramowe wytyczne alokacji kapitałowej dla przedsiębiorstw wydobywczych." }
             ],
             "Ministerstwo Cyfryzacji": [
-                { tytul: "Ustawa o zmianie ustawy o krajowym systemie cyberbezpieczeństwa", opis: "Wprowadza surowe wymogi raportowania incydentów oraz obowiązkową certyfikację oprogramowania dla podmiotów kluczowych." },
-                { tytul: "Ustawa o wytycznych dla systemów sztucznej inteligencji w sektorze publicznym", opis: "Reguluje normy etyczne, audyty algorytmiczne oraz odpowiedzialność prawną dostawców rozwiązań technologicznych." }
+                { tytul: "Ustawa o zmianie ustawy o krajowym systemie cyberbezpieczeństwa", opis: "Wymogi raportowania incydentów oraz obowiązkowa certyfikacja oprogramowania dla podmiotów kluczowych." },
+                { tytul: "Ustawa o wytycznych dla systemów sztucznej inteligencji", opis: "Normy etyczne, audyty algorytmiczne oraz odpowiedzialność prawna dostawców rozwiązań AI w sektorze publicznym." },
+                { tytul: "Ustawa o nowelizacji ustawy o doręczeniach elektronicznych", opis: "Uproszczenie standardów archiwizacji oraz obligatoryjne e-skrzynki dla podmiotów prawnych." },
+                { tytul: "Ustawa o bezpieczeństwie danych w chmurach rządowych", opis: "Standaryzacja lokalizacji serwerowni przechowujących rejestry obywatelskie." },
+                { tytul: "Ustawa o tożsamości cyfrowej i usługach zaufania", opis: "Rozszerzenie integracji mObywatel z procedurami notarialnymi i bankowymi." }
             ],
             "Ministerstwo Edukacji Narodowej": [
-                { tytul: "Ustawa o zmianie ustawy – Prawo oświatowe", opis: "Nowelizuje zasady oceniania kształtującego, ogranicza biurokrację nauczycielską oraz wprowadza cyfrowe standardy klasowe." },
-                { tytul: "Ustawa o wsparciu psychologicznym i bezpieczeństwie w szkołach", opis: "Gwarantuje etat psychologa w każdej placówce oraz budowę zintegrowanego systemu reagowania na kryzysy rówieśnicze." }
+                { tytul: "Ustawa o zmianie ustawy – Prawo oświatowe", opis: "Nowelizacja zasad oceniania kształtującego, ograniczenie biurokracji nauczycielskiej i cyfrowe klasy." },
+                { tytul: "Ustawa o wsparciu psychologicznym w szkołach", opis: "Gwarancja etatu psychologa w każdej placówce oraz budowa systemu reagowania na kryzysy rówieśnicze." },
+                { tytul: "Ustawa o zrównoważonym żywieniu w placówkach oświatowych", opis: "Normy dietetyczne oraz preferencje dla lokalnych dostawców żywności do stołówek." },
+                { tytul: "Ustawa o modernizacji bazy dydaktycznej szkół zawodowych", opis: "Fundusz dopłat do specjalistycznych pracowni technicznych." },
+                { tytul: "Ustawa o zmianie karty nauczyciela", opis: "Modyfikacja ścieżki awansu zawodowego oraz systemu rozliczania godzin ponadwymiarowych." }
             ],
             "Ministerstwo Finansów": [
-                { tytul: "Ustawa o zmianie ustawy o podatku od towarów i usług", opis: "Modyfikuje zasady funkcjonowania Krajowego Systemu e-Faktur oraz automatyzuje zwroty podatku VAT." },
-                { tytul: "Ustawa o automatyzacji audytu podatkowego transakcji cyfrowych", opis: "Wprowadza ciągły monitoring analityczny podmiotów z sektora e-commerce i technologii." }
+                { tytul: "Ustawa o zmianie ustawy o podatku od towarów i usług", opis: "Modyfikacja funkcjonowania Krajowego Systemu e-Faktur oraz automatyzacja zwrotów VAT." },
+                { tytul: "Ustawa o automatyzacji audytu podatkowego transakcji cyfrowych", opis: "Ciągły monitoring analityczny podmiotów z sektora e-commerce i technologii." },
+                { tytul: "Ustawa o podatku wyrównawczym dla korporacji międzynarodowych", opis: "Wdrożenie globalnego minimalnego poziomu opodatkowania." },
+                { tytul: "Ustawa o ulgach dla inwestycji w technologie ekologiczne", opis: "Odliczenia podatkowe dla przedsiębiorstw przeznaczających zyski na zieloną transformację." },
+                { tytul: "Ustawa o uszczelnieniu obrotu kryptowalutowego", opis: "Obowiązki sprawozdawcze dla giełd walut wirtualnych oraz nowe stawki kapitałowe." }
             ],
             "Ministerstwo Funduszy i Polityki Regionalnej": [
-                { tytul: "Ustawa o zmianie ustawy o zasadach prowadzenia polityki rozwoju", opis: "Upraszcza procedury aplikacyjne o środki unijne dla samorządów oraz wprowadza wskaźniki rozwoju zrównoważonego." }
+                { tytul: "Ustawa o zasadach prowadzenia polityki rozwoju", opis: "Uproszczenie procedur aplikacyjnych o środki unijne dla samorządów oraz wskaźniki rozwoju zrównoważonego." },
+                { tytul: "Ustawa o wsparciu miast średnich i tracących funkcje społeczno-gospodarcze", opis: "Dedykowane fundusze rozwojowe dla ośrodków zbieżności regionalnej." },
+                { tytul: "Ustawa o kompensacji cyfrowej obszarów wiejskich", opis: "Dofinansowanie infrastruktury światłowodowej i zasięgowej na terenach słabo zaludnionych." },
+                { tytul: "Ustawa o spójności terytorialnej subregionów", opis: "Ułatwienia przy tworzeniu związków metropolitalnych i powiązań komunikacyjnych." },
+                { tytul: "Ustawa o ewaluacji efektywności programów operacyjnych", opis: "Jednolite wskaźniki oceny inwestycji dofinansowywanych ze środków Europejskiego Funduszu Rozwoju." }
             ],
             "Ministerstwo Infrastruktury": [
-                { tytul: "Ustawa o zmianie ustawy – Prawo o ruchu drogowym", opis: "Nowelizuje przepisy dotyczące poruszania się autonomicznych pojazdów oraz zaostrza kary za przekroczenie prędkości." }
+                { tytul: "Ustawa o zmianie ustawy – Prawo o ruchu drogowym", opis: "Nowelizacja przepisów dotyczących pojazdów autonomicznych oraz zaostrzenie kar za przekroczenia prędkości." },
+                { tytul: "Ustawa o rozwoju kolei dużych prędkości", opis: "Uproszczenie procedur wywłaszczeniowych i środowiskowych dla magistrali kolejowych." },
+                { tytul: "Ustawa o modernizacji infrastruktury portowej", opis: "Zasady finansowania pogłębiania torów wodnych oraz rozbudowy terminali kontenerowych." },
+                { tytul: "Ustawa o zmianie ustawy o drogach publicznych", opis: "Nowy system poboru opłat od pojazdów ciężarowych i automatyczna weryfikacja tonażu." },
+                { tytul: "Ustawa o cyfryzacji procesu wydawania praw jazdy", opis: "Pełna automatyzacja wniosków i integracja z Centralną Ewidencją Kierowców." }
             ],
             "Ministerstwo Klimatu i Środowiska": [
-                { tytul: "Ustawa o zmianie ustawy o odnawialnych źródłach energii", opis: "Znosi bariery odległościowe dla farm wiatrowych oraz przyspiesza wydawanie warunków przyłączeniowych dla OZE." }
+                { tytul: "Ustawa o zmianie ustawy o odnawialnych źródłach energii", opis: "Zniesienie barier odległościowych dla farm wiatrowych oraz przyspieszenie warunków przyłączeniowych OZE." },
+                { tytul: "Ustawa o gospodarce w obiegu zamkniętym", opis: "Obowiązkowy system kaucyjny dla opakowań szklanych, plastikowych i puszek." },
+                { tytul: "Ustawa o ochronie zasobów wodnych i małej retencji", opis: "Program dopłat do zbiorników retencyjnych dla rolników i spółdzielni mieszkaniowych." },
+                { tytul: "Ustawa o transformacji rejonów wydobywczych", opis: "Tworzenie Specjalnych Stref Zielonej Energii na terenach poprzemysłowych." },
+                { tytul: "Ustawa o monitorowaniu jakości powietrza w miach", opis: "Nowe normy emisyjne dla przydomowych instalacji grzewczych i obligatoryjne czujniki." }
             ],
             "Ministerstwo Kultury i Dziedzictwa Narodowego": [
-                { tytul: "Ustawa o zmianie ustawy o prawie autorskim i prawach pokrewnych", opis: "Wprowadza sprawiedliwe wynagrodzenie dla twórców z tytułu eksploatacji ich dzieł na platformach streamingowych." }
+                { tytul: "Ustawa o prawie autorskim i prawach pokrewnych", opis: "Sprawiedliwe wynagrodzenie dla twórców z tytułu eksploatacji ich dzieł na platformach streamingowych." },
+                { tytul: "Ustawa o statusie artysty zawodowego", opis: "Dostęp do ubezpieczeń społecznych oraz fundusz stypendialny dla twórców o nieregularnych dochodach." },
+                { tytul: "Ustawa o ochronie zabytków i opiece nad zabytkami", opis: "Zwiększenie kar za niszczenie obiektów zabytkowych i dopłaty do prywatnych renowacji." },
+                { tytul: "Ustawa o cyfryzacji zasobów bibliotecznych i muzealnych", opis: "Jednolity repozytorium cyfrowe polskiego dziedzictwa kulturowego." },
+                { tytul: "Ustawa o mecenacie kultury i zwolnieniach podatkowych", opis: "Ulga sponsoringowa dla firm wspierających lokalne instytucje kulturalne." }
             ],
             "Ministerstwo Nauki i Szkolnictwa Wyższego": [
-                { tytul: "Ustawa o zmianie ustawy – Prawo o szkolnictwie wyższym i nauce", opis: "Nowelizuje zasady ewaluacji jakości działalności naukowej oraz zwiększa finansowanie badań przełomowych." }
+                { tytul: "Ustawa – Prawo o szkolnictwie wyższym i nauce", opis: "Nowelizacja zasad ewaluacji jakości działalności naukowej oraz zwiększenie finansowania badań." },
+                { tytul: "Ustawa o komercjalizacji wyników badań naukowych", opis: "Uproszczenie tworzenia spółek spin-off przy uczelniach wyższych." },
+                { tytul: "Ustawa o Krajowym Funduszu Stypendialnym dla doktorantów", opis: "Podwyższenie stawek stypendialnych i grantów na wyjazdy zagraniczne." },
+                { tytul: "Ustawa o umiędzynarodowieniu polskich uczelni", opis: "Ułatwienia w zatrudnianiu kadry profesorskiej z zagranicznych ośrodków akademickich." },
+                { tytul: "Ustawa o etyce w badaniach z wykorzystaniem technologii AI", opis: "Standardy weryfikacji prac dyplomowych i publikacji naukowych." }
             ],
             "Ministerstwo Obrony Narodowej": [
-                { tytul: "Ustawa o zmianie ustawy o obronie Ojczyzny", opis: "Optymalizuje procedury powoływania do rezerwy oraz wprowadza szybkie ścieżki zakupowe technologii obronnych." }
+                { tytul: "Ustawa o zmianie ustawy o obronie Ojczyzny", opis: "Optymalizacja procedur powoływania do rezerwy oraz szybka ścieżka zakupowa technologii obronnych." },
+                { tytul: "Ustawa o rozwoju przemysłu zbrojeniowego", opis: "Gwarancje rządowe dla krajowych zakładów produkcji amunicji i sprzętu pancernego." },
+                { tytul: "Ustawa o utworzeniu Wojsk Cyberprzestrzeni", opis: "Struktura organizacyjna, uposażenia i uprawnienia operacyjne służb cyberobrony." },
+                { tytul: "Ustawa o rezerwie aktywnej i obronie cywilnej", opis: "Szkolenia obywatelskie oraz obowiązki samorządów w zakresie budowy schronów." },
+                { tytul: "Ustawa o modernizacji baz wojskowych", opis: "Inwestycje w cyfrową infrastrukturę łączności i bezpieczeństwo magazynowania uzbrojenia." }
             ],
             "Ministerstwo Przemysłu": [
-                { tytul: "Ustawa o zmianie ustawy – Prawo geologiczne i górnicze", opis: "Dostosowuje zasady koncesjonowania wydobycia surowców do wymogów transformacji przemysłowej." }
+                { tytul: "Ustawa – Prawo geologiczne i górnicze", opis: "Dostosowanie zasad koncesjonowania wydobycia surowców strategicznych do wytycznych przemysłowych." },
+                { tytul: "Ustawa o transformacji sektora hutniczego", opis: "Dopłaty do pieców elektrycznych i wodorowych w zakładach przemysłu ciężkiego." },
+                { tytul: "Ustawa o uniezależnieniu surowcowym przemysłu", opis: "Rezerwy państwowe metali ziem rzadkich i kluczowych półprzewodników." },
+                { tytul: "Ustawa o wsparciu innowacji w sektorze chemicznym", opis: "Ulgi na wdrożenia niskoemisyjnych syntez i recyklingu polimerów." },
+                { tytul: "Ustawa o bezpieczeństwie technicznym urządzeń przemysłowych", opis: "Nowe normy Dozoru Technicznego dla autonomicznych linii produkcyjnych." }
             ],
             "Ministerstwo Rodziny, Pracy i Polityki Społecznej": [
-                { tytul: "Ustawa o zmianie ustawy – Kodeks pracy", opis: "Reguluje stosowanie algorytmów analitycznych przy ocenie pracowników oraz wprowadza elastyczne czasoprzestrzenie pracy." }
+                { tytul: "Ustawa – Kodeks pracy", opis: "Regulacja stosowania algorytmów przy ocenie pracowników oraz wprowadzenie elastycznego czasu pracy." },
+                { tytul: "Ustawa o zrównoważeniu czasu pracy i życia prywatnego", opis: "Prawo do rozłączenia po godzinach pracy oraz nowe urlopy opiekuńcze." },
+                { tytul: "Ustawa o zwalczaniu luki płacowej", opis: "Obowiązek sprawozdawczości średnich i dużych firm w zakresie równości wynagrodzeń." },
+                { tytul: "Ustawa o rewolucji w opiece nad dziećmi do lat 3", opis: "Dofinansowanie żłobków przyzakładowych i elastyczne świadczenia rodzicielskie." },
+                { tytul: "Ustawa o rynku pracy i służbach zatrudnienia", opis: "Modernizacja urzędów pracy i automatyczne dopasowywanie ofert szkoleniowych." }
             ],
             "Ministerstwo Rolnictwa i Rozwoju Wsi": [
-                { tytul: "Ustawa o zmianie ustawy o kształtowaniu ustroju rolnego", opis: "Zabezpiecza ziemię rolną przed wykupem spekulacyjnym oraz upraszcza przekazywanie gospodarstw." }
+                { tytul: "Ustawa o kształtowaniu ustroju rolnego", opis: "Zabezpieczenie ziemi rolnej przed wykupem spekulacyjnym oraz uproszczenie przekazywania gospodarstw." },
+                { tytul: "Ustawa o skracaniu łańcuchów dostaw żywności", opis: "Obowiązek udziału lokalnych produktów rolnych w sieciach wielkopowierzchniowych." },
+                { tytul: "Ustawa o cyfryzacji ewidencji gospodarstw rolnych", opis: "Zintegrowany system satelitarnego szacowania szkód suszowych i przymrozkowych." },
+                { tytul: "Ustawa o bioasekuracji i ochronie zwierząt hodowlanych", opis: "Nowe wymogi sanitarne dla ferm towarowych i wsparcie finansowe dla hodowców." },
+                { tytul: "Ustawa o wsparciu rolnictwa ekologicznego", opis: "Dopłaty do certyfikacji oraz zwolnienia z podatku od nieruchomości dla gospodarstw eko." }
             ],
             "Ministerstwo Rozwoju i Technologii": [
-                { tytul: "Ustawa o zmianie ustawy – Kodeks spółek handlowych", opis: "Wprowadza prostą spółkę akcyjną w wersji cyfrowej oraz ułatwia przeprowadzanie e-zgromadzeń." }
+                { tytul: "Ustawa – Kodeks spółek handlowych", opis: "Wprowadzenie prostej spółki akcyjnej w wersji cyfrowej oraz ułatwienia w e-zgromadzeniach." },
+                { tytul: "Ustawa o zmianie ustawy – Prawo budowlane", opis: "Cyfryzacja pełnej ścieżki pozwolenia na budowę oraz standaryzacja projektów." },
+                { tytul: "Ustawa o wspieraniu mikroprzedsiębiorczości", opis: "Wakacje od składek społecznych dla nowych firm oraz jednolity e-podatek." },
+                { tytul: "Ustawa o strefach czystego przemysłu", opis: "Udogodnienia podatkowe dla parków technologicznych i startupów hardware'owych." },
+                { tytul: "Ustawa o zamówieniach publicznych na innowacje", opis: "Ułatwiony dostęp dla lokalnych firm technologicznych do przetargów państwowych." }
             ],
             "Ministerstwo Sportu i Turystyki": [
-                { tytul: "Ustawa o zmianie ustawy o sporcie", opis: "Wprowadza równe zasady finansowania sportu kobiet i mężczyzn oraz zaostrza normy etyczne w związkach sportowych." }
+                { tytul: "Ustawa o zmianie ustawy o sporcie", opis: "Równe zasady finansowania sportu kobiet i mężczyzn oraz zaostrzenie norm etycznych w związkach." },
+                { tytul: "Ustawa o rozwoju infrastruktury sportowej dzieci i młodzieży", opis: "Fundusz budowy wielofunkcyjnych boisk całorocznych w każdej gminie." },
+                { tytul: "Ustawa o promocji turystyki krajowej", opis: "Cyfrowa platforma bonu turystycznego oraz ulgi dla obiektów agroturystycznych." },
+                { tytul: "Ustawa o zwalczaniu dopingu w sporcie", opis: "Zwiększenie uprawnień Polskiej Agencji Antydopingowej i nowe procedury kontrolne." },
+                { tytul: "Ustawa o organizacjach pożytku sportowego", opis: "Uproszczone rozliczenia dla klubów osiedlowych i amatorskich lig sportowych." }
             ],
             "Ministerstwo Spraw Wewnętrznych i Administracji": [
-                { tytul: "Ustawa o zmianie ustawy o Policji oraz niektórych innych ustaw", opis: "Wprowadza cyfrowe rejestratory obrazu w standardzie szyfrowanym oraz modernizuje wyposażenie służb." }
+                { tytul: "Ustawa o zmianie ustawy o Policji", opis: "Cyfrowe rejestratory obrazu w standardzie szyfrowanym oraz modernizacja wyposażenia służb." },
+                { tytul: "Ustawa o modernizacji Państwowej Straży Pożarnej", opis: "Zakup nowej floty ratowniczo-gaśniczej oraz dofinansowanie jednostek OSP." },
+                { tytul: "Ustawa o ochronie ludności i stanie klęski żywiołowej", opis: "Zintegrowany system ostrzegania obywateli oraz procedury ewakuacyjne." },
+                { tytul: "Ustawa o zmianie ustawy o dowodach osobistych", opis: "Nowy chip biometryczny oraz możliwość zdalnego zastrzegania dokumentów." },
+                { tytul: "Ustawa o usprawnieniu procedur paszportowych", opis: "Automatyczne punkty paszportowe w urzędach wojewódzkich i na lotniskach." }
             ],
             "Ministerstwo Spraw Zagranicznych": [
-                { tytul: "Ustawa o zmianie ustawy o służbie zagranicznej", opis: "Nowelizuje zasady naboru dyplomatów, wymogi językowe oraz procedury awansów w placówkach Dyplomatycznych." }
+                { tytul: "Ustawa o służbie zagranicznej", opis: "Zasady naboru dyplomatów, wymogi językowe oraz procedury awansów w placówkach." },
+                { tytul: "Ustawa o promocji gospodarczej Polski za granicą", opis: "Tworzenie wspólnych przedstawicielstw handlowych MSZ i agencji inwestycji." },
+                { tytul: "Ustawa o konsularnej ochronie obywateli RP", opis: "Szybki system pomocy finansowej i prawnej dla Polaków w sytuacjach kryzysowych za granicą." },
+                { tytul: "Ustawa o cyfryzacji procedur wizowych", opis: "Weryfikacja wniosków wizowych z wykorzystaniem biometrii i baz danych." },
+                { tytul: "Ustawa o dyplomacji publicznej i kulturalnej", opis: "Finansowanie instytutów polskich i promocja naukowa za granicą." }
             ],
             "Ministerstwo Sprawiedliwości": [
-                { tytul: "Ustawa o zmianie ustawy – Kodeks postępowania cywilnego", opis: "Wprowadza pełne e-doręczenia, e-rozprawy oraz obowiązkowy elektroniczny obieg pism procesowych." }
+                { tytul: "Ustawa – Kodeks postępowania cywilnego", opis: "Pełne e-doręczenia, e-rozprawy oraz obowiązkowy elektroniczny obieg pism procesowych." },
+                { tytul: "Ustawa – Kodeks karny wykonawczy", opis: "System dozoru elektronicznego nowej generacji i programy resocjalizacji cyfrowej." },
+                { tytul: "Ustawa o cyfryzacji Ksiąg Wieczystych", opis: "Automatyzacja wpisów hipotecznych i skrócony czas oczekiwania na decyzję." },
+                { tytul: "Ustawa o usprawnieniu sądów rejonowych", opis: "Specjalizacja sędziów oraz wprowadzenie asystentów AI do sporządzania uzasadnień." },
+                { tytul: "Ustawa o mediacji i polubownym rozwiązywaniu sporów", opis: "Obowiązkowe spotkania informacyjne przed skierowaniem sprawy do sądu." }
             ],
             "Ministerstwo Zdrowia": [
-                { tytul: "Ustawa o zmianie ustawy o świadczeniach opieki zdrowotnej finansowanych ze środków publicznych", opis: "Zmienia zasady wyceny świadczeń oraz automatyzuje rozliczenia szpitali z NFZ." }
+                { tytul: "Ustawa o świadczeniach opieki zdrowotnej", opis: "Zmiana zasad wyceny świadczeń oraz automatyzacja rozliczeń szpitali z NFZ." },
+                { tytul: "Ustawa o cyfryzacji dokumentacji medycznej", opis: "Zintegrowana karta zdrowia pacjenta z natychmiastowym dostępem dla SOR." },
+                { tytul: "Ustawa o Krajowej Sieci Onkologicznej", opis: "Standardy leczenia, powszechne badania profilaktyczne i szybka ścieżka pacjenta." },
+                { tytul: "Ustawa o modernizacji Państwowego Ratownictwa Medycznego", opis: "Nowy sprzęt dla zespołów karetkowych i automatyczne wymuszanie korytarzy życia." },
+                { tytul: "Ustawa o refundacji leków i wyrobów medycznych", opis: "Skrócenie procedur wprowadzania innowacyjnych terapii na listy refundacyjne." }
             ]
         };
 
@@ -452,7 +526,7 @@
             } else {
                 el.className = "bg-slate-900/90 p-4 rounded-xl border border-white/10 text-slate-200 font-mono text-xs space-y-2 leading-relaxed shadow-lg";
                 el.innerHTML = `<div class="text-emerald-400 font-bold border-b border-white/5 pb-1 flex justify-between items-center">
-                    <span>Odp. LexCorp Legislator v3.0:</span>
+                    <span>Odp. LexCorp Legislator v3.10:</span>
                     <span class="text-[10px] text-slate-500 font-mono">ZTP Compliant</span>
                 </div>
                 <div class="whitespace-pre-wrap">${tekst}</div>`;
@@ -463,19 +537,18 @@
             kontener.scrollTop = kontener.scrollHeight;
         }
 
-        // Symulacja stabilnej odpowiedzi silnika legislacyjnego
         function symulujOdpowiedź(promptUzytkownika, typ) {
             dodajWiadomoscDoKonsoli('user', promptUzytkownika);
 
             setTimeout(() => {
                 let Wynik = "";
                 if (typ === 'audyt') {
-                    Wynik = `AUDYT LEGISLACYJNY ZTP (v3.0)\n----------------------------------------\n1. Ocena Strukturalna: Prawidłowa systematyka artykułowa.\n2. Zgodność z ZTP: Brak zastrzeżeń do formuły sankcjonującej.\n3. Uwagi i Rekomendacje:\n   - Zaleca się sprecyzowanie terminu wejścia w życie w Art. Przepisów Końcowych.\n   - Przepisy przejściowe zachowują zasadę Lex Retro Non Agit.`;
+                    Wynik = `AUDYT LEGISLACYJNY ZTP (v3.10)\n----------------------------------------\n1. Ocena Strukturalna: Prawidłowa systematyka artykułowa.\n2. Zgodność z ZTP: Brak zastrzeżeń do formuły sankcjonującej.\n3. Uwagi i Rekomendacje:\n   - Zaleca się sprecyzowanie terminu wejścia w życie w Art. Przepisów Końcowych.\n   - Przepisy przejściowe zachowują zasadę Lex Retro Non Agit.`;
                 } else if (typ === 'kreator') {
                     const tytul = document.getElementById('kreatorTytul').value || "USTAWA";
-                    Wynik = `PROJEKT AKT UUSTAWODAWCZEGO\n\n${tytul.toUpperCase()}\n\nz dnia ${new Date().toLocaleDateString('pl-PL')} r.\n\nArt. 1. Niniejsza ustawa określa szczegółowe zasady oraz zakres regulacji prawnych dla wskazanego obszaru przedmiotowego.\n\nArt. 2. W ustawie wprowadza się zmiany określone w kolejnych przepisach szczegółowych.\n\nArt. 3. Ustawa wchodzi w życie po upływie 14 dni od dnia ogłoszenia.`;
+                    Wynik = `PROJEKT AKTU USTAWODAWCZEGO (v3.10)\n\n${tytul.toUpperCase()}\n\nz dnia ${new Date().toLocaleDateString('pl-PL')} r.\n\nArt. 1. Niniejsza ustawa określa szczegółowe zasady oraz zakres regulacji prawnych dla wskazanego obszaru przedmiotowego.\n\nArt. 2. W ustawie wprowadza się zmiany określone w kolejnych przepisach szczegółowych.\n\nArt. 3. Ustawa wchodzi w życie po upływie 14 dni od dnia ogłoszenia.`;
                 } else {
-                    Wynik = `Przyjęto poprawkę legislacyjną. System zaktualizował strukturę aktu zgodnie z wytycznymi ZTP v3.0.`;
+                    Wynik = `Przyjęto poprawkę legislacyjną. System zaktualizował strukturę aktu zgodnie z wytycznymi ZTP v3.10.`;
                 }
 
                 dodajWiadomoscDoKonsoli('model', Wynik);
@@ -523,8 +596,26 @@
             alert("Pomyślnie skopiowano projekt aktu do schowka.");
         }
 
+        // Timer automatycznego odświeżania co 5 minut (300 s)
+        function UruchomTimer() {
+            setInterval(() => {
+                sekundDoOdswiezenia--;
+                if (sekundDoOdswiezenia <= 0) {
+                    sekundDoOdswiezenia = 300;
+                    odswiezPropozycje();
+                }
+                const min = Math.floor(sekundDoOdswiezenia / 60).toString().padStart(2, '0');
+                const sec = (sekundDoOdswiezenia % 60).toString().padStart(2, '0');
+                const timerEl = document.getElementById('timerOdswiezania');
+                if (timerEl) {
+                    timerEl.innerText = `Odświeżanie za: ${min}:${sec}`;
+                }
+            }, 1000);
+        }
+
         window.onload = () => {
             inicjalizujMinisterstwa();
+            UruchomTimer();
         };
     </script>
 </body>
