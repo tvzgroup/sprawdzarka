@@ -57,8 +57,8 @@
 
     <!-- EKRAN LOGOWANIA / BLOKADA -->
     <div id="authGate" class="fixed inset-0 z-[200] flex items-center justify-center bg-black/90 backdrop-blur-xl p-4">
-        <div class="glass-panel p-8 rounded-3xl max-w-md w-full border border-blue-500/30 shadow-2xl space-y-6 text-center relative glow-effect">
-            <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-3xl mx-auto shadow-lg shadow-blue-500/30 border border-white/10">
+        <div id="authBox" class="glass-panel p-8 rounded-3xl max-w-md w-full border border-blue-500/30 shadow-2xl space-y-6 text-center relative glow-effect transition-all">
+            <div id="authIcon" class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-3xl mx-auto shadow-lg shadow-blue-500/30 border border-white/10">
                 🔒
             </div>
             
@@ -81,51 +81,71 @@
         </div>
     </div>
 
-    <!-- MODAL: POLITYKA PRYWATNOŚCI -->
+    <!-- MODAL: POLITYKA PRYWATNOŚCI v5.0 -->
     <div id="modalPrivacy" class="fixed inset-0 z-[150] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 hidden">
-        <div class="glass-panel p-6 sm:p-8 rounded-3xl max-w-md w-full border border-blue-500/30 shadow-2xl space-y-5 relative glow-effect">
-            <div class="flex items-center space-x-3 border-b border-white/10 pb-4">
-                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-xl shadow-lg shadow-blue-500/30">
-                    🛡️
+        <div class="glass-panel p-6 sm:p-8 rounded-3xl max-w-lg w-full border border-blue-500/30 shadow-2xl space-y-6 relative glow-effect max-h-[90vh] flex flex-col">
+            
+            <div class="flex items-center justify-between border-b border-white/10 pb-4 shrink-0">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-xl shadow-lg shadow-blue-500/30">
+                        🛡️
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-white tracking-wide">Polityka Prywatności</h3>
+                        <p class="text-xs text-blue-400 font-mono">LexCorp Standard v5.0</p>
+                    </div>
                 </div>
-                <div>
-                    <h3 class="text-lg font-bold text-white tracking-wide">Polityka Prywatności</h3>
-                    <p class="text-xs text-blue-400 font-mono">LexCorp v5.0 Protection Standard</p>
-                </div>
+                <button onclick="zamknijPrywatnosc()" class="text-slate-400 hover:text-white transition-colors p-1 rounded-lg hover:bg-white/5">
+                    ✕
+                </button>
             </div>
 
-            <div class="space-y-3 text-xs text-slate-300 font-sans leading-relaxed">
-                <div class="bg-slate-900/60 p-3.5 rounded-xl border border-white/5 space-y-2">
-                    <p class="font-bold text-white flex items-center space-x-1.5">
-                        <span>🔒</span> <span>Zero zbierania danych:</span>
+            <div class="space-y-3.5 text-xs text-slate-300 font-sans leading-relaxed overflow-y-auto pr-1 flex-grow">
+                
+                <div class="bg-slate-900/60 p-4 rounded-2xl border border-white/5 space-y-1.5 transition-all hover:border-blue-500/20">
+                    <p class="font-bold text-white flex items-center space-x-2">
+                        <span class="text-blue-400">🔒</span> <span>Zero zbierania danych osobowych</span>
                     </p>
                     <p class="text-slate-400 text-[11px]">
-                        Aplikacja nie gromadzi, nie przechowuje ani nie przesyła do zewnętrznych baz żadnych Twoich danych osobowych, nicków ani wprowadzanych projektów aktów prawnych.
+                        System nie gromadzi, nie przechowuje ani nie przesyła do zewnętrznych baz danych żadnych danych osobowych, numerów IP, wprowadzanych pseudonimów ani treści analizowanych dokumentów.
                     </p>
                 </div>
 
-                <div class="bg-slate-900/60 p-3.5 rounded-xl border border-white/5 space-y-2">
-                    <p class="font-bold text-white flex items-center space-x-1.5">
-                        <span>⚡</span> <span>Przetwarzanie Lokalne:</span>
+                <div class="bg-slate-900/60 p-4 rounded-2xl border border-white/5 space-y-1.5 transition-all hover:border-blue-500/20">
+                    <p class="font-bold text-white flex items-center space-x-2">
+                        <span class="text-indigo-400">⚡</span> <span>Przetwarzanie wyłącznie lokalne</span>
                     </p>
                     <p class="text-slate-400 text-[11px]">
-                        Wszystkie operacje audytowe i sprawdzanie formatowania tekstu odbywają się wyłącznie tymczasowo w pamięci Twojej przeglądarki.
+                        Wszystkie operacje sprawdzania techniki prawodawczej wykonywane są wyłącznie w pamięci podręcznej (RAM) Twojej przeglądarki. Po zamknięciu lub odświeżeniu karty wprowadzony tekst ulega całkowitemu usunięciu.
                     </p>
                 </div>
 
-                <div class="bg-slate-900/60 p-3.5 rounded-xl border border-white/5 space-y-2">
-                    <p class="font-bold text-white flex items-center space-x-1.5">
-                        <span>🚫</span> <span>Brak Integracji AI:</span>
+                <div class="bg-slate-900/60 p-4 rounded-2xl border border-white/5 space-y-1.5 transition-all hover:border-blue-500/20">
+                    <p class="font-bold text-white flex items-center space-x-2">
+                        <span class="text-emerald-400">🚫</span> <span>Brak integracji z zewnętrznymi AI</span>
                     </p>
                     <p class="text-slate-400 text-[11px]">
-                        System v5.0 nie zawiera modułów sztucznej inteligencji. Żadne zapytania nie są przekazywane dostawcom modeli zewnętrznych.
+                        Wraz z aktualizacją v5.0 wycofano wszystkie moduły generatorów AI. Żadne wprowadzane projekty i uchwały nie trafiają do serwisów stron trzecich (np. OpenAI, Anthropic czy Google).
                     </p>
                 </div>
+
+                <div class="bg-slate-900/60 p-4 rounded-2xl border border-white/5 space-y-1.5 transition-all hover:border-blue-500/20">
+                    <p class="font-bold text-white flex items-center space-x-2">
+                        <span class="text-purple-400">🍪</span> <span>Brak plików Cookies i Śledzenia</span>
+                    </p>
+                    <p class="text-slate-400 text-[11px]">
+                        Aplikacja nie wykorzystuje śledzących plików cookie (tracking cookies), skryptów analitycznych ani narzędzi marketingowych.
+                    </p>
+                </div>
+
             </div>
 
-            <button onclick="zamknijPrywatnosc()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs py-3.5 rounded-xl transition-all shadow-lg shadow-blue-600/30">
-                Rozumiem
-            </button>
+            <div class="pt-2 shrink-0">
+                <button onclick="zamknijPrywatnosc()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs py-3.5 rounded-xl transition-all shadow-lg shadow-blue-600/30">
+                    Zatwierdź i Zamknij
+                </button>
+            </div>
+
         </div>
     </div>
 
@@ -154,10 +174,9 @@
         </div>
     </header>
 
-    <!-- GŁÓWNA PRZESTRZEŃ ROBOCZA (WYŁĄCZNIE AUDYTOR) -->
+    <!-- GŁÓWNA PRZESTRZEŃ ROBOCZA (SPRAWDZARKA) -->
     <main class="max-w-[1700px] mx-auto px-4 sm:px-6 py-6 flex-grow w-full grid grid-cols-1 lg:grid-cols-12 gap-6 h-[calc(100vh-4rem)]">
         
-        <!-- Edytor / Wklejanie Ustawy -->
         <section class="lg:col-span-7 flex flex-col h-full min-h-0">
             <div class="glass-panel rounded-2xl p-5 flex flex-col h-full relative overflow-hidden">
                 <div class="flex justify-between items-center pb-3 border-b border-white/5">
@@ -188,7 +207,6 @@
             </div>
         </section>
 
-        <!-- Konsola Wyników -->
         <section class="lg:col-span-5 flex flex-col h-full min-h-0">
             <div class="glass-panel rounded-2xl p-5 flex flex-col h-full relative overflow-hidden">
                 <div class="flex justify-between items-center pb-3 border-b border-white/5">
@@ -225,13 +243,21 @@
             const nickLower = rawNick.toLowerCase();
             const alertBox = document.getElementById('blockAlert');
             const alertText = document.getElementById('blockAlertText');
+            const authBox = document.getElementById('authBox');
+            const authIcon = document.getElementById('authIcon');
 
             if (!rawNick) return;
 
+            // Sprawdzanie czy podany nick zawiera frazę z czarnej listy
             const jestZablokowany = czarnaLista.some(zabranaFraza => nickLower.includes(zabranaFraza));
 
             if (jestZablokowany) {
+                // Wyświetlenie komunikatu i efekty blokady
                 alertBox.classList.remove('hidden');
+                authBox.classList.add('border-red-500/50', 'shadow-red-500/20');
+                authIcon.className = "w-16 h-16 rounded-2xl bg-gradient-to-tr from-red-600 to-rose-700 flex items-center justify-center text-3xl mx-auto shadow-lg shadow-red-500/30 border border-white/10";
+                authIcon.innerText = "⛔";
+
                 if (nickLower.includes('dr załęcki') || nickLower.includes('dr zalecki')) {
                     alertText.innerText = '🚩 FLAG: DR ZAŁĘCKI - ODMOWA DOSTĘPU';
                 } else if (nickLower.includes('maciej borówka') || nickLower.includes('maciej borowka')) {
@@ -239,9 +265,12 @@
                 } else {
                     alertText.innerText = '⛔ BRAK DOSTĘPU - OSOBA WSKAZANA NA LIŚCIE ZASTRZEŻONEJ';
                 }
+
+                // KLUCZOWE: Zatrzymujemy wykonywanie funkcji! Oknomodalne logowania NIE zostanie schowane.
                 return;
             }
 
+            // Jeśli użytkownik jest czysty:
             alertBox.classList.add('hidden');
             document.getElementById('authGate').classList.add('hidden');
         }
