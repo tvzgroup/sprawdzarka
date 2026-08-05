@@ -1,949 +1,115 @@
-<!DOCTYPE html>
-<html lang="pl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal Legislacyjny RP - Wersja 4.0</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0f172a;
-            color: #f8fafc;
-        }
-        .legal-font {
-            font-family: 'Merriweather', serif;
-        }
-        .paper-view {
-            background-color: #ffffff;
-            color: #0f172a;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
-            border-top: 6px solid #dc2626;
-        }
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 8px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: #1e293b;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #475569;
-            border-radius: 4px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #64748b;
-        }
-    </style>
-</head>
-<body class="min-h-screen flex flex-col custom-scrollbar">
+// --- AKTUALIZACJA 4.0: Rozbudowana baza ministerstw i generator RPU / Uchwał ---
 
-    <!-- Header / Nawigacja -->
-    <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap items-center justify-between gap-4">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-red-700 rounded-lg flex items-center justify-center font-bold text-xl text-white shadow-lg border border-red-500">
-                    RP
-                </div>
-                <div>
-                    <h1 class="text-lg font-bold tracking-tight text-slate-100 flex items-center gap-2">
-                        System Legislacyjny RP
-                        <span class="bg-red-950 text-red-400 border border-red-800 text-xs px-2 py-0.5 rounded-full font-semibold">v4.0</span>
-                    </h1>
-                    <p class="text-xs text-slate-400">Rządowe, Poselskie i Obywatelskie Inicjatywy Ustawodawcze</p>
-                </div>
+const MINISTERSTWA = [
+    "Ministerstwo Sprawiedliwości",
+    "Ministerstwo Finansów",
+    "Ministerstwo Spraw Wewnętrznych i Administracji",
+    "Ministerstwo Obrony Narodowej",
+    "Ministerstwo Spraw Zagranicznych",
+    "Ministerstwo Aktywów Państwowych",
+    "Ministerstwo Cyfryzacji",
+    "Ministerstwo Edukacji Narodowej",
+    "Ministerstwo Klimatu i Środowiska",
+    "Ministerstwo Zdrowia",
+    "Ministerstwo Infrastruktury",
+    "Ministerstwo Rozwoju i Technologii",
+    "Ministerstwo Rolnictwa i Rozwoju Wsi",
+    "Ministerstwo Funduszy i Polityki Regionalnej",
+    "Ministerstwo Rodziny, Pracy i Polityki Społecznej",
+    "Ministerstwo Nauki i Szkolnictwa Wyższego",
+    "Ministerstwo Sportu i Turystyki",
+    "Ministerstwo Kultury i Dziedzictwa Narodowego"
+];
+
+const PROPOZYCJE_USTAW = [
+    { kategoria: "Cyfryzacja", tytul: "Ustawa o krajowym systemie tożsamości cyfrowej i usługach zaufania", min: "Ministerstwo Cyfryzacji", dlugosc: "dluga" },
+    { kategoria: "Bezpieczeństwo", tytul: "Ustawa o ochronie infrastruktury krytycznej i cyberbezpieczeństwie", min: "Ministerstwo Spraw Wewnętrznych i Administracji", dlugosc: "srednia" },
+    { kategoria: "Finanse", tytul: "Ustawa o zmianie ustawy o podatku od towarów i usług oraz niektórych innych ustaw", min: "Ministerstwo Finansów", dlugosc: "dluga" },
+    { kategoria: "Środowisko", tytul: "Ustawa o systemie kaucyjnym i gospodarce obiegu zamkniętego", min: "Ministerstwo Klimatu i Środowiska", dlugosc: "krotka" },
+    { kategoria: "Edukacja", tytul: "Ustawa o cyfryzacji placówek oświatowych i modernizacji programu nauczania", min: "Ministerstwo Edukacji Narodowej", dlugosc: "srednia" },
+    { kategoria: "Zdrowie", tytul: "Ustawa o zintegrowanym systemie ratownictwa medycznego i opiece szpitalnej", min: "Ministerstwo Zdrowia", dlugosc: "dluga" },
+    { kategoria: "Sprawiedliwość", tytul: "Ustawa o informatyzacji procedur sądowych i doręczeniach elektronicznych", min: "Ministerstwo Sprawiedliwości", dlugosc: "srednia" }
+];
+
+const PROPOZYCJE_UCHWAL = [
+    { kategoria: "Polityka Państwa", tytul: "Uchwała Rady Ministrów w sprawie przyjęcia Strategii Rozwoju Sztucznej Inteligencji", min: "Ministerstwo Cyfryzacji", dlugosc: "krotka" },
+    { kategoria: "Obronność", tytul: "Uchwała Rady Ministrów w sprawie programu modernizacji technicznej Sił Zbrojnych", min: "Ministerstwo Obrony Narodowej", dlugosc: "srednia" },
+    { kategoria: "Infrastruktura", tytul: "Uchwała w sprawie Krajowego Programu Kolejowego do roku 2030", min: "Ministerstwo Infrastruktury", dlugosc: "dluga" }
+];
+
+// Instancja aplikacji i nawigacja AI
+const AppLegislacyjna = {
+    renderujPropozycje() {
+        const container = document.getElementById("propozycje-list");
+        if (!container) return;
+
+        const wsezystkiePropozycje = [...PROPOZYCJE_USTAW, ...PROPOZYCJE_UCHWAL];
+        container.innerHTML = wsezystkiePropozycje.map(prop => `
+            <div class="propozycja-card" onclick="AppLegislacyjna.przekierujDoAI('${encodeURIComponent(prop.tytul)}', '${prop.min}', '${prop.dlugosc}')">
+                <span class="badge">${prop.kategoria}</span>
+                <h4>${prop.tytul}</h4>
+                <p><small>Wnioskodawca: ${prop.min} | Format: ${prop.dlugosc}</small></p>
             </div>
+        `).join("");
+    },
 
-            <!-- Zakładki Navigation -->
-            <nav class="flex gap-2 bg-slate-950 p-1 rounded-xl border border-slate-800">
-                <button onclick="switchTab('proposals')" id="tab-proposals" class="px-4 py-2 text-sm font-medium rounded-lg transition-all flex items-center gap-2 bg-red-700 text-white shadow">
-                    <i class="fa-solid fa-folder-open"></i> Baza Propozycji
-                </button>
-                <button onclick="switchTab('ai-generator')" id="tab-ai-generator" class="px-4 py-2 text-sm font-medium rounded-lg transition-all flex items-center gap-2 text-slate-400 hover:text-slate-200 hover:bg-slate-800">
-                    <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i> Generator AI
-                </button>
-                <button onclick="switchTab('checker')" id="tab-checker" class="px-4 py-2 text-sm font-medium rounded-lg transition-all flex items-center gap-2 text-slate-400 hover:text-slate-200 hover:bg-slate-800">
-                    <i class="fa-solid fa-file-circle-check text-blue-400"></i> Sprawdzarka ZTP
-                </button>
-            </nav>
-        </div>
-    </header>
+    przekierujDoAI(tytul, ministerstwo, dlugosc) {
+        const decTytul = decodeURIComponent(tytul);
+        
+        // Przełączenie widoku na panel AI Generatora
+        document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+        const aiTab = document.getElementById('tab-ai-generator');
+        if (aiTab) aiTab.style.display = 'block';
 
-    <!-- Główna Zawartość -->
-    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        // Wypełnienie formularza danymi z wybranej propozycji
+        const inputPrompt = document.getElementById('ai-prompt-input');
+        const selectMin = document.getElementById('ai-ministerstwo-select');
+        const selectDlugosc = document.getElementById('ai-dlugosc-select');
 
-        <!-- SEKCJA 1: BAZA PROPOZYCJI -->
-        <section id="sec-proposals" class="space-y-6">
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
-                <div class="flex flex-wrap items-center justify-between gap-4">
-                    <div>
-                        <h2 class="text-lg font-semibold text-slate-100 flex items-center gap-2">
-                            <i class="fa-solid fa-filter text-red-500"></i> Kategoria Inicjatywy
-                        </h2>
-                        <p class="text-xs text-slate-400">Wybierz typ inicjatywy legislacyjnej oraz właściwy organ</p>
-                    </div>
-                    <div class="relative min-w-[280px]">
-                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                        <input type="text" id="searchInput" oninput="filterProposals()" placeholder="Szukaj po tytule, ministerstwie..." class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-9 pr-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-red-500 transition">
-                    </div>
-                </div>
+        if (inputPrompt) inputPrompt.value = decTytul;
+        if (selectMin) selectMin.value = ministerstwo;
+        if (selectDlugosc) selectDlugosc.value = dlugosc;
 
-                <div class="flex flex-wrap gap-2">
-                    <button onclick="setCategoryFilter('all')" id="cat-all" class="cat-btn px-4 py-2 text-sm font-medium rounded-xl border border-red-600 bg-red-950/60 text-red-300">
-                        Wszystkie (<span id="count-all">0</span>)
-                    </button>
-                    <button onclick="setCategoryFilter('RPU')" id="cat-RPU" class="cat-btn px-4 py-2 text-sm font-medium rounded-xl border border-slate-800 bg-slate-950 text-slate-400 hover:text-slate-200">
-                        RPU (Rządowe Projekty Ustaw) (<span id="count-RPU">0</span>)
-                    </button>
-                    <button onclick="setCategoryFilter('UCHWAŁA')" id="cat-UCHWAŁA" class="cat-btn px-4 py-2 text-sm font-medium rounded-xl border border-slate-800 bg-slate-950 text-slate-400 hover:text-slate-200">
-                        Projekty Uchwał (<span id="count-UCHWAŁA">0</span>)
-                    </button>
-                    <button onclick="setCategoryFilter('PPU')" id="cat-PPU" class="cat-btn px-4 py-2 text-sm font-medium rounded-xl border border-slate-800 bg-slate-950 text-slate-400 hover:text-slate-200">
-                        PPU (Poselskie Projekty Ustaw) (<span id="count-PPU">0</span>)
-                    </button>
-                    <button onclick="setCategoryFilter('OPU')" id="cat-OPU" class="cat-btn px-4 py-2 text-sm font-medium rounded-xl border border-slate-800 bg-slate-950 text-slate-400 hover:text-slate-200">
-                        OPU (Obywatelskie Projekty Ustaw) (<span id="count-OPU">0</span>)
-                    </button>
-                </div>
+        // Auto-generowanie treści po przekierowaniu
+        this.generujTrescAI(decTytul, ministerstwo, dlugosc);
+    },
 
-                <div class="pt-3 border-t border-slate-800/80 flex flex-wrap gap-4 items-center justify-between">
-                    <div class="flex items-center gap-2 flex-wrap" id="ministry-filter-wrapper">
-                        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Ministerstwo / Autor:</span>
-                        <select id="ministrySelect" onchange="filterProposals()" class="bg-slate-950 border border-slate-800 text-xs text-slate-300 rounded-lg px-3 py-1.5 focus:outline-none focus:border-red-500">
-                            <option value="all">Wszystkie Ministerstwa / Wnioskodawcy</option>
-                        </select>
-                    </div>
+    generujTrescAI(tytul, ministerstwo, dlugosc) {
+        const output = document.getElementById('editor-output');
+        if (!output) return;
 
-                    <div class="flex items-center gap-2 flex-wrap">
-                        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Typ Aktu:</span>
-                        <select id="docTypeSelect" onchange="filterProposals()" class="bg-slate-950 border border-slate-800 text-xs text-slate-300 rounded-lg px-3 py-1.5 focus:outline-none focus:border-red-500">
-                            <option value="all">Wszystkie typy aktów</option>
-                            <option value="Projekt ustawy">Projekt ustawy (Nowa)</option>
-                            <option value="Projekt ustawy o zmianie ustawy">Projekt ustawy o zmianie ustawy (Nowelizacja)</option>
-                            <option value="Projekt uchwały">Projekt uchwały</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <div id="proposalsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            </div>
-        </section>
-
-        <!-- SEKCJA 2: GENERATOR AI -->
-        <section id="sec-ai-generator" class="hidden space-y-6">
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
-                <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <span id="ai-category-badge" class="bg-red-950 text-red-400 border border-red-800 text-xs px-2.5 py-1 rounded-lg font-semibold">RPU</span>
-                            <span id="ai-type-badge" class="bg-slate-800 text-slate-300 text-xs px-2.5 py-1 rounded-lg font-semibold">Projekt ustawy</span>
-                        </div>
-                        <h2 id="ai-doc-title" class="text-xl font-bold text-slate-100 mt-2">Wybierz propozycję z bazy lub wygeneruj projekt</h2>
-                        <p id="ai-doc-author" class="text-xs text-slate-400 mt-1">Ministerstwo Cyfryzacji</p>
-                    </div>
-
-                    <div class="flex items-center gap-3">
-                        <div class="flex items-center gap-2 bg-slate-950 p-1.5 border border-slate-800 rounded-xl text-xs">
-                            <span class="text-slate-400 px-2 font-medium">Tryb długości:</span>
-                            <button onclick="toggleLengthMode('auto')" id="mode-auto" class="px-2.5 py-1 rounded-lg bg-red-700 text-white font-medium">Naprzemienny (Długa/Krótka)</button>
-                            <button onclick="toggleLengthMode('long')" id="mode-long" class="px-2.5 py-1 rounded-lg text-slate-400 hover:text-slate-200">Zawsze Długa</button>
-                            <button onclick="toggleLengthMode('short')" id="mode-short" class="px-2.5 py-1 rounded-lg text-slate-400 hover:text-slate-200">Zawsze Krótka</button>
-                        </div>
-
-                        <button onclick="generateCurrentAIDraft()" class="bg-red-600 hover:bg-red-500 text-white font-medium text-sm px-4 py-2.5 rounded-xl transition shadow flex items-center gap-2">
-                            <i class="fa-solid fa-arrows-rotate"></i> Wygeneruj Ponownie
-                        </button>
-                    </div>
-                </div>
-
-                <div id="ai-status-bar" class="hidden mb-4 bg-slate-950 border border-slate-800 rounded-xl p-3 flex items-center gap-3">
-                    <div class="w-4 h-4 border-2 border-red-500 border-t-transparent rounded-full animate-spin"></div>
-                    <span id="ai-status-text" class="text-xs font-medium text-slate-300">Sztuczna Inteligencja analizuje strukturę ZTP i generuje pełny akt prawny...</span>
-                </div>
-
-                <div class="paper-view rounded-xl p-8 md:p-12 min-h-[600px] shadow-2xl relative">
-                    <div class="flex justify-between items-center border-b pb-4 mb-6 border-slate-200 text-xs text-slate-500">
-                        <span>RZECZPOSPOLITA POLSKA</span>
-                        <span id="ai-doc-date">Druk nr 401/2026</span>
-                        <span>DZIENNIK USTAW / MONITOR POLSKI</span>
-                    </div>
-
-                    <div id="ai-output-text" class="legal-font leading-relaxed whitespace-pre-line text-sm md:text-base text-slate-900">
-                        Kliknij w przycisk "Wygeneruj AI" przy dowolnej propozycji w Bazie Propozycji, aby wygenerować kompletny, sformatowany projekt aktu prawnego.
-                    </div>
-
-                    <div class="mt-8 pt-6 border-t border-slate-200 flex flex-wrap items-center justify-between gap-4 font-sans">
-                        <div class="text-xs text-slate-500 flex items-center gap-2">
-                            <i class="fa-solid fa-robot text-red-600"></i>
-                            <span id="ai-meta-info">Długość tekstu: - | Liczba Artykułów: -</span>
-                        </div>
-                        <div class="flex gap-2">
-                            <button onclick="sendToChecker()" class="bg-slate-900 hover:bg-slate-800 text-white text-xs px-4 py-2 rounded-lg font-semibold flex items-center gap-2 shadow">
-                                <i class="fa-solid fa-microscope text-blue-400"></i> Przeanalizuj w Sprawdzarce ZTP
-                            </button>
-                            <button onclick="copyAIText()" class="bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs px-4 py-2 rounded-lg font-semibold border border-slate-300 flex items-center gap-2">
-                                <i class="fa-solid fa-copy"></i> Kopiuj Tekst
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- SEKCJA 3: SPRAWDZARKA ZTP -->
-        <section id="sec-checker" class="hidden space-y-6">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-                <div class="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col h-full">
-                    <div class="flex items-center justify-between mb-4">
-                        <div>
-                            <h2 class="text-lg font-bold text-slate-100 flex items-center gap-2">
-                                <i class="fa-solid fa-vial text-blue-400"></i> Sprawdzarka Zgodności z ZTP
-                            </h2>
-                            <p class="text-xs text-slate-400">Zasady Techniki Prawodawczej (Dz.U. z 2016 r. poz. 283)</p>
-                        </div>
-                        <button onclick="runChecker()" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs px-4 py-2 rounded-xl transition shadow flex items-center gap-2">
-                            <i class="fa-solid fa-play"></i> Uruchom Analizę ZTP
-                        </button>
-                    </div>
-
-                    <div class="flex items-center gap-2 mb-3 overflow-x-auto pb-1 text-xs">
-                        <span class="text-slate-400 whitespace-nowrap font-medium">Testuj wzorce:</span>
-                        <button onclick="loadCheckerPreset('valid_law')" class="px-2.5 py-1 bg-slate-950 border border-slate-800 rounded-lg text-emerald-400 hover:bg-slate-800 whitespace-nowrap">
-                            <i class="fa-solid fa-check text-xs"></i> Poprawna Ustawa
-                        </button>
-                        <button onclick="loadCheckerPreset('invalid_num')" class="px-2.5 py-1 bg-slate-950 border border-slate-800 rounded-lg text-red-400 hover:bg-slate-800 whitespace-nowrap">
-                            <i class="fa-solid fa-triangle-exclamation text-xs"></i> Błąd: Przerwana Numeracja
-                        </button>
-                        <button onclick="loadCheckerPreset('invalid_ref')" class="px-2.5 py-1 bg-slate-950 border border-slate-800 rounded-lg text-amber-400 hover:bg-slate-800 whitespace-nowrap">
-                            <i class="fa-solid fa-bug text-xs"></i> Błąd: Złe Odwołanie
-                        </button>
-                        <button onclick="loadCheckerPreset('invalid_amendment')" class="px-2.5 py-1 bg-slate-950 border border-slate-800 rounded-lg text-rose-400 hover:bg-slate-800 whitespace-nowrap">
-                            <i class="fa-solid fa-file-circle-xmark text-xs"></i> Zła Zmiana Ustawy
-                        </button>
-                    </div>
-
-                    <textarea id="checkerInput" rows="18" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs font-mono text-slate-200 focus:outline-none focus:border-blue-500 leading-relaxed custom-scrollbar flex-grow" placeholder="Wklej tutaj treść aktu prawnego..."></textarea>
-                </div>
-
-                <div class="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col">
-                    <h3 class="text-base font-bold text-slate-100 mb-4 flex items-center justify-between">
-                        <span>Raport Walidacyjny ZTP</span>
-                        <span id="checker-status-badge" class="text-xs px-2.5 py-1 rounded-full font-semibold bg-slate-800 text-slate-400">Oczekiwanie</span>
-                    </h3>
-
-                    <div id="checkerResults" class="space-y-4 flex-grow custom-scrollbar overflow-y-auto max-h-[500px] pr-2">
-                        <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 text-center text-slate-400 text-xs">
-                            Wklej tekst ustawy i kliknij "Uruchom Analizę ZTP".
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </section>
-
-    </main>
-
-    <script>
-        const proposalsData = [
-            {
-                id: 'rpu-1',
-                category: 'RPU',
-                type: 'Projekt ustawy o zmianie ustawy',
-                title: 'Projekt ustawy o zmianie ustawy o podatku od towarów i usług oraz niektórych innych ustaw',
-                ministry: 'Ministerstwo Finansów',
-                description: 'Wdrożenie obowiązkowego Krajowego Systemu e-Faktur (KSeF) oraz uszczelnienie systemu poboru VAT w obrocie transgranicznym.',
-                tags: ['VAT', 'KSeF', 'Finanse']
-            },
-            {
-                id: 'rpu-2',
-                category: 'RPU',
-                type: 'Projekt ustawy',
-                title: 'Projekt ustawy o stabilizacji finansów samorządowych i dochodach JST',
-                ministry: 'Ministerstwo Finansów',
-                description: 'Nowy algorytm partycypacji jednostek samorządu terytorialnego w podatkach PIT i CIT oraz subwencja rozwojowa.',
-                tags: ['Samorządy', 'PIT', 'Subwencje']
-            },
-            {
-                id: 'rpu-3',
-                category: 'RPU',
-                type: 'Projekt ustawy',
-                title: 'Projekt ustawy o Krajowej Sieci Onkologicznej i modernizacji szpitali',
-                ministry: 'Ministerstwo Zdrowia',
-                description: 'Wprowadzenie jednolicie monitorowanych standardów leczenia chorób nowotworowych oraz centralnego rejestru kadr medycznych.',
-                tags: ['Zdrowie', 'Onkologia', 'Szpitale']
-            },
-            {
-                id: 'rpu-4',
-                category: 'RPU',
-                type: 'Projekt ustawy o zmianie ustawy',
-                title: 'Projekt ustawy o zmianie ustawy o Państwowym Ratownictwie Medycznym',
-                ministry: 'Ministerstwo Zdrowia',
-                description: 'Zwiększenie liczby motocyklowych zespołów ratownictwa medycznego oraz cyfryzacja dyspozyczni medycznych.',
-                tags: ['Ratownictwo', 'Zdrowie', 'Pojazdy']
-            },
-            {
-                id: 'rpu-5',
-                category: 'RPU',
-                type: 'Projekt ustawy',
-                title: 'Projekt ustawy o sztucznej inteligencji i bezpiecznym przetwarzaniu danych',
-                ministry: 'Ministerstwo Cyfryzacji',
-                description: 'Ustanowienie Komisji Rozwoju i Bezpieczeństwa AI, zasady certyfikacji modeli wysokiego ryzyka oraz ochrona danych.',
-                tags: ['AI', 'Cyfryzacja', 'Nowe Technologie']
-            },
-            {
-                id: 'rpu-6',
-                category: 'RPU',
-                type: 'Projekt ustawy o zmianie ustawy',
-                title: 'Projekt ustawy o zmianie ustawy o krajowym systemie cyberbezpieczeństwa',
-                ministry: 'Ministerstwo Cyfryzacji',
-                description: 'Implementacja unijnej dyrektywy NIS2, zaostrzenie wymogów dla operatorów usług kluczowych i dostawców chmury.',
-                tags: ['Cyberbezpieczeństwo', 'NIS2', 'IT']
-            },
-            {
-                id: 'rpu-7',
-                category: 'RPU',
-                type: 'Projekt ustawy o zmianie ustawy',
-                title: 'Projekt ustawy o zmianie ustawy - Kodeks karny oraz ustawy - Kodeks postępowania karnego',
-                ministry: 'Ministerstwo Sprawiedliwości',
-                description: 'Zaostrzenie kar za przestępstwa komputerowe, oszustwa internetowe typu phishing oraz usprawnienie e-doręczeń sądowych.',
-                tags: ['Kodeks Karny', 'Sądownictwo', 'Sąd']
-            },
-            {
-                id: 'rpu-8',
-                category: 'RPU',
-                type: 'Projekt ustawy',
-                title: 'Projekt ustawy o modernizacji i wsparciu obrony cywilnej oraz ludności',
-                ministry: 'Ministerstwo Obrony Narodowej',
-                description: 'Budowa nowych schronów dla ludności cywilnej, utworzenie Systemu Ostrzegania Narodowego i rezerw strategicznych.',
-                tags: ['MON', 'Obrona Cywilna', 'Bezpieczeństwo']
-            },
-            {
-                id: 'rpu-9',
-                category: 'RPU',
-                type: 'Projekt ustawy',
-                title: 'Projekt ustawy o przyspieszeniu inwestycji w odnawialne źródła energii',
-                ministry: 'Ministerstwo Klimatu i Środowiska',
-                description: 'Uproszczenie procedur wydawania decyzji środowiskowych dla elektrowni wiatrowych na lądzie oraz magazynów energii.',
-                tags: ['OZE', 'Klimat', 'Energia']
-            },
-            {
-                id: 'rpu-10',
-                category: 'RPU',
-                type: 'Projekt ustawy o zmianie ustawy',
-                title: 'Projekt ustawy o zmianie ustawy - Prawo o ruchu drogowym',
-                ministry: 'Ministerstwo Infrastruktury',
-                description: 'Zwiększenie kar za przekroczenie prędkości w obszarze zabudowanym oraz cyfrowe prawo jazdy od 17 roku życia.',
-                tags: ['Ruch Drogowy', 'Kierowcy', 'Transport']
-            },
-            {
-                id: 'rpu-11',
-                category: 'RPU',
-                type: 'Projekt ustawy',
-                title: 'Projekt ustawy o nowej cyfrowej szkole i powszechnym dostępie do e-podręczników',
-                ministry: 'Ministerstwo Edukacji',
-                description: 'Program dopłat do sprzętu komputerowego dla uczniów szkół podstawowych i wprowadzenie zajęć z higieny cyfrowej.',
-                tags: ['Edukacja', 'Szkoła', 'Cyfryzacja']
-            },
-            {
-                id: 'uch-1',
-                category: 'UCHWAŁA',
-                type: 'Projekt uchwały',
-                title: 'Projekt uchwały Rady Ministrów w sprawie przyjęcia Strategii Rozwoju Sztucznej Inteligencji w Polsce do roku 2030',
-                ministry: 'Ministerstwo Cyfryzacji',
-                description: 'Określenie priorytetów inwestycyjnych w polskie superkomputery, duże modele językowe oraz edukację kadr AI.',
-                tags: ['Uchwała RM', 'Strategia AI', 'Cyfryzacja']
-            },
-            {
-                id: 'uch-2',
-                category: 'UCHWAŁA',
-                type: 'Projekt uchwały',
-                title: 'Projekt uchwały Rady Ministrów w sprawie aktualizacji Polskiego Programu Energetyki Jądrowej',
-                ministry: 'Ministerstwo Klimatu i Środowiska',
-                description: 'Zatwierdzenie harmonogramu budowy pierwszej elektrowni jądrowej oraz wsparcia dla reaktorów SMR.',
-                tags: ['Uchwała RM', 'Atom', 'Energia']
-            },
-            {
-                id: 'uch-3',
-                category: 'UCHWAŁA',
-                type: 'Projekt uchwały',
-                title: 'Projekt uchwały Rady Ministrów w sprawie Budowy Strategicznego Portu Komunikacyjnego',
-                ministry: 'Ministerstwo Infrastruktury',
-                description: 'Ustanowienie programu wieloletniego rozbudowy infrastruktury kolejowej wysokich prędkości.',
-                tags: ['Uchwała RM', 'Transport', 'Kolej']
-            },
-            {
-                id: 'uch-4',
-                category: 'UCHWAŁA',
-                type: 'Projekt uchwały',
-                title: 'Projekt uchwały Sejmu RP w sprawie upamiętnienia Setnej Rocznicy Polskiego Radia',
-                ministry: 'Ministerstwo Kultury i Dziedzictwa Narodowego',
-                description: 'Uczczenie dorobku polskiej radiofonii oraz jej roli w zachowaniu tożsamości narodowej i kultury.',
-                tags: ['Uchwała Sejmu', 'Kultura', 'Radio']
-            },
-            {
-                id: 'ppu-1',
-                category: 'PPU',
-                type: 'Projekt ustawy o zmianie ustawy',
-                title: 'Projekt ustawy o zmianie ustawy - Kodeks pracy (Skrócenie tygodnia pracy do 35 godzin)',
-                ministry: 'Klub Parlamentarny "Nowa Przyszłość"',
-                description: 'Pilotażowe wprowadzenie 35-godzinnego tygodnia pracy przy zachowaniu dotychczasowej wysokości wynagrodzenia.',
-                tags: ['Poselski', 'Kodeks Pracy', 'Praca']
-            },
-            {
-                id: 'ppu-2',
-                category: 'PPU',
-                type: 'Projekt ustawy',
-                title: 'Projekt ustawy o podniesieniu kwoty wolnej od podatku do 60 000 zł',
-                ministry: 'Grupa 15 Posłów',
-                description: 'Zwiększenie kwoty wolnej od podatku dochodowego od osób fizycznych dla wszystkich podatników.',
-                tags: ['Poselski', 'Podatki', 'PIT']
-            },
-            {
-                id: 'ppu-3',
-                category: 'PPU',
-                type: 'Projekt ustawy o zmianie ustawy',
-                title: 'Projekt ustawy o zmianie ustawy o ochronie praw lokatorów',
-                ministry: 'Komisja Spraw Obywatelskich',
-                description: 'Zwiększenie zasobu mieszkań komunalnych oraz uregulowanie rynku najmu krótkoterminowego w miastach.',
-                tags: ['Poselski', 'Mieszkania', 'Lokatorzy']
-            },
-            {
-                id: 'opu-1',
-                category: 'OPU',
-                type: 'Projekt ustawy',
-                title: 'Projekt ustawy o ochronie lokalnych zasobów wodnych i małej retencji "Czysta Woda"',
-                ministry: 'Komitet Inicjatywy Obywatelskiej "Czysta Woda"',
-                description: 'Wprowadzenie obowiązkowych zbiorników retencyjnych przy inwestycjach budowlanych i zakaz betonowania rzek.',
-                tags: ['Obywatelski', 'Ekologia', 'Woda']
-            },
-            {
-                id: 'opu-2',
-                category: 'OPU',
-                type: 'Projekt ustawy o zmianie ustawy',
-                title: 'Projekt ustawy o zmianie ustawy o ochronie zwierząt "Stop Łańcuchom"',
-                ministry: 'Komitet Inicjatywy Obywatelskiej "Pupile"',
-                description: 'Całkowity zakaz trzymania psów na uwięzi oraz podwyższenie kar za znęcanie się nad zwierzętami.',
-                tags: ['Obywatelski', 'Zwierzęta', 'Prawo']
-            },
-            {
-                id: 'opu-3',
-                category: 'OPU',
-                type: 'Projekt ustawy',
-                title: 'Projekt ustawy o gwarantowanym czasie dostępu do lekarza specjalisty',
-                ministry: 'Komitet "Zdrowie Obywateli"',
-                description: 'Gwarancja wizyty u lekarza specjalisty w ciągu 30 dni lub zwrot kosztów wizyty w gabinecie prywatnym.',
-                tags: ['Obywatelski', 'Zdrowie', 'NFZ']
-            }
-        ];
-
-        let currentTab = 'proposals';
-        let currentCategoryFilter = 'all';
-        let selectedProposal = proposalsData[0];
-        let lengthMode = 'auto';
-        let lastGeneratedLength = 'short';
-
-        function populateMinistryOptions() {
-            const select = document.getElementById('ministrySelect');
-            select.innerHTML = '<option value="all">Wszystkie Ministerstwa / Autorzy</option>';
-
-            const ministries = [...new Set(proposalsData.map(p => p.ministry))].sort();
-            ministries.forEach(m => {
-                const opt = document.createElement('option');
-                opt.value = m;
-                opt.textContent = m;
-                select.appendChild(opt);
-            });
+        let strukturaStron = "";
+        if (dlugosc === "krotka") {
+            strukturaStron = "Art. 1. W ustawie z dnia... wprowadza się następujące zmiany...\nArt. 2. Ustawa wchodzi w życie po upływie 14 dni od dnia ogłoszenia.";
+        } else if (dlugosc === "dluga") {
+            strukturaStron = "Rozdział 1. Przepisy ogólne\nArt. 1. [Zakres regulacji]\nArt. 2. [Definicje legalne]\n\nRozdział 2. Zadania i kompetencje organów\nArt. 3. [Obowiązki organów administrative]\nArt. 4. [Nadzór i kontrola]\n\nRozdział 3. Przepisy karne i epizodyczne\nArt. 5. [Sankcje]\nArt. 6. [Wejście w życie]";
+        } else {
+            strukturaStron = "Art. 1. Określa się zasady i tryb...\nArt. 2. Organem właściwym w sprawach... jest...\nArt. 3. Ustawa wchodzi w życie z dniem 1 stycznia kolejnego roku.";
         }
 
-        function updateCategoryCounts() {
-            document.getElementById('count-all').textContent = proposalsData.length;
-            document.getElementById('count-RPU').textContent = proposalsData.filter(p => p.category === 'RPU').length;
-            document.getElementById('count-UCHWAŁA').textContent = proposalsData.filter(p => p.category === 'UCHWAŁA').length;
-            document.getElementById('count-PPU').textContent = proposalsData.filter(p => p.category === 'PPU').length;
-            document.getElementById('count-OPU').textContent = proposalsData.filter(p => p.category === 'OPU').length;
+        output.value = `USTAWA\nz dnia ${new Date().toLocaleDateString('pl-PL')} r.\n\no ${tytul.toLowerCase()}\n\nWniosek: ${ministerstwo}\n\n${strukturaStron}`;
+        this.uruchomAudytorZTP(output.value);
+    },
+
+    uruchomAudytorZTP(tekst) {
+        const ztpReport = document.getElementById('ztp-report-panel');
+        if (!ztpReport) return;
+
+        let bledy = [];
+        if (!tekst.includes("Wchodzi w życie") && !tekst.includes("wejście w życie")) {
+            bledy.push("Brak przepisu o wejściu w życie aktu (§ 49 ZTP).");
+        }
+        if (tekst.includes("Rozdział") && !tekst.includes("Rozdział 1")) {
+            bledy.push("Błędna numeracja rozdziałów lub brak pierwszego rozdziału.");
         }
 
-        function renderProposals() {
-            const grid = document.getElementById('proposalsGrid');
-            const search = document.getElementById('searchInput').value.toLowerCase();
-            const minSel = document.getElementById('ministrySelect').value;
-            const docSel = document.getElementById('docTypeSelect').value;
-
-            const filtered = proposalsData.filter(item => {
-                if (currentCategoryFilter !== 'all' && item.category !== currentCategoryFilter) return false;
-                if (minSel !== 'all' && item.ministry !== minSel) return false;
-                if (docSel !== 'all' && item.type !== docSel) return false;
-                if (search && !item.title.toLowerCase().includes(search) && !item.description.toLowerCase().includes(search) && !item.ministry.toLowerCase().includes(search)) return false;
-                return true;
-            });
-
-            grid.innerHTML = '';
-
-            if (filtered.length === 0) {
-                grid.innerHTML = `
-                    <div class="col-span-full bg-slate-900 border border-slate-800 rounded-2xl p-12 text-center text-slate-400">
-                        <i class="fa-solid fa-folder-open text-4xl text-slate-600 mb-3"></i>
-                        <p class="text-base font-semibold text-slate-300">Brak propozycji spełniających podane kryteria</p>
-                    </div>
-                `;
-                return;
-            }
-
-            filtered.forEach(p => {
-                let catBadgeClass = 'bg-red-950 text-red-300 border-red-800';
-                if (p.category === 'UCHWAŁA') catBadgeClass = 'bg-blue-950 text-blue-300 border-blue-800';
-                if (p.category === 'PPU') catBadgeClass = 'bg-amber-950 text-amber-300 border-amber-800';
-                if (p.category === 'OPU') catBadgeClass = 'bg-emerald-950 text-emerald-300 border-emerald-800';
-
-                const card = document.createElement('div');
-                card.className = "bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-2xl p-5 shadow-lg flex flex-col justify-between transition-all hover:-translate-y-1";
-                card.innerHTML = `
-                    <div>
-                        <div class="flex items-center justify-between gap-2 mb-3">
-                            <span class="border text-[11px] px-2.5 py-0.5 rounded-full font-bold uppercase ${catBadgeClass}">
-                                ${p.category}
-                            </span>
-                            <span class="text-[11px] text-slate-400 bg-slate-950 px-2 py-0.5 rounded-lg border border-slate-800">
-                                ${p.type}
-                            </span>
-                        </div>
-                        <h3 class="text-sm font-bold text-slate-100 line-clamp-2 leading-snug mb-2">${p.title}</h3>
-                        <p class="text-xs text-slate-400 mb-3 line-clamp-3">${p.description}</p>
-                        <div class="flex items-center gap-1.5 text-xs text-slate-300 font-medium mb-4">
-                            <i class="fa-solid ${p.category === 'RPU' || p.category === 'UCHWAŁA' ? 'fa-building-columns text-red-400' : 'fa-users text-amber-400'}"></i>
-                            <span class="truncate">${p.ministry}</span>
-                        </div>
-                    </div>
-                    <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between">
-                        <div class="flex gap-1 flex-wrap">
-                            ${p.tags.map(t => `<span class="text-[10px] bg-slate-950 text-slate-400 px-2 py-0.5 rounded">${t}</span>`).join('')}
-                        </div>
-                        <button onclick="selectAndGenerate('${p.id}')" class="bg-red-700 hover:bg-red-600 text-white font-medium text-xs px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 shadow">
-                            <i class="fa-solid fa-wand-magic-sparkles text-amber-300"></i> Wygeneruj AI
-                        </button>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-        }
-
-        function setCategoryFilter(cat) {
-            currentCategoryFilter = cat;
-            document.querySelectorAll('.cat-btn').forEach(btn => {
-                btn.className = "cat-btn px-4 py-2 text-sm font-medium rounded-xl border border-slate-800 bg-slate-950 text-slate-400 hover:text-slate-200";
-            });
-
-            const activeBtn = document.getElementById(`cat-${cat}`);
-            if (activeBtn) {
-                activeBtn.className = "cat-btn px-4 py-2 text-sm font-medium rounded-xl border border-red-600 bg-red-950/60 text-red-300";
-            }
-            renderProposals();
-        }
-
-        function filterProposals() {
-            renderProposals();
-        }
-
-        function selectAndGenerate(id) {
-            selectedProposal = proposalsData.find(p => p.id === id) || proposalsData[0];
-            switchTab('ai-generator');
-            generateCurrentAIDraft();
-        }
-
-        function toggleLengthMode(mode) {
-            lengthMode = mode;
-            document.getElementById('mode-auto').className = mode === 'auto' ? "px-2.5 py-1 rounded-lg bg-red-700 text-white font-medium" : "px-2.5 py-1 rounded-lg text-slate-400 hover:text-slate-200";
-            document.getElementById('mode-long').className = mode === 'long' ? "px-2.5 py-1 rounded-lg bg-red-700 text-white font-medium" : "px-2.5 py-1 rounded-lg text-slate-400 hover:text-slate-200";
-            document.getElementById('mode-short').className = mode === 'short' ? "px-2.5 py-1 rounded-lg bg-red-700 text-white font-medium" : "px-2.5 py-1 rounded-lg text-slate-400 hover:text-slate-200";
-        }
-
-        function generateCurrentAIDraft() {
-            const output = document.getElementById('ai-output-text');
-            const statusBar = document.getElementById('ai-status-bar');
-            
-            let isLong = false;
-            if (lengthMode === 'long') {
-                isLong = true;
-            } else if (lengthMode === 'short') {
-                isLong = false;
-            } else {
-                isLong = (lastGeneratedLength === 'short');
-                lastGeneratedLength = isLong ? 'long' : 'short';
-            }
-
-            document.getElementById('ai-category-badge').textContent = selectedProposal.category;
-            document.getElementById('ai-type-badge').textContent = selectedProposal.type;
-            document.getElementById('ai-doc-title').textContent = selectedProposal.title;
-            document.getElementById('ai-doc-author').textContent = `Inicjator / Organ: ${selectedProposal.ministry}`;
-
-            statusBar.classList.remove('hidden');
-            output.innerHTML = `<span class="animate-pulse text-slate-400">Generowanie aktu prawnego w formule ZTP przez Moduł Legislacyjny AI...</span>`;
-
-            setTimeout(() => {
-                const generatedText = createFullLegalText(selectedProposal, isLong);
-                output.textContent = generatedText;
-                statusBar.classList.add('hidden');
-
-                const wordCount = generatedText.split(/\s+/).length;
-                const artCount = (generatedText.match(/Art\.\s*\d+/g) || generatedText.match(/§\s*\d+/g) || []).length;
-                document.getElementById('ai-meta-info').textContent = `Tryb: ${isLong ? 'DŁUGI (Rozbudowany)' : 'KRÓTKI (Zwięzły)'} | Słów: ${wordCount} | Liczba artykułów/paragrafów: ${artCount}`;
-            }, 600);
-        }
-
-        function createFullLegalText(prop, isLong) {
-            const today = new Date().toLocaleDateString('pl-PL', { day: 'numeric', month: 'long', year: 'numeric' });
-            
-            if (prop.type === 'Projekt uchwały') {
-                if (isLong) {
-                    return `UCHWAŁA NR ${Math.floor(Math.random()*300 + 100)}/2026
-RADY MINISTRÓW
-z dnia ${today} r.
-
-w sprawie przyjęcia programu pod nazwą: "${prop.title.replace('Projekt uchwały Rady Ministrów w sprawie ', '')}"
-
-Na podstawie art. 148 pkt 6 Konstytucji Rzeczypospolitej Polskiej z dnia 2 kwietnia 1997 r. (Dz. U. poz. 483, z późn. zm.) Rada Ministrów uchwala, co następuje:
-
-§ 1. Przyjmuje się program pod nazwą "${prop.title.replace('Projekt uchwały Rady Ministrów w sprawie ', '')}", stanowiący załącznik do niniejszej uchwały.
-
-§ 2. 1. Wykonanie uchwały powierza się właściwym ministrom oraz kierownikom urzędów centralnych.
-2. Minister właściwy do spraw administracji rządowej składa Radzie Ministrów coroczne sprawozdanie z realizacji programu, w terminie do dnia 31 marca roku następującego po roku sprawozdawczym.
-
-§ 3. Środki finansowe na realizację zadań wynikających z programu, o którym mowa w § 1, będą zabezpieczane w corocznych ustawach budżetowych w ramach limitów wydatków właściwych części budżetowych.
-
-§ 4. Uchwała wchodzi w życie z dniem następującym po dniu ogłoszenia.`;
-                } else {
-                    return `UCHWAŁA NR ${Math.floor(Math.random()*100 + 10)}/2026
-RADY MINISTRÓW
-z dnia ${today} r.
-
-w sprawie przyjęcia rozwiązań z zakresu: ${prop.tags.join(', ')}
-
-Na podstawie art. 148 pkt 6 Konstytucji Rzeczypospolitej Polskiej uchwala się, co następuje:
-
-§ 1. Przyjmuje się założenia do programu strategicznego w obszarze wskazanym w tytule.
-
-§ 2. Uchwała wchodzi w życie z dniem podjęcia.`;
-                }
-            }
-
-            if (prop.type === 'Projekt ustawy o zmianie ustawy') {
-                if (isLong) {
-                    return `USTAWA
-z dnia ${today} r.
-
-o zmianie ustawy oraz niektórych innych ustaw
-
-Art. 1. W ustawie z dnia 11 września 2019 r. (Dz. U. z 2023 r. poz. 1200, z późn. zm.) wprowadza się następujące zmiany:
-1) w art. 4 ust. 2 otrzymuje brzmienie:
-"2. Do zadań organu należy również monitorowanie wdrażania rozwiązań z zakresu: ${prop.tags.join(', ')}.";
-2) po art. 12 dodaje się art. 12a w brzmieniu:
-"Art. 12a. 1. Wnioskodawca składa wniosek w formie elektronicznej za pośrednictwem dedykowanego systemu teleinformatycznego.
-2. Minister właściwy określi, w drodze rozporządzenia, szczegółowe warunki techniczne systemu, o którym mowa w ust. 1.";
-3) w art. 45 w ust. 1 pkt 3 lit. a dodaje się średnik i lit. b w brzmieniu:
-"b) wymogi w zakresie bezpieczeństwa informacji i ochrony danych osobowych.".
-
-Art. 2. W sprawach wszczętych i niezakończonych przed dniem wejścia w życie niniejszej ustawy stosuje się przepisy dotychczasowe.
-
-Art. 3. Ustawa wchodzi w życie po upływie 14 dni od dnia ogłoszenia.`;
-                } else {
-                    return `USTAWA
-z dnia ${today} r.
-
-o zmianie ustawy
-
-Art. 1. W ustawie z dnia 15 lutego 1992 r. (Dz. U. z 2023 r. poz. 250) wprowadza się następujące zmiany:
-1) w art. 2 dodaje się ust. 3 w brzmieniu:
-"3. Przepis ust. 1 stosuje się odpowiednio do spraw z zakresu opisanego w ustawie z dnia ${today} r.".
-
-Art. 2. Ustawa wchodzi w życie z dniem 1 stycznia 2027 r.`;
-                }
-            }
-
-            if (isLong) {
-                return `USTAWA
-z dnia ${today} r.
-
-${prop.title.replace('Projekt ustawy o ', 'o ').replace('Projekt ustawy ', 'o ')}
-
-Rozdział 1
-Przepisy ogólne
-
-Art. 1. Ustawa określa:
-1) zasady i tryb funkcjonowania rozwiązań z zakresu: ${prop.tags.join(', ')};
-2) kompetencje organów administracji publicznej;
-3) prawa i obowiązki podmiotów uczestniczących w procedurach.
-
-Art. 2. Użyte w ustawie określenia oznaczają:
-1) organ – ministra właściwego do spraw administracji publicznej;
-2) system – zintegrowany system informatyczny służący do obsługi wniosków;
-3) wnioskodawca – osobę fizyczną lub prawną składającą wniosek.
-
-Rozdział 2
-Zasady funkcjonowania i procedury
-
-Art. 3. 1. Postępowanie wszczyna się na wniosek złożony w formie dokumentu elektronicznego.
-2. Wniosek zawiera dane identyfikujące wnioskodawcę oraz uzasadnienie.
-
-Art. 4. Organ wydaje decyzję w terminie 30 dni od dnia złożenia kompletnego wniosku.
-
-Rozdział 3
-Przepisy karne i przejściowe
-
-Art. 5. Kto wbrew obowiązkowi nie dopełnia wymogów określonych w art. 3 ust. 1, podlega karze grzywny.
-
-Art. 6. Ustawa wchodzi w życie po upływie 30 dni od dnia ogłoszenia.`;
-            } else {
-                return `USTAWA
-z dnia ${today} r.
-
-${prop.title.replace('Projekt ustawy o ', 'o ').replace('Projekt ustawy ', 'o ')}
-
-Art. 1. Regulacja ustala podstawowe standardy w obszarze opisanym w niniejszym akcie.
-
-Art. 2. 1. Organem właściwym w sprawach określonych w ustawie jest właściwy minister.
-2. Wykonanie ustawy powierza się organom administracji.
-
-Art. 3. Ustawa wchodzi w życie po upływie 14 dni od dnia ogłoszenia.`;
-            }
-        }
-
-        function copyAIText() {
-            const txt = document.getElementById('ai-output-text').textContent;
-            navigator.clipboard.writeText(txt);
-            alert('Skopiowano treść aktu do schowka!');
-        }
-
-        function sendToChecker() {
-            const txt = document.getElementById('ai-output-text').textContent;
-            document.getElementById('checkerInput').value = txt;
-            switchTab('checker');
-            runChecker();
-        }
-
-        function loadCheckerPreset(type) {
-            const ta = document.getElementById('checkerInput');
-            if (type === 'valid_law') {
-                ta.value = `USTAWA
-z dnia 14 maja 2026 r.
-
-o ochronie danych cyfrowych
-
-Art. 1. Ustawa określa zasady przetwarzania danych w systemach teleinformatycznych.
-
-Art. 2. 1. Przetwarzanie danych wymaga zgody użytkownika.
-2. Zgoda może być wycofana w każdym czasie.
-
-Art. 3. Kto narusza przepisy art. 2, podlega karze grzywny.
-
-Art. 4. Ustawa wchodzi w życie po upływie 14 dni od dnia ogłoszenia.`;
-            } else if (type === 'invalid_num') {
-                ta.value = `USTAWA
-z dnia 10 marca 2026 r.
-
-o zmianach w budownictwie
-
-Art. 1. Ustawa reguluje kwestie nadzoru.
-
-Art. 3. Przeoczon artykuł 2! Przerwana numeracja artykułów.
-
-Art. 4. W myśl art. 10 ustawa nakłada kary.
-
-Art. 5. Ustawa wchodzi w życie z dniem ogłoszenia.`;
-            } else if (type === 'invalid_ref') {
-                ta.value = `USTAWA
-o cyfryzacji urzędów
-
-Art. 1. Zgodnie z art. 25 niniejszej ustawy urzędy przechodzą na system cyfrowy.
-
-Art. 2. Brak daty ustawy w nagłówku oraz brak przepisu o wejściu w życie!`;
-            } else if (type === 'invalid_amendment') {
-                ta.value = `USTAWA
-z dnia 12 lutego 2026 r.
-
-o zmianie ustawy o podatkach
-
-Art. 1. Zmieniamy ustawę o podatkach w ten sposób że podatek wynosi 10%.
-
-- punkt wypunktowany zamiast litery lub punktu ZTP!
-
-Art. 2. Ustawa wchodzi w życie z dniem ogłoszenia.`;
-            }
-            runChecker();
-        }
-
-        function runChecker() {
-            const text = document.getElementById('checkerInput').value;
-            const resDiv = document.getElementById('checkerResults');
-            const badge = document.getElementById('checker-status-badge');
-
-            if (!text.trim()) {
-                resDiv.innerHTML = `<div class="p-4 bg-slate-950 text-slate-400 text-xs rounded-xl">Wklej tekst aktu prawnego.</div>`;
-                badge.textContent = "Brak tekstu";
-                badge.className = "text-xs px-2.5 py-1 rounded-full font-semibold bg-slate-800 text-slate-400";
-                return;
-            }
-
-            const errors = [];
-            const warnings = [];
-
-            const isLaw = text.includes('USTAWA');
-            const isResolution = text.includes('UCHWAŁA');
-
-            if (!isLaw && !isResolution) {
-                errors.push({
-                    code: 'ZTP § 14',
-                    msg: 'Brak określenia rodzaju aktu prawnego w nagłówku (brak wyrazów USTAWA lub UCHWAŁA).'
-                });
-            }
-
-            if (!text.match(/z dnia \d{1,2}\s+[a-złóęćśąźżA-ZŁÓĘĆŚĄŹŻ]+\s+\d{4}\s*r\./i)) {
-                warnings.push({
-                    code: 'ZTP § 16',
-                    msg: 'Brak prawidłowo sformułowanej daty aktu (wzorzec: "z dnia [dzień] [miesiąc słownie] [rok] r.").'
-                });
-            }
-
-            const artMatches = [...text.matchAll(/Art\.\s*(\d+)/g)].map(m => parseInt(m[1]));
-            if (artMatches.length > 0) {
-                for (let i = 0; i < artMatches.length; i++) {
-                    if (i === 0 && artMatches[0] !== 1) {
-                        errors.push({
-                            code: 'ZTP § 58',
-                            msg: `Akt nie rozpoczyna się od Art. 1 (wykryto Art. ${artMatches[0]}).`
-                        });
-                    }
-                    if (i > 0 && artMatches[i] !== artMatches[i-1] + 1) {
-                        errors.push({
-                            code: 'ZTP § 58',
-                            msg: `Naruszenie ciągłości numeracji artykułów: po Art. ${artMatches[i-1]} występuje Art. ${artMatches[i]} (brakujący Art. ${artMatches[i-1] + 1}).`
-                        });
-                    }
-                }
-
-                const maxArt = Math.max(...artMatches);
-                const refMatches = [...text.matchAll(/art\.\s*(\d+)/gi)].map(m => parseInt(m[1]));
-                refMatches.forEach(refNum => {
-                    if (!artMatches.includes(refNum)) {
-                        errors.push({
-                            code: 'ZTP § 149',
-                            msg: `Błędne odwołanie wewnętrzne: w tekście występuje odwołanie do art. ${refNum}, podczas gdy akt nie posiada takiego artykułu (maksymalny Art. to ${maxArt}).`
-                        });
-                    }
-                });
-            } else if (isLaw) {
-                errors.push({
-                    code: 'ZTP § 54',
-                    msg: 'Ustawa nie posiada prawidłowo wyodrębnionych artykułów (brak zwrotu "Art. 1.").'
-                });
-            }
-
-            if (text.toLowerCase().includes('o zmianie ustawy') && !text.toLowerCase().includes('wprowadza się następujące zmiany') && !text.toLowerCase().includes('wprowadza się zmianę')) {
-                errors.push({
-                    code: 'ZTP § 83',
-                    msg: 'Projekt ustawy o zmianie ustawy nie zawiera wymaganej formuły nowelizacyjnej ("wprowadza się następujące zmiany:").'
-                });
-            }
-
-            if (text.match(/^\s*-\s+/m)) {
-                warnings.push({
-                    code: 'ZTP § 56',
-                    msg: 'Stosowanie myślników (-) w wyliczeniach jest niedozwolone w technice prawodawczej. Należy stosować punkty (1)) lub litery (a)).'
-                });
-            }
-
-            if (!text.toLowerCase().includes('wchodzi w życie') && !text.toLowerCase().includes('wchodzą w życie')) {
-                errors.push({
-                    code: 'ZTP § 51',
-                    msg: 'Brak końcowego przepisu o wejściu w życie aktu prawnego ("Ustawa wchodzi w życie...").'
-                });
-            }
-
-            if (errors.length === 0 && warnings.length === 0) {
-                badge.textContent = "Zgodny z ZTP";
-                badge.className = "text-xs px-2.5 py-1 rounded-full font-semibold bg-emerald-950 text-emerald-300 border border-emerald-800";
-                resDiv.innerHTML = `
-                    <div class="bg-emerald-950/40 border border-emerald-800/80 rounded-xl p-4 text-emerald-300 space-y-2">
-                        <div class="flex items-center gap-2 font-bold text-sm">
-                            <i class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
-                            <span>Akt Prawny Zgodny z Dobrą Praktyką ZTP</span>
-                        </div>
-                        <p class="text-xs text-emerald-200/80 leading-relaxed">
-                            Nie wykryto żadnych naruszeń Zasad Techniki Prawodawczej. Numeracja artykułów, formuły oraz przepisy końcowe są poprawne.
-                        </p>
-                    </div>
-                `;
-            } else {
-                badge.textContent = `Wykryto Błędy (${errors.length})`;
-                badge.className = "text-xs px-2.5 py-1 rounded-full font-semibold bg-red-950 text-red-300 border border-red-800";
-
-                let html = '';
-
-                if (errors.length > 0) {
-                    html += `<div class="space-y-2">
-                        <h4 class="text-xs font-bold text-red-400 uppercase tracking-wider flex items-center gap-1.5">
-                            <i class="fa-solid fa-circle-xmark"></i> Błędy Krytyczne ZTP (${errors.length}):
-                        </h4>`;
-                    errors.forEach(err => {
-                        html += `
-                            <div class="bg-red-950/50 border border-red-900 rounded-xl p-3 text-xs text-red-200">
-                                <span class="bg-red-900 text-red-100 font-mono font-bold px-1.5 py-0.5 rounded text-[10px] mr-1.5">${err.code}</span>
-                                ${err.msg}
-                            </div>
-                        `;
-                    });
-                    html += `</div>`;
-                }
-
-                if (warnings.length > 0) {
-                    html += `<div class="space-y-2 mt-4">
-                        <h4 class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
-                            <i class="fa-solid fa-triangle-exclamation"></i> Ostrzeżenia Legislacyjne (${warnings.length}):
-                        </h4>`;
-                    warnings.forEach(warn => {
-                        html += `
-                            <div class="bg-amber-950/50 border border-amber-900 rounded-xl p-3 text-xs text-amber-200">
-                                <span class="bg-amber-900 text-amber-100 font-mono font-bold px-1.5 py-0.5 rounded text-[10px] mr-1.5">${warn.code}</span>
-                                ${warn.msg}
-                            </div>
-                        `;
-                    });
-                    html += `</div>`;
-                }
-
-                resDiv.innerHTML = html;
-            }
-        }
-
-        function switchTab(tabId) {
-            currentTab = tabId;
-            document.getElementById('sec-proposals').classList.add('hidden');
-            document.getElementById('sec-ai-generator').classList.add('hidden');
-            document.getElementById('sec-checker').classList.add('hidden');
-
-            document.getElementById('tab-proposals').className = "px-4 py-2 text-sm font-medium rounded-lg transition-all flex items-center gap-2 text-slate-400 hover:text-slate-200 hover:bg-slate-800";
-            document.getElementById('tab-ai-generator').className = "px-4 py-2 text-sm font-medium rounded-lg transition-all flex items-center gap-2 text-slate-400 hover:text-slate-200 hover:bg-slate-800";
-            document.getElementById('tab-checker').className = "px-4 py-2 text-sm font-medium rounded-lg transition-all flex items-center gap-2 text-slate-400 hover:text-slate-200 hover:bg-slate-800";
-
-            if (tabId === 'proposals') {
-                document.getElementById('sec-proposals').classList.remove('hidden');
-                document.getElementById('tab-proposals').className = "px-4 py-2 text-sm font-medium rounded-lg transition-all flex items-center gap-2 bg-red-700 text-white shadow";
-            } else if (tabId === 'ai-generator') {
-                document.getElementById('sec-ai-generator').classList.remove('hidden');
-                document.getElementById('tab-ai-generator').className = "px-4 py-2 text-sm font-medium rounded-lg transition-all flex items-center gap-2 bg-red-700 text-white shadow";
-            } else if (tabId === 'checker') {
-                document.getElementById('sec-checker').classList.remove('hidden');
-                document.getElementById('tab-checker').className = "px-4 py-2 text-sm font-medium rounded-lg transition-all flex items-center gap-2 bg-red-700 text-white shadow";
-            }
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            populateMinistryOptions();
-            updateCategoryCounts();
-            renderProposals();
-        });
-    </script>
-</body>
-</html>
+        ztpReport.innerHTML = bledy.length > 0 
+            ? `<div class="warning"><ul>${bledy.map(b => `<li>⚠️ ${b}</li>`).join('')}</ul></div>`
+            : `<div class="success">✅ Brak zastrzeżeń z zasadami techniki legislacyjnej.</div>`;
+    }
+};
+
+// Inicjalizacja przy załadowaniu drzewa DOM
+document.addEventListener("DOMContentLoaded", () => {
+    AppLegislacyjna.renderujPropozycje();
+});
