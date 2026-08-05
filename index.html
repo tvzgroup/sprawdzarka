@@ -71,7 +71,7 @@
 </head>
 <body onload="inicjalizujSystem()" class="bg-mesh text-slate-100 h-full flex flex-col font-sans antialiased selection:bg-blue-500 selection:text-white">
 
-    <!-- EKRAN LOGOWANIA / BRAMKA WERYFIKACYJNA -->
+    <!-- EKRAN LOGOWANIA / WERYFIKACJA NICKU -->
     <div id="authGate" class="fixed inset-0 z-[200] flex items-center justify-center bg-black/90 backdrop-blur-xl p-4">
         <div class="glass-panel p-8 rounded-3xl max-w-md w-full border border-blue-500/30 shadow-2xl space-y-6 text-center relative glow-effect">
             <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-3xl mx-auto shadow-lg shadow-blue-500/30 border border-white/10">
@@ -80,13 +80,12 @@
             
             <div>
                 <h2 class="text-xl font-bold text-white tracking-wide">Autoryzacja Dostępu v4.10</h2>
-                <p class="text-xs text-slate-400 mt-1">Wprowadź swój pseudonim, aby uzyskać dostęp do panelu legislacyjnego.</p>
+                <p class="text-xs text-slate-400 mt-1">Wprowadź swój pseudonim, aby przejść do systemu legislacyjnego.</p>
             </div>
 
             <div class="space-y-3">
-                <input type="text" id="userNickInput" onkeydown="if(event.key==='Enter') weryfikujDostep()" placeholder="Twój nick / identyfikator..." class="glass-input w-full px-4 py-3 rounded-xl text-sm font-medium text-center placeholder:text-slate-600">
-                <p id="authError" class="text-xs text-rose-500 font-semibold hidden"></p>
-                <button onclick="weryfikujDostep()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs py-3.5 rounded-xl transition-all shadow-lg shadow-blue-600/30 active:scale-[0.99]">
+                <input type="text" id="userNickInput" onkeydown="if(event.key==='Enter') zalogujUzytkownika()" placeholder="Twój nick / identyfikator..." class="glass-input w-full px-4 py-3 rounded-xl text-sm font-medium text-center placeholder:text-slate-600">
+                <button onclick="zalogujUzytkownika()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs py-3.5 rounded-xl transition-all shadow-lg shadow-blue-600/30 active:scale-[0.99]">
                     Zaloguj i Przejdź &rarr;
                 </button>
             </div>
@@ -111,19 +110,15 @@
                 <ul class="space-y-2 font-mono text-[11px] bg-slate-900/60 p-4 rounded-2xl border border-white/5">
                     <li class="flex items-start space-x-2">
                         <span class="text-emerald-400 font-bold">✓</span>
-                        <span><strong>Trwała czarna lista:</strong> Automatyczna blokada dostępu powiązana z lokalną pamięcią przeglądarki.</span>
+                        <span><strong>Odblokowany Dostęp:</strong> Wszyscy użytkownicy mają dostęp do systemu.</span>
                     </li>
                     <li class="flex items-start space-x-2">
                         <span class="text-emerald-400 font-bold">✓</span>
-                        <span><strong>Rządowy Projekt Uchwały (RPU):</strong> Zastąpienie uchwały sejmowej dedykowanym modułem RPU.</span>
+                        <span><strong>Podział Resortowy:</strong> Ministerstwa widoczne są tylko w Projektach Rządowych oraz RPU.</span>
                     </li>
                     <li class="flex items-start space-x-2">
                         <span class="text-emerald-400 font-bold">✓</span>
-                        <span><strong>Rozbudowa Resortów:</strong> Dodano liczne ministerstwa i rozszerzono bazę gotowych propozycji.</span>
-                    </li>
-                    <li class="flex items-start space-x-2">
-                        <span class="text-emerald-400 font-bold">✓</span>
-                        <span><strong>Baza dla Inicjatyw Poselskich i Obywatelskich:</strong> Wszystkie typy inicjatyw posiadają teraz katalogi tematyczne.</span>
+                        <span><strong>Pełna Baza 5 Propozycji:</strong> Każda kategoria/resort zawiera po 5 propozycji ustaw i zmian.</span>
                     </li>
                 </ul>
             </div>
@@ -261,14 +256,15 @@
                     </div>
                 </div>
 
-                <!-- Sekcja Ministerstw / Baz Propozycji (Dostępna dla WSZYSTKICH typów) -->
-                <div id="sekcjaMinisterstw" class="glass-card p-3 rounded-xl space-y-2 border border-white/5">
+                <!-- Sekcja Bazy Propozycji -->
+                <div id="sekcjaPropozycji" class="glass-card p-3 rounded-xl space-y-2 border border-white/5">
                     <div class="flex items-center justify-between">
                         <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider" id="tytulSekcjiResortowej">Baza Propozycji Ustaw i Nowelizacji:</span>
                         <span class="text-[10px] font-mono text-slate-500" id="timerOdswiezania">Odświeżenie za: 05:00</span>
                     </div>
                     
-                    <div class="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto pr-1" id="kontenerMinisterstw"></div>
+                    <!-- Przycisk Ministerstw - TYLKO DLA RZĄDOWEGO I RPU -->
+                    <div class="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto pr-1 hidden" id="kontenerMinisterstw"></div>
 
                     <div class="pt-2">
                         <div id="listaPropozycji" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-36 overflow-y-auto pr-1"></div>
@@ -314,7 +310,7 @@
                 <div id="wynikiKontener" class="flex-grow overflow-y-auto my-4 pr-2 space-y-4 text-xs font-mono">
                     <div class="bg-slate-900/40 p-4 rounded-xl border border-white/5 text-slate-400 leading-relaxed">
                         <p class="text-blue-400 font-semibold mb-1">System Legislacyjny LexCorp v4.10 Gotowy</p>
-                        Wybierz rodzaj aktu. Dostępna jest rozbudowana baza propozycji oraz pełne wsparcie dla Projektów Rządowych, RPU, Inicjatyw Poselskich i Obywatelskich.
+                        Wybierz rodzaj aktu. Dostępna jest rozbudowana baza propozycji po 5 pozycji dla każdego typu inicjatywy oraz wsparcie dla projektów Rządowych, RPU, Poselskich i Obywatelskich.
                     </div>
                 </div>
 
@@ -333,62 +329,20 @@
     </main>
 
     <script>
-        // Rozbudowana lista zabronionych fraz z uwzględnieniem danych z obrazka
-        const BLACKLIST = [
-            "jpa_pis", 
-            "stachu jones", 
-            "stachu j.", 
-            "ioannes paulus adamczewski", 
-            "polskagrom", 
-            "stanisław jon", 
-            "stanislaw jon",
-            "prof. dr h. c. mgr stanisław jon",
-            "prof. dr h. c. mgr stanislaw jon",
-            "prof dr h c mgr stanislaw jon"
-        ];
-
-        function sprawdzZapisanaAutoryzacje() {
-            // Jeżeli użytkownik został już kiedyś zablokowany, natychmiast pokazuj blokadę
-            if (localStorage.getItem('lex_blacklisted') === 'true') {
-                pokazBlokadeDostepu();
-                return;
-            }
-            // Zawsze pokazujemy okno logowania, by użytkownik podał nick
+        function inicjalizujSystem() {
+            // Ekran autoryzacji z nickiem zawsze pokazuje się przy starcie
             document.getElementById('authGate').classList.remove('hidden');
+            wygenerujPrzyciskiMinisterstw();
+            ustawTypInicjatywy('poselski');
+            startTimer();
         }
 
-        function weryfikujDostep() {
+        function zalogujUzytkownika() {
             const rawNick = document.getElementById('userNickInput').value.trim();
             if (!rawNick) return;
 
-            const nickLower = rawNick.toLowerCase();
-            const jestZablokowany = BLACKLIST.some(b => nickLower.includes(b.toLowerCase()));
-
-            if (jestZablokowany) {
-                // Trwały zapis blokady w przeglądarce
-                localStorage.setItem('lex_blacklisted', 'true');
-                pokazBlokadeDostepu();
-            } else {
-                localStorage.setItem('lex_user_nick', rawNick);
-                document.getElementById('authGate').classList.add('hidden');
-                document.getElementById('modalChangelog').classList.remove('hidden');
-            }
-        }
-
-        function pokazBlokadeDostepu() {
-            const gate = document.getElementById('authGate');
-            gate.classList.remove('hidden');
-            gate.innerHTML = `
-                <div class="glass-panel p-8 rounded-3xl max-w-md w-full border border-rose-500/40 shadow-2xl space-y-4 text-center relative glow-effect">
-                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-rose-600 to-red-700 flex items-center justify-center text-3xl mx-auto shadow-lg shadow-rose-600/30 border border-white/10 animate-bounce">
-                        🚫
-                    </div>
-                    <h2 class="text-xl font-bold text-white tracking-wide">Dostęp Zablokowany</h2>
-                    <p class="text-xs text-rose-300 font-mono leading-relaxed">
-                        Twoje konto/identyfikator znajduje się na czarnej liście systemu LexCorp Legislator. Dostęp został trwale uniemożliwiony.
-                    </p>
-                </div>
-            `;
+            document.getElementById('authGate').classList.add('hidden');
+            document.getElementById('modalChangelog').classList.remove('hidden');
         }
 
         let ostatniaOdpowiedz = "";
@@ -396,80 +350,160 @@
         let wybranyTypInicjatywy = "poselski";
         let sekundDoOdswiezenia = 300;
 
-        // Bazy Propozycji podzielone na resorty oraz kategorie inicjatyw
-        const bazaPropozycji = {
+        // BAZA DANYCH - Dokładnie po 5 propozycji w każdej kategorii
+        const bazaMinisterstw = {
             "Ministerstwo Spraw Wewnętrznych i Administracji": [
-                { tytul: "Ustawa o zmianie ustawy o ochronie ludności i stanie klęski żywiołowej", opis: "Wdrożenie krajowego systemu automatycznego powiadomienia oraz dofinansowania lokalnych jednostek OSP.", typ: "rzadowy" },
-                { tytul: "Ustawa o modernizacji służb mundurowych podległych MSWiA", opis: "Zwiększenie uposażeń funkcjonariuszy Policji, Państwowej Straży Pożarnej oraz Straży Granicznej.", typ: "rzadowy" },
-                { tytul: "Rządowy Projekt Uchwały w sprawie Krajowego Programu Ochrony Ludności", opis: "Wytyczne dla wojewodów w zakresie rozbudowy infrastruktury schronowej.", typ: "rpu" },
-                { tytul: "Ustawa o zmianie ustawy – Prawo o zgromadzeniach", opis: "Zwiększenie wymogów bezpieczeństwa przy organizacji wydarzeń masowych w centrach miast.", typ: "poselski" },
-                { tytul: "Obywatelski projekt ustawy o wsparciu ochotniczych straży pożarnych", opis: "Gwarancja ulg podatkowych dla strażaków ochotników i ich zakładów pracy.", typ: "obywatelski" }
+                { tytul: "Ustawa o zmianie ustawy o ochronie ludności i stanie klęski żywiołowej", opis: "Wdrożenie automatycznego systemu ostrzegania publicznego oraz dofinansowania lokalnych jednostek OSP." },
+                { tytul: "Ustawa o modernizacji służb podległych MSWiA", opis: "Zwiększenie uposażeń i zakupy nowoczesnego wyposażenia dla Policji, Państwowej Straży Pożarnej i Straży Granicznej." },
+                { tytul: "Ustawa o bezpieczeństwie imprez masowych i zgromadzeń", opis: "Modyfikacja procedur wydawania pozwoleń oraz doprecyzowanie odpowiedzialności organizatorów wydarzeń." },
+                { tytul: "Ustawa o zmianie ustawy o ewidencji ludności i dowodach osobistych", opis: "Wprowadzenie w pełni cyfrowego wniosku o wydanie pierwszego dokumentu tożsamości." },
+                { tytul: "Ustawa o cyfryzacji procedur administracji terenowej", opis: "Ujednolicenie elektronicznego obiegu dokumentów w Urzędach Wojewódzkich i Starostwach." }
             ],
             "Ministerstwo Sprawiedliwości": [
-                { tytul: "Ustawa o zmianie ustawy – Kodeks karny", opis: "Zaostrzenie kar za przestępstwa skarbowe oraz cyfrowe oszustwa finansowe.", typ: "rzadowy" },
-                { tytul: "Ustawa o cyfryzacji doręczeń sądowych", opis: "Obowiązek stosowania doręczeń elektronicznych dla radców prawnych i adwokatów.", typ: "rzadowy" },
-                { tytul: "Rządowy Projekt Uchwały w sprawie Strategii Reformy Sądownictwa", opis: "Założenia organizacji pracy sądów rejonowych na lata 2026-2030.", typ: "rpu" },
-                { tytul: "Ustawa o zmianie ustawy o KRS", opis: "Modyfikacja wyboru członków Krajowej Rady Sądownictwa przez środowiska sędziowskie.", typ: "poselski" },
-                { tytul: "Obywatelski projekt ustawy o bezpłatnej pomocy prawnej", opis: "Poszerzenie kręgu osób uprawnionych do darmowych porad prawnych.", typ: "obywatelski" }
+                { tytul: "Ustawa o zmianie ustawy – Kodeks karny", opis: "Zaostrzenie kar za przestępstwa skarbowe, oszustwa internetowe i kradzież tożsamości." },
+                { tytul: "Ustawa o cyfryzacji doręczeń sądowych", opis: "Wprowadzenie obowiązkowych doręczeń elektronicznych dla adwokatów i radców prawnych." },
+                { tytul: "Ustawa o zmianie ustawy o Krajowym Rejestrze Sądowym", opis: "Uproszczenie wpisów spółek oraz skrócenie czasu oczekiwania na rejestrację." },
+                { tytul: "Ustawa o zmianie ustawy – Kodeks postępowania cywilnego", opis: "Rozszerzenie zakresu rozpraw zdalnych w sprawach cywilnych i gospodarczych." },
+                { tytul: "Ustawa o nieodpłatnej pomocy prawnej i poradnictwie obywatelskim", opis: "Zwiększenie dostępności punktów bezpłatnych porad dla osób o niskich dochodach." }
             ],
             "Ministerstwo Finansów": [
-                { tytul: "Ustawa o zmianie ustawy o podatku od towarów i usług (VAT)", opis: "Uproszczenie rozliczeń w KSeF oraz podniesienie limitu podmiotowego dla małych podatników.", typ: "rzadowy" },
-                { tytul: "Ustawa o podatku wyrównawczym dla przedsiębiorstw wielonarodowych", opis: "Wdrożenie unijnej dyrektywy w zakresie minimalnego opodatkowania korporacji.", typ: "rzadowy" },
-                { tytul: "Rządowy Projekt Uchwały w sprawie Wieloletniego Planu Finansowego Państwa", opis: "Ramowe założenia budżetowe oraz prognoza długu sektora finansów publicznych.", typ: "rpu" },
-                { tytul: "Ustawa o zmianie ustawy o PIT – podniesienie kwoty wolnej", opis: "Zwiększenie kwoty wolnej od podatku do wysokości 60 000 zł.", typ: "poselski" },
-                { tytul: "Obywatelski projekt ustawy o zwolnieniu emerytur z podatku dochodowego", opis: "Całkowite zwolnienie świadczeń emerytalnych z podatku PIT.", typ: "obywatelski" }
+                { tytul: "Ustawa o zmianie ustawy o podatku od towarów i usług (VAT)", opis: "Uproszczenie rozliczeń w Krajowym Systemie e-Faktur oraz podniesienie limitu podmiotowego." },
+                { tytul: "Ustawa o podatku wyrównawczym dla korporacji międzynarodowych", opis: "Implementacja dyrektyw unijnych w zakresie minimalnego opodatkowania dużych grup kapitałowych." },
+                { tytul: "Ustawa o zmianie ustawy o podatku dochodowym od osób fizycznych", opis: "Wprowadzenie nowych ulg podatkowych na inwestycje w odnawialne źródła energii." },
+                { tytul: "Ustawa o cyfryzacji Krajowej Administracji Skarbowej", opis: "Automatyzacja zwrotów podatku i wdrożenie nowoczesnych narzędzi analitycznych KAS." },
+                { tytul: "Ustawa o ułatwieniach w sukcesji firm rodzinnych", opis: "Zniesienie wybranych opłat i podatków od spadków i darowizn dla mikroprzedsiębiorstw." }
             ],
             "Ministerstwo Cyfryzacji": [
-                { tytul: "Ustawa o zmianie ustawy o krajowym systemie cyberbezpieczeństwa", opis: "Wdrożenie dyrektywy NIS2 oraz obowiązek audytu kluczowych dostawców usług.", typ: "rzadowy" },
-                { tytul: "Ustawa o zasobach sztucznej inteligencji w sektorze publicznym", opis: "Ustanowienie ram certyfikacji oraz etycznego wykorzystania systemów AI.", typ: "rzadowy" },
-                { tytul: "Rządowy Projekt Uchwały w sprawie Państwowej Strategii Cyfryzacji 2030", opis: "Harmonogram cyfryzacji procedur urzędowych oraz rozbudowy światłowodów.", typ: "rpu" },
-                { tytul: "Ustawa o ochronie prywatności małoletnich w sieci", opis: "Obowiązek weryfikacji wieku na portalach zawierających treści nieodpowiednie.", typ: "poselski" },
-                { tytul: "Obywatelski projekt ustawy o prawie do bycia offline", opis: "Ochrona pracowników przed kontaktem ze strony pracodawcy poza godzinami pracy.", typ: "obywatelski" }
+                { tytul: "Ustawa o zmianie ustawy o krajowym systemie cyberbezpieczeństwa", opis: "Wdrożenie dyrektywy NIS2 oraz obowiązek audytów dla dostawców usług kluczowych." },
+                { tytul: "Ustawa o bezpiecznym stosowaniu sztucznej inteligencji", opis: "Ustanowienie zasad certyfikacji systemów wysokie ryzyka oraz ramy etyczne AI." },
+                { tytul: "Ustawa o zmianie ustawy o cyfryzacji działalności podmiotów publicznych", opis: "Wprowadzenie standardów dostępności cyfrowej dla portali rządowych i samorządowych." },
+                { tytul: "Ustawa o ochronie danych osobowych w administracji publicznej", opis: "Zaostrzenie procedur przechowywania i przetwarzania baz danych obywateli." },
+                { tytul: "Ustawa o budowie szerokopasmowego internetu w małych miejscowościach", opis: "Dofinansowanie infrastruktury światłowodowej na terenach wiejskich." }
             ],
             "Ministerstwo Obrony Narodowej": [
-                { tytul: "Ustawa o zmianie ustawy o obronie Ojczyzny", opis: "Nowe zasady powoływania rezerwy oraz finansowania zakupów sprzętu wojskowego.", typ: "rzadowy" },
-                { tytul: "Rządowy Projekt Uchwały w sprawie Celów Operacyjnych Sił Zbrojnych", opis: "Rozbudowa jednostek operacyjnych we wschodnich rejonach kraju.", typ: "rpu" },
-                { tytul: "Ustawa o wsparciu przemysłu zbrojeniowego", opis: "Specjalny fundusz inwestycyjny dla krajowych producentów amunicji.", typ: "poselski" },
-                { tytul: "Obywatelski projekt ustawy o obowiązkowych szkoleniach z pierwszej pomocy", opis: "Powszechne szkolenia cywilne w zakresie postępowania kryzysowego.", typ: "obywatelski" }
+                { tytul: "Ustawa o zmianie ustawy o obronie Ojczyzny", opis: "Nowe zasady powoływania rezerwy oraz rozbudowa bazy szkoleniowej Sił Zbrojnych." },
+                { tytul: "Ustawa o wsparciu przemysłu zbrojeniowego", opis: "Utworzenie Dedykowanego Funduszu Inwestycyjnego dla zakładów produkujących amunicję." },
+                { tytul: "Ustawa o modernizacji technicznej Wojska Polskiego", opis: "Wykup nowoczesnych systemów antydronowych i osłony przeciwlotniczej." },
+                { tytul: "Ustawa o statusie weterana i świadczeniach dla rodzin wojskowych", opis: "Zwiększenie świadczeń osłonowych oraz bezpłatny dostęp do rehabilitacji." },
+                { tytul: "Ustawa o ochronie infrastruktury krytycznej wojska", opis: "Wprowadzenie stref chronionych wokół obiektów wojskowych i magazynowych." }
             ],
             "Ministerstwo Zdrowia": [
-                { tytul: "Ustawa o zmianie ustawy o świadczeniach opieki zdrowotnej", opis: "Skrócenie czasów oczekiwania do specjalistów oraz modyfikacja wyceny procedur.", typ: "rzadowy" },
-                { tytul: "Rządowy Projekt Uchwały w sprawie Narodowego Programu Ochrony Zdrowia Psychicznego", opis: "Rozbudowa sieci poradni psychologiczno-pediatrycznych.", typ: "rpu" },
-                { tytul: "Ustawa o zwiększeniu nakładów na ochronę zdrowia do 8% PKB", opis: "Sztywny harmonogram wzrostu finansowania publicznej ochrony zdrowia.", typ: "poselski" },
-                { tytul: "Obywatelski projekt ustawy o darmowych lekach dla dzieci", opis: "Rozszerzenie listy leków bezpłatnych dla pacjentów poniżej 18 roku życia.", typ: "obywatelski" }
+                { tytul: "Ustawa o zmianie ustawy o świadczeniach opieki zdrowotnej", opis: "Modyfikacja wyceny procedur medycznych oraz skrócenie kolejek do specjalistów." },
+                { tytul: "Ustawa o kadrach medycznych i kształceniu lekarzy", opis: "Uproszczenie procedur nostryfikacji dyplomów oraz dofinansowanie rezydentur." },
+                { tytul: "Ustawa o zmianie ustawy o refundacji leków", opis: "Poszerzenie wykazów bezpłatnych leków dla dzieci i seniorów." },
+                { tytul: "Ustawa o cyfryzacji pacjenta i e-recepcie", opis: "Wdrożenie ogólnopolskiej bazy kartotek medycznych z powiadomieniem SMS." },
+                { tytul: "Ustawa o ratownictwie medycznym i szpitalnych oddziałach ratunkowych", opis: "Reorganizacja pracy SOR-ów oraz zwiększenie obsady zespołów ratowniczych." }
             ],
             "Ministerstwo Edukacji Narodowej": [
-                { tytul: "Ustawa o zmianie ustawy – Prawo oświatowe", opis: "Redukcja podstawy programowej oraz cyfryzacja podręczników szkolnych.", typ: "rzadowy" },
-                { tytul: "Rządowy Projekt Uchwały w sprawie Polityki Oświatowej Państwa", opis: "Priorytety rozwijania kompetencji cyfrowych w szkolnictwie.", typ: "rpu" },
-                { tytul: "Ustawa o podwyżkach dla nauczycieli dyplomowanych", opis: "Wzrost pensji zasadniczej o 20% dla kadry dydaktycznej.", typ: "poselski" },
-                { tytul: "Obywatelski projekt ustawy o odejściu od prac domowych", opis: "Ustawowy zakaz zadawania prac pisemnych w szkołach podstawowych.", typ: "obywatelski" }
+                { tytul: "Ustawa o zmianie ustawy – Prawo oświatowe", opis: "Modernizacja podstawy programowej i wdrożenie nowych przedmiotów cyfrowych." },
+                { tytul: "Ustawa o finansowaniu szkolnictwa i podwyżkach dla nauczycieli", opis: "Powiązanie wynagrodzeń nauczycieli ze średnim wynagrodzeniem w gospodarce." },
+                { tytul: "Ustawa o bezpieczeństwie i psychologach w szkołach", opis: "Obowiązek zatrudnienia psychologa w każdej placówce oświatowej." },
+                { tytul: "Ustawa o cyfrowej szkole i darmowym sprzęcie komputerowym", opis: "Program zakupu urządzeń mobilnych dla uczniów klas podstawowych." },
+                { tytul: "Ustawa o zmianie ustawy o systemie oświaty", opis: "Reforma egzaminów ósmoklasisty i ułatwienia w rekrutacji do szkół średnich." }
             ],
             "Ministerstwo Infrastruktury": [
-                { tytul: "Ustawa o zmianie ustawy – Prawo o ruchu drogowym", opis: "Nowe normy prędkości oraz zaostrzenie kar za prowadzenie bez uprawnień.", typ: "rzadowy" },
-                { tytul: "Rządowy Projekt Uchwały w sprawie Budowy Dróg Krajowych", opis: "Plan inwestycji autostradowych i ekspresowych do roku 2035.", typ: "rpu" },
-                { tytul: "Ustawa o rozwoju pasażerskich połączeń kolejowych", opis: "Subwencjonowanie lokalnych linii kolejowych w miastach powiatowych.", typ: "poselski" },
-                { tytul: "Obywatelski projekt ustawy o bezpłatnej komunikacji miejskiej dla uczniów", opis: "Bezpłatne przejazdy dla młodzieży szkolnej w gminach.", typ: "obywatelski" }
+                { tytul: "Ustawa o zmianie ustawy – Prawo o ruchu drogowym", opis: "Zaostrzenie kar za jazdę pod wpływem alkoholu i przekraczanie prędkości." },
+                { tytul: "Ustawa o rozwoju kolei regionalnych", opis: "Subwencjonowanie lokalnych linii kolejowych w miastach powiatowych." },
+                { tytul: "Ustawa o zmianie ustawy o drogach publicznych", opis: "Uproszczenie procedur przetargowych przy budowie autostrad i obwodnic." },
+                { tytul: "Ustawa o bezpieczeństwie w transporcie zbiorowym", opis: "Nowe normy techniczne i obowiązkowy monitoring w pojazdach komunikacji miejskiej." },
+                { tytul: "Ustawa o CPK i kluczowych węzłach przesiadkowych", opis: "Regulacja wywłaszczeń i odszkodowań przy budowie infrastruktury węzłowej." }
             ],
             "Ministerstwo Klimatu i Środowiska": [
-                { tytul: "Ustawa o zmianie ustawy o odnawialnych źródłach energii", opis: "Ułatwienia w budowie instalacji fotowoltaicznych i wiatrowych.", typ: "rzadowy" },
-                { tytul: "Rządowy Projekt Uchwały w sprawie Polityki Energetycznej Polski do 2040 r.", opis: "Harmonogram transformacji jądrowej i wygaszania bloków węglowych.", typ: "rpu" },
-                { tytul: "Ustawa o ochronie parków narodowych", opis: "Zaostrzenie wymogów przekształcania gruntów leśnych.", typ: "poselski" },
-                { tytul: "Obywatelski projekt ustawy o zakazie plastiku jednorazowego", opis: "Całkowite wycofanie wybranych opakowań z tworzyw sztucznych.", typ: "obywatelski" }
+                { tytul: "Ustawa o zmianie ustawy o odnawialnych źródłach energii", opis: "Ułatwienia w budowie mikroinstalacji oraz wdrożenie ułatwień dla prosumentów." },
+                { tytul: "Ustawa o gospodarce odpadami i systemie kaucyjnym", opis: "Rozszerzona odpowiedzialność producentów oraz nowe zasady recyklingu." },
+                { tytul: "Ustawa o ochronie zasobów leśnych i parków narodowych", opis: "Ograniczenie wycinki w lasach ochronnych i utworzenie nowych parków." },
+                { tytul: "Ustawa o zmianie ustawy – Prawo ochrony środowiska", opis: "Zwiększenie kar za nielegalne składowanie i sprowadzanie odpadów niebezpiecznych." },
+                { tytul: "Ustawa o czystym powietrzu i dopłatach do wymiany pieców", opis: "Zwiększenie budżetu na wymianę źródeł ciepła w domach jednorodzinnych." }
             ]
         };
 
-        function inicjalizujSystem() {
-            sprawdzZapisanaAutoryzacje();
-            wygenerujPrzyciskiMinisterstw();
-            wyswietlPropozycje(wybraneMinisterstwo);
-            ustawTypInicjatywy('poselski');
-            startTimer();
-        }
+        const bazaInicjatywPoselskich = [
+            { tytul: "Ustawa o zmianie ustawy o podatku PIT – kwota wolna 60 tys. zł", opis: "Projekt poselski podnoszący kwotę wolną od podatku do 60 000 zł rocznie." },
+            { tytul: "Ustawa o ograniczeniu handlu w niedziele i święta", opis: "Projekt nowelizacji znoszący zakaz handlu w wybrane dwie niedziele w miesiącu." },
+            { tytul: "Ustawa o ochronie praw zwierząt i zakazie hodowli na futra", opis: "Projekt poselski wprowadzający okres przejściowy dla branży futrzarskiej." },
+            { tytul: "Ustawa o zmianie ustawy o emeryturach stażowych", opis: "Możliwość przejścia na emeryturę po przepracowaniu 35 lat dla kobiet i 40 dla mężczyzn." },
+            { tytul: "Ustawa o wsparciu budownictwa komunalnego w gminach", opis: "Dotacje celowe dla samorządów na budowę tanich mieszkań na wynajem." }
+        ];
+
+        const bazaInicjatywObywatelskich = [
+            { tytul: "Obywatelski projekt ustawy o zwolnieniu emerytur z podatku", opis: "Całkowite zwolnienie z opodatkowania świadczeń emerytalno-rentowych." },
+            { tytul: "Obywatelski projekt ustawy o bezpłatnych lekach dla dzieci", opis: "Wprowadzenie pełnej refundacji leków na receptę dla dzieci do 18 roku życia." },
+            { tytul: "Obywatelski projekt ustawy o wsparciu Ochotniczych Straży Pożarnych", opis: "Ulgi podatkowe dla druchów OSP i ich pracodawców." },
+            { tytul: "Obywatelski projekt ustawy o zakazie plastiku jednorazowego", opis: "Całkowite wycofanie plastikowych sztućców, kubków i opakowań w handlu." },
+            { tytul: "Obywatelski projekt ustawy o prawie do bycia offline", opis: "Prawo pracownika do nieodbierania telefonów służbowych po godzinach pracy." }
+        ];
+
+        const bazaRpuPrzykłady = {
+            "Ministerstwo Spraw Wewnętrznych i Administracji": [
+                { tytul: "Rządowy Projekt Uchwały w sprawie Krajowego Programu Ochrony Ludności", opis: "Wytyczne dla wojewodów w zakresie rozbudowy infrastruktury schronowej." },
+                { tytul: "Rządowy Projekt Uchwały w sprawie ramowych działań Policji w pasie przygranicznym", opis: "Przyjęcie planu operacyjnego ochrony granicy państwowej na lata 2026-2028." },
+                { tytul: "Rządowy Projekt Uchwały w sprawie podziału środków dla Straży Pożarnej", opis: "Rozdzielenie rezerwy celowej na sprzęt ratowniczo-gaśniczy." },
+                { tytul: "Rządowy Projekt Uchwały w sprawie strategii zarządzania kryzysowego", opis: "Zatwierdzenie nowego harmonogramu ćwiczeń służb ratowniczych." },
+                { tytul: "Rządowy Projekt Uchwały w sprawie powołania Zespołu ds. Cyberbezpieczeństwa MSWiA", opis: "Utworzenie międzyresortowej grupy eksperckiej." }
+            ],
+            "Ministerstwo Sprawiedliwości": [
+                { tytul: "Rządowy Projekt Uchwały w sprawie Strategii Reformy Sądownictwa", opis: "Założenia organizacji pracy sądów rejonowych i cyfryzacji protokołów." },
+                { tytul: "Rządowy Projekt Uchwały w sprawie programu modernizacji więziennictwa", opis: "Kierunki inwestycji w zakłady karne i systemy dozoru elektronicznego." },
+                { tytul: "Rządowy Projekt Uchwały w sprawie nieodpłatnej mediacji", opis: "Plan promocji i finansowania alternatywnych metod rozwiązywania sporów." },
+                { tytul: "Rządowy Projekt Uchwały w sprawie standardów biegłych sądowych", opis: "Przyjęcie wytycznych wdrożenia nowego systemu wyceny opinii." },
+                { tytul: "Rządowy Projekt Uchwały w sprawie cyfryzacji archiwów sądowych", opis: "Plan skanowania dokumentacji sądowej na lata 2026–2030." }
+            ],
+            "Ministerstwo Finansów": [
+                { tytul: "Rządowy Projekt Uchwały w sprawie Wieloletniego Planu Finansowego Państwa", opis: "Ramowe założenia budżetowe oraz prognoza długu sektora finansów publicznych." },
+                { tytul: "Rządowy Projekt Uchwały w sprawie kierunków polityki podatkowej", opis: "Wytyczne w zakresie upraszczania systemu podatkowego w latach 2026-2027." },
+                { tytul: "Rządowy Projekt Uchwały w sprawie stabilności sektora bankowego", opis: "Założenia środków osłonowych i nadzoru nad rynkiem finansowym." },
+                { tytul: "Rządowy Projekt Uchwały w sprawie restrukturyzacji długu publicznego", opis: "Kierunki emisji skarbowych papierów wartościowych." },
+                { tytul: "Rządowy Projekt Uchwały w sprawie cyfryzacji poboru podatków", opis: "Harmonogram rozbudowy centrów analitycznych Krajowej Administracji Skarbowej." }
+            ],
+            "Ministerstwo Cyfryzacji": [
+                { tytul: "Rządowy Projekt Uchwały w sprawie Państwowej Strategii Cyfryzacji 2030", opis: "Harmonogram cyfryzacji procedur urzędowych oraz rozbudowy światłowodów." },
+                { tytul: "Rządowy Projekt Uchwały w sprawie bezpieczeństwa chmury rządowej", opis: "Wytyczne migracji zasobów państwowych do bezpiecznych serwerowni." },
+                { tytul: "Rządowy Projekt Uchwały w sprawie rozwoju sztucznej inteligencji w Polsce", opis: "Zasady grantów dla polskich uczelni i startupów technologicznych." },
+                { tytul: "Rządowy Projekt Uchwały w sprawie cyfrowej tożsamości mObywatel", opis: "Wdrożenie nowego standardu dokumentów cyfrowych zgodnych z UE." },
+                { tytul: "Rządowy Projekt Uchwały w sprawie walki z dezinformacją sieciową", opis: "Utworzenie zespołu reagowania na fałszywe narracje w internecie." }
+            ],
+            "Ministerstwo Obrony Narodowej": [
+                { tytul: "Rządowy Projekt Uchwały w sprawie Celów Operacyjnych Sił Zbrojnych", opis: "Rozbudowa jednostek operacyjnych we wschodnich rejonach kraju." },
+                { tytul: "Rządowy Projekt Uchwały w sprawie Programu Wsparcia Państw Sojuszniczych", opis: "Harmonogram wspólnych ćwiczeń wojskowych z armiami NATO." },
+                { tytul: "Rządowy Projekt Uchwały w sprawie rozwoju Wojsk Obrony Terytorialnej", opis: "Plan utworzenia nowych brygad WOT." },
+                { tytul: "Rządowy Projekt Uchwały w sprawie zakupów uzbrojenia w latach 2026-2035", opis: "Plan finansowania strategicznych kontraktów zbrojeniowych." },
+                { tytul: "Rządowy Projekt Uchwały w sprawie rezerwy wojskowej", opis: "Zasady prowadzenia powszechnych ćwiczeń dla rezerwistów." }
+            ],
+            "Ministerstwo Zdrowia": [
+                { tytul: "Rządowy Projekt Uchwały w sprawie Narodowej Strategii Onkologicznej", opis: "Kierunki dofinansowania szpitali onkologicznych i zakupu aparatury." },
+                { tytul: "Rządowy Projekt Uchwały w sprawie Ochrony Zdrowia Psychicznego", opis: "Plan rozbudowy sieci środowiskowych poradni psychologicznych." },
+                { tytul: "Rządowy Projekt Uchwały w sprawie profilaktyki chorób cywilizacyjnych", opis: "Program badań przesiewowych dla osób powyżej 40 roku życia." },
+                { tytul: "Rządowy Projekt Uchwały w sprawie informatyzacji szpitali", opis: "Dotacje na wdrożenie elektronicznej dokumentacji medycznej." },
+                { tytul: "Rządowy Projekt Uchwały w sprawie kadr medycznych", opis: "Założenia zachęt dla młodych lekarzy do pracy w mniejszych miastach." }
+            ],
+            "Ministerstwo Edukacji Narodowej": [
+                { tytul: "Rządowy Projekt Uchwały w sprawie Polityki Oświatowej Państwa", opis: "Priorytety rozwijania kompetencji cyfrowych w szkolnictwie." },
+                { tytul: "Rządowy Projekt Uchwały w sprawie bezpiecznej szkoły", opis: "Kierunki działań antywirusowych i profilaktycznych w placówkach oświatowych." },
+                { tytul: "Rządowy Projekt Uchwały w sprawie budowy horyzontów naukowych", opis: "Plan wsparcia dla olimpijczyków oraz kół naukowych." },
+                { tytul: "Rządowy Projekt Uchwały w sprawie dofinansowania wycieczek szkolnych", opis: "Program Poznaj Polskę – dotacje dla szkół." },
+                { tytul: "Rządowy Projekt Uchwały w sprawie modernizacji pracowni przedmiotowych", opis: "Finansowanie nowoczesnych laboratoriów chemicznych i fizycznych." }
+            ],
+            "Ministerstwo Infrastruktury": [
+                { tytul: "Rządowy Projekt Uchwały w sprawie Budowy Dróg Krajowych do 2035 r.", opis: "Plan inwestycji autostradowych i ekspresowych." },
+                { tytul: "Rządowy Projekt Uchwały w sprawie Krajowego Programu Kolejowego", opis: "Założenia modernizacji linii magistralnych i taboru pasażerskiego." },
+                { tytul: "Rządowy Projekt Uchwały w sprawie poprawy bezpieczeństwa drogowego", opis: "Plan przebudowy przejść dla pieszych i niebezpiecznych skrzyżowań." },
+                { tytul: "Rządowy Projekt Uchwały w sprawie rozwoju portów morskich", opis: "Kierunki inwestycji w portach w Gdańsku, Gdyni i Świnoujściu." },
+                { tytul: "Rządowy Projekt Uchwały w sprawie zrównoważonego transportu", opis: "Założenia wspierania niskoemisyjnego transportu zbiorowego." }
+            ],
+            "Ministerstwo Klimatu i Środowiska": [
+                { tytul: "Rządowy Projekt Uchwały w sprawie Polityki Energetycznej Polski do 2040 r.", opis: "Harmonogram transformacji jądrowej i wygaszania bloków węglowych." },
+                { tytul: "Rządowy Projekt Uchwały w sprawie Strategii Ochrony Rzek i Jezior", opis: "Program ciągłego monitorowania jakości wód śródlądowych." },
+                { tytul: "Rządowy Projekt Uchwały w sprawie zalesiania kraju", opis: "Plan zwiększenia lesistości Polski do 33% powierzchni." },
+                { tytul: "Rządowy Projekt Uchwały w sprawie wsparcia gospodarki obiegu zamkniętego", opis: "Wytyczne dla branży przemysłowej w zakresie recyklingu." },
+                { tytul: "Rządowy Projekt Uchwały w sprawie rozwoju energetyki wiatrowej na Bałtyku", opis: "Kierunki budowy morskich farm wiatrowych (offshore)." }
+            ]
+        };
 
         function ustawTypInicjatywy(typ) {
             wybranyTypInicjatywy = typ;
             const sekcjaPoselska = document.getElementById('sekcjaPoselska');
             const tytulSekcji = document.getElementById('tytulSekcjiResortowej');
+            const kontenerMin = document.getElementById('kontenerMinisterstw');
             
             const przyciski = {
                 poselski: document.getElementById('btnTypPoselski'),
@@ -488,28 +522,35 @@
                 przyciski[typ].className = "px-3 py-2 rounded-lg text-xs font-medium border border-blue-500/40 bg-blue-600/20 text-blue-300 transition-all text-center font-bold";
             }
 
-            if (typ === 'poselski') {
-                sekcjaPoselska.classList.remove('hidden');
-                tytulSekcji.innerText = "Propozycje Inicjatyw Poselskich wg Kategori/Resortu:";
-            } else if (typ === 'rzadowy') {
-                sekcjaPoselska.classList.add('hidden');
-                tytulSekcji.innerText = "Rządowe Propozycje Ustaw i Nowelizacji:";
-            } else if (typ === 'rpu') {
-                sekcjaPoselska.classList.add('hidden');
-                tytulSekcji.innerText = "Rządowe Projekty Uchwał (RPU) wg Resortu:";
-            } else if (typ === 'obywatelski') {
-                sekcjaPoselska.classList.add('hidden');
-                tytulSekcji.innerText = "Propozycje Inicjatyw Obywatelskich:";
+            // Resorty widoczne są TYLKO dla projektów Rządowych oraz RPU
+            if (typ === 'rzadowy' || typ === 'rpu') {
+                kontenerMin.classList.remove('hidden');
+            } else {
+                kontenerMin.classList.add('hidden');
             }
 
-            wyswietlPropozycje(wybraneMinisterstwo);
+            if (typ === 'poselski') {
+                sekcjaPoselska.classList.remove('hidden');
+                tytulSekcji.innerText = "Propozycje Inicjatyw Poselskich (5 propozycji):";
+            } else if (typ === 'rzadowy') {
+                sekcjaPoselska.classList.add('hidden');
+                tytulSekcji.innerText = "Rządowe Propozycje Ustaw wg Resortu (po 5 propozycji):";
+            } else if (typ === 'rpu') {
+                sekcjaPoselska.classList.add('hidden');
+                tytulSekcji.innerText = "Rządowe Projekty Uchwał (RPU) wg Resortu (po 5 propozycji):";
+            } else if (typ === 'obywatelski') {
+                sekcjaPoselska.classList.add('hidden');
+                tytulSekcji.innerText = "Propozycje Inicjatyw Obywatelskich (5 propozycji):";
+            }
+
+            wyswietlPropozycje();
         }
 
         function wygenerujPrzyciskiMinisterstw() {
             const kontener = document.getElementById('kontenerMinisterstw');
             kontener.innerHTML = '';
             
-            Object.keys(bazaPropozycji).forEach(min => {
+            Object.keys(bazaMinisterstw).forEach(min => {
                 const btn = document.createElement('button');
                 btn.type = 'button';
                 const isSelected = min === wybraneMinisterstwo;
@@ -518,22 +559,25 @@
                 btn.onclick = () => {
                     wybraneMinisterstwo = min;
                     wygenerujPrzyciskiMinisterstw();
-                    wyswietlPropozycje(min);
+                    wyswietlPropozycje();
                 };
                 kontener.appendChild(btn);
             });
         }
 
-        function wyswietlPropozycje(ministerstwo) {
+        function wyswietlPropozycje() {
             const lista = document.getElementById('listaPropozycji');
             lista.innerHTML = '';
-            const wszystkiePozycje = bazaPropozycji[ministerstwo] || [];
+            let pozycje = [];
 
-            // Filtrowanie propozycji pasujących do danej kategorii lub wyświetlanie rekomendowanych
-            let pozycje = wszystkiePozycje.filter(p => p.typ === wybranyTypInicjatywy);
-
-            if (pozycje.length === 0) {
-                pozycje = wszystkiePozycje; // fallback
+            if (wybranyTypInicjatywy === 'rzadowy') {
+                pozycje = bazaMinisterstw[wybraneMinisterstwo] || [];
+            } else if (wybranyTypInicjatywy === 'rpu') {
+                pozycje = bazaRpuPrzykłady[wybraneMinisterstwo] || [];
+            } else if (wybranyTypInicjatywy === 'poselski') {
+                pozycje = bazaInicjatywPoselskich;
+            } else if (wybranyTypInicjatywy === 'obywatelski') {
+                pozycje = bazaInicjatywObywatelskich;
             }
 
             pozycje.forEach(p => {
@@ -631,13 +675,15 @@
                 return;
             }
 
-            let naglowek = "PROJEKT";
+            let naglowek = "PROJEKT USTAWY";
             if (wybranyTypInicjatywy === 'rpu') {
                 naglowek = "RZĄDOWY PROJEKT UCHWAŁY (RPU)";
             } else if (wybranyTypInicjatywy === 'poselski') {
                 naglowek = "POSELSKI PROJEKT USTAWY";
             } else if (wybranyTypInicjatywy === 'obywatelski') {
                 naglowek = "OBYWATELSKI PROJEKT USTAWY";
+            } else if (wybranyTypInicjatywy === 'rzadowy') {
+                naglowek = "RZĄDOWY PROJEKT USTAWY";
             }
 
             const wygenerowanaTresc = `${naglowek}\n\n${tytul.toUpperCase()}\n\nz dnia .................... r.\n\n${opis}\n\nArt. 1. Akt wchodzi w życie z dniem następującym po dniu ogłoszenia.`;
