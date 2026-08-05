@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LexCorp Legislator v4.0 | System ZTP</title>
+    <title>LexCorp Legislator v4.10 | System ZTP</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -72,14 +72,14 @@
 <body onload="inicjalizujSystem()" class="bg-mesh text-slate-100 h-full flex flex-col font-sans antialiased selection:bg-blue-500 selection:text-white">
 
     <!-- EKRAN LOGOWANIA / BRAMKA WERYFIKACYJNA -->
-    <div id="authGate" class="fixed inset-0 z-[200] flex items-center justify-center bg-black/90 backdrop-blur-xl p-4 hidden">
+    <div id="authGate" class="fixed inset-0 z-[200] flex items-center justify-center bg-black/90 backdrop-blur-xl p-4">
         <div class="glass-panel p-8 rounded-3xl max-w-md w-full border border-blue-500/30 shadow-2xl space-y-6 text-center relative glow-effect">
             <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-3xl mx-auto shadow-lg shadow-blue-500/30 border border-white/10">
                 🔒
             </div>
             
             <div>
-                <h2 class="text-xl font-bold text-white tracking-wide">Autoryzacja Dostępu</h2>
+                <h2 class="text-xl font-bold text-white tracking-wide">Autoryzacja Dostępu v4.10</h2>
                 <p class="text-xs text-slate-400 mt-1">Wprowadź swój pseudonim, aby uzyskać dostęp do panelu legislacyjnego.</p>
             </div>
 
@@ -93,33 +93,37 @@
         </div>
     </div>
 
-    <!-- Modal 1: Changelog v4.0 (EKRAN EKRAN Z NAZWĄ / CHANGELOG) -->
-    <div id="modalChangelog" class="fixed inset-0 z-[110] flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
+    <!-- Modal 1: Changelog v4.10 -->
+    <div id="modalChangelog" class="fixed inset-0 z-[110] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 hidden">
         <div class="glass-panel p-6 sm:p-8 rounded-3xl max-w-lg w-full border border-blue-500/30 shadow-2xl space-y-5 relative glow-effect">
             <div class="flex items-center space-x-3 border-b border-white/10 pb-4">
                 <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-xl shadow-lg shadow-blue-500/30">
                     🚀
                 </div>
                 <div>
-                    <h3 class="text-lg font-bold text-white tracking-wide">LexCorp Legislator v4.0</h3>
+                    <h3 class="text-lg font-bold text-white tracking-wide">LexCorp Legislator v4.10</h3>
                     <p class="text-xs text-blue-400 font-mono">Dziennik Zmian & Aktualizacja Systemu</p>
                 </div>
             </div>
 
             <div class="space-y-3 text-xs text-slate-300">
-                <p class="font-medium text-slate-200">Witaj w aktualizacji v4.0 systemu legislacyjnego!</p>
+                <p class="font-medium text-slate-200">Zaktualizowano system do wersji v4.10!</p>
                 <ul class="space-y-2 font-mono text-[11px] bg-slate-900/60 p-4 rounded-2xl border border-white/5">
                     <li class="flex items-start space-x-2">
                         <span class="text-emerald-400 font-bold">✓</span>
-                        <span><strong>Aktualizacja v4.0:</strong> Pełna optymalizacja modułów audytu oraz generowania projektów.</span>
+                        <span><strong>Trwała czarna lista:</strong> Automatyczna blokada dostępu powiązana z lokalną pamięcią przeglądarki.</span>
                     </li>
                     <li class="flex items-start space-x-2">
                         <span class="text-emerald-400 font-bold">✓</span>
-                        <span><strong>Kontekstowe Ministerstwa:</strong> Dynamiczne zarządzanie propozycjami resortowymi.</span>
+                        <span><strong>Rządowy Projekt Uchwały (RPU):</strong> Zastąpienie uchwały sejmowej dedykowanym modułem RPU.</span>
                     </li>
                     <li class="flex items-start space-x-2">
                         <span class="text-emerald-400 font-bold">✓</span>
-                        <span><strong>Nowe Szablony ZTP:</strong> Dostosowanie formatowania pod najnowsze wytyczne legislacyjne.</span>
+                        <span><strong>Rozbudowa Resortów:</strong> Dodano liczne ministerstwa i rozszerzono bazę gotowych propozycji.</span>
+                    </li>
+                    <li class="flex items-start space-x-2">
+                        <span class="text-emerald-400 font-bold">✓</span>
+                        <span><strong>Baza dla Inicjatyw Poselskich i Obywatelskich:</strong> Wszystkie typy inicjatyw posiadają teraz katalogi tematyczne.</span>
                     </li>
                 </ul>
             </div>
@@ -172,7 +176,7 @@
                     <div class="flex items-center space-x-2">
                         <span class="text-base font-bold tracking-tight text-white">LexCorp Legislator</span>
                         <span class="text-[11px] font-mono font-semibold px-2.5 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                            v4.0
+                            v4.10
                         </span>
                     </div>
                 </div>
@@ -210,17 +214,17 @@
                         <option value="Ustawa" class="bg-slate-900">Ustawa</option>
                         <option value="Poselski projekt ustawy" class="bg-slate-900">Poselski projekt ustawy</option>
                         <option value="Ustawa o zmianie ustawy" class="bg-slate-900">Ustawa o zmianie ustawy (Nowelizacja)</option>
-                        <option value="Uchwała" class="bg-slate-900">Uchwała Sejmu RP</option>
+                        <option value="Rządowy Projekt Uchwały" class="bg-slate-900">Rządowy Projekt Uchwały (RPU)</option>
                         <option value="Rozporządzenie" class="bg-slate-900">Rozporządzenie</option>
                     </select>
                 </div>
 
                 <div class="flex-grow flex flex-col my-4">
-                    <textarea id="trescDoSprawdzenia" placeholder="Wklej treść aktu prawnego, projektu poselskiego lub nowelizacji do oceny legislacyjnej..." class="glass-input w-full flex-grow p-4 rounded-xl text-xs font-mono resize-none leading-relaxed transition-all placeholder:text-slate-600"></textarea>
+                    <textarea id="trescDoSprawdzenia" placeholder="Wklej treść aktu prawnego, projektu poselskiego, nowelizacji lub RPU do oceny legislacyjnej..." class="glass-input w-full flex-grow p-4 rounded-xl text-xs font-mono resize-none leading-relaxed transition-all placeholder:text-slate-600"></textarea>
                 </div>
 
                 <div class="pt-3 border-t border-white/5 flex items-center justify-between">
-                    <span class="text-[11px] text-slate-500 font-mono">Weryfikacja: Systematyka, Lex Retro Non Agit, ZTP, Wymogi Inicjatywy</span>
+                    <span class="text-[11px] text-slate-500 font-mono">Weryfikacja: Systematyka, Lex Retro Non Agit, ZTP, Inicjatywa</span>
                     <button onclick="uruchomAudyt()" class="bg-blue-600 hover:bg-blue-500 text-white font-medium px-5 py-2.5 rounded-xl text-xs transition-all flex items-center space-x-2 shadow-lg shadow-blue-600/20 active:scale-[0.98]">
                         <span>Uruchom Audyt ZTP</span>
                         <span>⚡</span>
@@ -235,7 +239,7 @@
                         <span class="text-emerald-400 text-sm">🖋️</span>
                         <h2 class="text-xs font-semibold text-slate-200 uppercase tracking-wider">Kreator Aktów Prawnych & Nowelizacji</h2>
                     </div>
-                    <span class="text-[10px] uppercase font-mono tracking-widest text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-md border border-emerald-500/20">Standard ZTP v4.0</span>
+                    <span class="text-[10px] uppercase font-mono tracking-widest text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-md border border-emerald-500/20">Standard ZTP v4.10</span>
                 </div>
 
                 <!-- Wybór Typu Inicjatywy -->
@@ -246,10 +250,10 @@
                             🏛️ Poselski Projekt
                         </button>
                         <button type="button" onclick="ustawTypInicjatywy('rzadowy')" id="btnTypRzadowy" class="px-3 py-2 rounded-lg text-xs font-medium border border-white/10 bg-slate-900 text-slate-400 transition-all text-center hover:border-white/20">
-                            🏢 Projekt Rządowy (RPU)
+                            🏢 Projekt Rządowy
                         </button>
-                        <button type="button" onclick="ustawTypInicjatywy('uchwala')" id="btnTypUchwala" class="px-3 py-2 rounded-lg text-xs font-medium border border-white/10 bg-slate-900 text-slate-400 transition-all text-center hover:border-white/20">
-                            📜 Uchwała Sejmu
+                        <button type="button" onclick="ustawTypInicjatywy('rpu')" id="btnTypRpu" class="px-3 py-2 rounded-lg text-xs font-medium border border-white/10 bg-slate-900 text-slate-400 transition-all text-center hover:border-white/20">
+                            📜 Rządowy Projekt Uchwały (RPU)
                         </button>
                         <button type="button" onclick="ustawTypInicjatywy('obywatelski')" id="btnTypObywatelski" class="px-3 py-2 rounded-lg text-xs font-medium border border-white/10 bg-slate-900 text-slate-400 transition-all text-center hover:border-white/20">
                             👥 Obywatelski
@@ -257,14 +261,14 @@
                     </div>
                 </div>
 
-                <!-- Sekcja Ministerstw (Widoczna tylko dla Rządowych i Uchwał) -->
-                <div id="sekcjaMinisterstw" class="glass-card p-3 rounded-xl space-y-2 border border-white/5 hidden">
+                <!-- Sekcja Ministerstw / Baz Propozycji (Dostępna dla WSZYSTKICH typów) -->
+                <div id="sekcjaMinisterstw" class="glass-card p-3 rounded-xl space-y-2 border border-white/5">
                     <div class="flex items-center justify-between">
-                        <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider" id="tytulSekcjiResortowej">Wykaz Resortów / Baza Propozycji:</span>
+                        <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider" id="tytulSekcjiResortowej">Baza Propozycji Ustaw i Nowelizacji:</span>
                         <span class="text-[10px] font-mono text-slate-500" id="timerOdswiezania">Odświeżenie za: 05:00</span>
                     </div>
                     
-                    <div class="flex flex-wrap gap-1.5 max-h-20 overflow-y-auto pr-1" id="kontenerMinisterstw"></div>
+                    <div class="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto pr-1" id="kontenerMinisterstw"></div>
 
                     <div class="pt-2">
                         <div id="listaPropozycji" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-36 overflow-y-auto pr-1"></div>
@@ -274,8 +278,8 @@
                 <!-- Formularz Redagowania -->
                 <div class="space-y-2 flex-grow flex flex-col">
                     <div id="sekcjaPoselska" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        <input type="text" id="kreatorWnioskodawcy" placeholder="Wnioskodawcy (np. Grupa Posłów Klubu X / Komisja...)" value="Grupa posłów (podpisana przez 15 posłów)" class="glass-input w-full px-3 py-2 rounded-xl text-xs font-medium placeholder:text-slate-600">
-                        <input type="text" id="kreatorReprezentant" placeholder="Poseł Reprezentujący wnioskodawców..." class="glass-input w-full px-3 py-2 rounded-xl text-xs font-medium placeholder:text-slate-600">
+                        <input type="text" id="kreatorWnioskodawcy" placeholder="Wnioskodawcy (np. Grupa Posłów...)" value="Grupa posłów (podpisana przez 15 posłów)" class="glass-input w-full px-3 py-2 rounded-xl text-xs font-medium placeholder:text-slate-600">
+                        <input type="text" id="kreatorReprezentant" placeholder="Poseł Reprezentujący..." class="glass-input w-full px-3 py-2 rounded-xl text-xs font-medium placeholder:text-slate-600">
                     </div>
 
                     <input type="text" id="kreatorTytul" placeholder="Tytuł aktu..." class="glass-input w-full px-4 py-2.5 rounded-xl text-xs font-medium placeholder:text-slate-600">
@@ -300,7 +304,7 @@
                 <div class="flex justify-between items-center pb-3 border-b border-white/5">
                     <div class="flex items-center space-x-2">
                         <span class="text-indigo-400 text-sm">🤖</span>
-                        <h2 class="text-xs font-semibold text-slate-200 uppercase tracking-wider">Konsola Legislacyjna v4.0</h2>
+                        <h2 class="text-xs font-semibold text-slate-200 uppercase tracking-wider">Konsola Legislacyjna v4.10</h2>
                     </div>
                     <button onclick="skopiujOstatniTekst()" class="text-[11px] bg-slate-800/80 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg border border-white/5 transition-all flex items-center space-x-1.5">
                         <span>📋 Skopiuj Projekt</span>
@@ -309,8 +313,8 @@
 
                 <div id="wynikiKontener" class="flex-grow overflow-y-auto my-4 pr-2 space-y-4 text-xs font-mono">
                     <div class="bg-slate-900/40 p-4 rounded-xl border border-white/5 text-slate-400 leading-relaxed">
-                        <p class="text-blue-400 font-semibold mb-1">System Legislacyjny LexCorp v4.0 Gotowy</p>
-                        Wybierz rodzaj aktu. Dla projektów rządowych (RPU) oraz uchwał Sejmu dostępna jest dedykowana baza propozycji ministerstw.
+                        <p class="text-blue-400 font-semibold mb-1">System Legislacyjny LexCorp v4.10 Gotowy</p>
+                        Wybierz rodzaj aktu. Dostępna jest rozbudowana baza propozycji oraz pełne wsparcie dla Projektów Rządowych, RPU, Inicjatyw Poselskich i Obywatelskich.
                     </div>
                 </div>
 
@@ -329,26 +333,39 @@
     </main>
 
     <script>
+        // Rozbudowana lista zabronionych fraz z uwzględnieniem danych z obrazka
         const BLACKLIST = [
-            "jpa_pis", "stachu jones", "stachu j.", "ioannes paulus adamczewski", "polskagrom", "stanisław jon", "stanislaw jon"
+            "jpa_pis", 
+            "stachu jones", 
+            "stachu j.", 
+            "ioannes paulus adamczewski", 
+            "polskagrom", 
+            "stanisław jon", 
+            "stanislaw jon",
+            "prof. dr h. c. mgr stanisław jon",
+            "prof. dr h. c. mgr stanislaw jon",
+            "prof dr h c mgr stanislaw jon"
         ];
 
         function sprawdzZapisanaAutoryzacje() {
+            // Jeżeli użytkownik został już kiedyś zablokowany, natychmiast pokazuj blokadę
             if (localStorage.getItem('lex_blacklisted') === 'true') {
                 pokazBlokadeDostepu();
                 return;
             }
-            if (localStorage.getItem('lex_user_nick')) {
-                document.getElementById('authGate').classList.add('hidden');
-                document.getElementById('modalChangelog').classList.remove('hidden');
-            }
+            // Zawsze pokazujemy okno logowania, by użytkownik podał nick
+            document.getElementById('authGate').classList.remove('hidden');
         }
 
         function weryfikujDostep() {
             const rawNick = document.getElementById('userNickInput').value.trim();
             if (!rawNick) return;
 
-            if (BLACKLIST.includes(rawNick.toLowerCase())) {
+            const nickLower = rawNick.toLowerCase();
+            const jestZablokowany = BLACKLIST.some(b => nickLower.includes(b.toLowerCase()));
+
+            if (jestZablokowany) {
+                // Trwały zapis blokady w przeglądarce
                 localStorage.setItem('lex_blacklisted', 'true');
                 pokazBlokadeDostepu();
             } else {
@@ -368,7 +385,7 @@
                     </div>
                     <h2 class="text-xl font-bold text-white tracking-wide">Dostęp Zablokowany</h2>
                     <p class="text-xs text-rose-300 font-mono leading-relaxed">
-                        Twoje konto znajduje się na czarnej liście systemu LexCorp Legislator.
+                        Twoje konto/identyfikator znajduje się na czarnej liście systemu LexCorp Legislator. Dostęp został trwale uniemożliwiony.
                     </p>
                 </div>
             `;
@@ -379,30 +396,65 @@
         let wybranyTypInicjatywy = "poselski";
         let sekundDoOdswiezenia = 300;
 
+        // Bazy Propozycji podzielone na resorty oraz kategorie inicjatyw
         const bazaPropozycji = {
-            "Ministerstwo Aktywów Państwowych": [
-                { tytul: "Ustawa o zmianie ustawy o zarządzaniu mieniem państwowym", opis: "Zaostrzenie kryteriów nadzoru nad spółkami z udziałem Skarbu Państwa." },
-                { tytul: "Ustawa o ochronie infrastruktury krytycznej w energetyce", opis: "Mechanizmy osłony finansowej i fizycznej dla kluczowych węzłów." }
+            "Ministerstwo Spraw Wewnętrznych i Administracji": [
+                { tytul: "Ustawa o zmianie ustawy o ochronie ludności i stanie klęski żywiołowej", opis: "Wdrożenie krajowego systemu automatycznego powiadomienia oraz dofinansowania lokalnych jednostek OSP.", typ: "rzadowy" },
+                { tytul: "Ustawa o modernizacji służb mundurowych podległych MSWiA", opis: "Zwiększenie uposażeń funkcjonariuszy Policji, Państwowej Straży Pożarnej oraz Straży Granicznej.", typ: "rzadowy" },
+                { tytul: "Rządowy Projekt Uchwały w sprawie Krajowego Programu Ochrony Ludności", opis: "Wytyczne dla wojewodów w zakresie rozbudowy infrastruktury schronowej.", typ: "rpu" },
+                { tytul: "Ustawa o zmianie ustawy – Prawo o zgromadzeniach", opis: "Zwiększenie wymogów bezpieczeństwa przy organizacji wydarzeń masowych w centrach miast.", typ: "poselski" },
+                { tytul: "Obywatelski projekt ustawy o wsparciu ochotniczych straży pożarnych", opis: "Gwarancja ulg podatkowych dla strażaków ochotników i ich zakładów pracy.", typ: "obywatelski" }
             ],
-            "Ministerstwo Cyfryzacji": [
-                { tytul: "Ustawa o zmianie ustawy o krajowym systemie cyberbezpieczeństwa", opis: "Wymogi raportowania incydentów oraz obowiązkowa certyfikacja." },
-                { tytul: "Ustawa o wytycznych dla systemów sztucznej inteligencji", opis: "Normy etyczne, audyty algorytmiczne w sektorze publicznym." }
-            ],
-            "Ministerstwo Edukacji Narodowej": [
-                { tytul: "Ustawa o zmianie ustawy – Prawo oświatowe", opis: "Nowelizacja zasad oceniania oraz ograniczenie biurokracji nauczycielskiej." },
-                { tytul: "Ustawa o wsparciu psychologicznym w szkołach", opis: "Gwarancja etatu psychologa w każdej placówce oświatowej." }
+            "Ministerstwo Sprawiedliwości": [
+                { tytul: "Ustawa o zmianie ustawy – Kodeks karny", opis: "Zaostrzenie kar za przestępstwa skarbowe oraz cyfrowe oszustwa finansowe.", typ: "rzadowy" },
+                { tytul: "Ustawa o cyfryzacji doręczeń sądowych", opis: "Obowiązek stosowania doręczeń elektronicznych dla radców prawnych i adwokatów.", typ: "rzadowy" },
+                { tytul: "Rządowy Projekt Uchwały w sprawie Strategii Reformy Sądownictwa", opis: "Założenia organizacji pracy sądów rejonowych na lata 2026-2030.", typ: "rpu" },
+                { tytul: "Ustawa o zmianie ustawy o KRS", opis: "Modyfikacja wyboru członków Krajowej Rady Sądownictwa przez środowiska sędziowskie.", typ: "poselski" },
+                { tytul: "Obywatelski projekt ustawy o bezpłatnej pomocy prawnej", opis: "Poszerzenie kręgu osób uprawnionych do darmowych porad prawnych.", typ: "obywatelski" }
             ],
             "Ministerstwo Finansów": [
-                { tytul: "Ustawa o zmianie ustawy o podatku od towarów i usług", opis: "Modyfikacja funkcjonowania Krajowego Systemu e-Faktur." },
-                { tytul: "Ustawa o podatku wyrównawczym dla korporacji", opis: "Wdrożenie globalnego minimalnego poziomu opodatkowania." }
+                { tytul: "Ustawa o zmianie ustawy o podatku od towarów i usług (VAT)", opis: "Uproszczenie rozliczeń w KSeF oraz podniesienie limitu podmiotowego dla małych podatników.", typ: "rzadowy" },
+                { tytul: "Ustawa o podatku wyrównawczym dla przedsiębiorstw wielonarodowych", opis: "Wdrożenie unijnej dyrektywy w zakresie minimalnego opodatkowania korporacji.", typ: "rzadowy" },
+                { tytul: "Rządowy Projekt Uchwały w sprawie Wieloletniego Planu Finansowego Państwa", opis: "Ramowe założenia budżetowe oraz prognoza długu sektora finansów publicznych.", typ: "rpu" },
+                { tytul: "Ustawa o zmianie ustawy o PIT – podniesienie kwoty wolnej", opis: "Zwiększenie kwoty wolnej od podatku do wysokości 60 000 zł.", typ: "poselski" },
+                { tytul: "Obywatelski projekt ustawy o zwolnieniu emerytur z podatku dochodowego", opis: "Całkowite zwolnienie świadczeń emerytalnych z podatku PIT.", typ: "obywatelski" }
+            ],
+            "Ministerstwo Cyfryzacji": [
+                { tytul: "Ustawa o zmianie ustawy o krajowym systemie cyberbezpieczeństwa", opis: "Wdrożenie dyrektywy NIS2 oraz obowiązek audytu kluczowych dostawców usług.", typ: "rzadowy" },
+                { tytul: "Ustawa o zasobach sztucznej inteligencji w sektorze publicznym", opis: "Ustanowienie ram certyfikacji oraz etycznego wykorzystania systemów AI.", typ: "rzadowy" },
+                { tytul: "Rządowy Projekt Uchwały w sprawie Państwowej Strategii Cyfryzacji 2030", opis: "Harmonogram cyfryzacji procedur urzędowych oraz rozbudowy światłowodów.", typ: "rpu" },
+                { tytul: "Ustawa o ochronie prywatności małoletnich w sieci", opis: "Obowiązek weryfikacji wieku na portalach zawierających treści nieodpowiednie.", typ: "poselski" },
+                { tytul: "Obywatelski projekt ustawy o prawie do bycia offline", opis: "Ochrona pracowników przed kontaktem ze strony pracodawcy poza godzinami pracy.", typ: "obywatelski" }
+            ],
+            "Ministerstwo Obrony Narodowej": [
+                { tytul: "Ustawa o zmianie ustawy o obronie Ojczyzny", opis: "Nowe zasady powoływania rezerwy oraz finansowania zakupów sprzętu wojskowego.", typ: "rzadowy" },
+                { tytul: "Rządowy Projekt Uchwały w sprawie Celów Operacyjnych Sił Zbrojnych", opis: "Rozbudowa jednostek operacyjnych we wschodnich rejonach kraju.", typ: "rpu" },
+                { tytul: "Ustawa o wsparciu przemysłu zbrojeniowego", opis: "Specjalny fundusz inwestycyjny dla krajowych producentów amunicji.", typ: "poselski" },
+                { tytul: "Obywatelski projekt ustawy o obowiązkowych szkoleniach z pierwszej pomocy", opis: "Powszechne szkolenia cywilne w zakresie postępowania kryzysowego.", typ: "obywatelski" }
+            ],
+            "Ministerstwo Zdrowia": [
+                { tytul: "Ustawa o zmianie ustawy o świadczeniach opieki zdrowotnej", opis: "Skrócenie czasów oczekiwania do specjalistów oraz modyfikacja wyceny procedur.", typ: "rzadowy" },
+                { tytul: "Rządowy Projekt Uchwały w sprawie Narodowego Programu Ochrony Zdrowia Psychicznego", opis: "Rozbudowa sieci poradni psychologiczno-pediatrycznych.", typ: "rpu" },
+                { tytul: "Ustawa o zwiększeniu nakładów na ochronę zdrowia do 8% PKB", opis: "Sztywny harmonogram wzrostu finansowania publicznej ochrony zdrowia.", typ: "poselski" },
+                { tytul: "Obywatelski projekt ustawy o darmowych lekach dla dzieci", opis: "Rozszerzenie listy leków bezpłatnych dla pacjentów poniżej 18 roku życia.", typ: "obywatelski" }
+            ],
+            "Ministerstwo Edukacji Narodowej": [
+                { tytul: "Ustawa o zmianie ustawy – Prawo oświatowe", opis: "Redukcja podstawy programowej oraz cyfryzacja podręczników szkolnych.", typ: "rzadowy" },
+                { tytul: "Rządowy Projekt Uchwały w sprawie Polityki Oświatowej Państwa", opis: "Priorytety rozwijania kompetencji cyfrowych w szkolnictwie.", typ: "rpu" },
+                { tytul: "Ustawa o podwyżkach dla nauczycieli dyplomowanych", opis: "Wzrost pensji zasadniczej o 20% dla kadry dydaktycznej.", typ: "poselski" },
+                { tytul: "Obywatelski projekt ustawy o odejściu od prac domowych", opis: "Ustawowy zakaz zadawania prac pisemnych w szkołach podstawowych.", typ: "obywatelski" }
             ],
             "Ministerstwo Infrastruktury": [
-                { tytul: "Ustawa o zmianie ustawy – Prawo o ruchu drogowym", opis: "Nowelizacja przepisów dotyczących pojazdów autonomicznych." },
-                { tytul: "Ustawa o rozwoju kolei dużych prędkości", opis: "Uproszczenie procedur środowiskowych dla magistrali kolejowych." }
+                { tytul: "Ustawa o zmianie ustawy – Prawo o ruchu drogowym", opis: "Nowe normy prędkości oraz zaostrzenie kar za prowadzenie bez uprawnień.", typ: "rzadowy" },
+                { tytul: "Rządowy Projekt Uchwały w sprawie Budowy Dróg Krajowych", opis: "Plan inwestycji autostradowych i ekspresowych do roku 2035.", typ: "rpu" },
+                { tytul: "Ustawa o rozwoju pasażerskich połączeń kolejowych", opis: "Subwencjonowanie lokalnych linii kolejowych w miastach powiatowych.", typ: "poselski" },
+                { tytul: "Obywatelski projekt ustawy o bezpłatnej komunikacji miejskiej dla uczniów", opis: "Bezpłatne przejazdy dla młodzieży szkolnej w gminach.", typ: "obywatelski" }
             ],
-            "Ministerstwo Spraw Wewnętrznych i Administracji": [
-                { tytul: "Ustawa o zmianie ustawy o ochronie ludności", opis: "Nowy system powiadamiania kryzysowego i procedury ewakuacyjne." },
-                { tytul: "Ustawa o zmianie ustawy o Policji", opis: "Podwyżki uposażeń oraz cyfrowe kamery nasobne dla funkcjonariuszy." }
+            "Ministerstwo Klimatu i Środowiska": [
+                { tytul: "Ustawa o zmianie ustawy o odnawialnych źródłach energii", opis: "Ułatwienia w budowie instalacji fotowoltaicznych i wiatrowych.", typ: "rzadowy" },
+                { tytul: "Rządowy Projekt Uchwały w sprawie Polityki Energetycznej Polski do 2040 r.", opis: "Harmonogram transformacji jądrowej i wygaszania bloków węglowych.", typ: "rpu" },
+                { tytul: "Ustawa o ochronie parków narodowych", opis: "Zaostrzenie wymogów przekształcania gruntów leśnych.", typ: "poselski" },
+                { tytul: "Obywatelski projekt ustawy o zakazie plastiku jednorazowego", opis: "Całkowite wycofanie wybranych opakowań z tworzyw sztucznych.", typ: "obywatelski" }
             ]
         };
 
@@ -417,13 +469,12 @@
         function ustawTypInicjatywy(typ) {
             wybranyTypInicjatywy = typ;
             const sekcjaPoselska = document.getElementById('sekcjaPoselska');
-            const sekcjaMinisterstw = document.getElementById('sekcjaMinisterstw');
             const tytulSekcji = document.getElementById('tytulSekcjiResortowej');
             
             const przyciski = {
                 poselski: document.getElementById('btnTypPoselski'),
                 rzadowy: document.getElementById('btnTypRzadowy'),
-                uchwala: document.getElementById('btnTypUchwala'),
+                rpu: document.getElementById('btnTypRpu'),
                 obywatelski: document.getElementById('btnTypObywatelski')
             };
 
@@ -439,21 +490,19 @@
 
             if (typ === 'poselski') {
                 sekcjaPoselska.classList.remove('hidden');
-                sekcjaMinisterstw.classList.add('hidden');
+                tytulSekcji.innerText = "Propozycje Inicjatyw Poselskich wg Kategori/Resortu:";
             } else if (typ === 'rzadowy') {
                 sekcjaPoselska.classList.add('hidden');
-                sekcjaMinisterstw.classList.remove('hidden');
-                tytulSekcji.innerText = "Propozycje Rządowe / Ustawy i Nowelizacje:";
-                wyswietlPropozycje(wybraneMinisterstwo);
-            } else if (typ === 'uchwala') {
+                tytulSekcji.innerText = "Rządowe Propozycje Ustaw i Nowelizacji:";
+            } else if (typ === 'rpu') {
                 sekcjaPoselska.classList.add('hidden');
-                sekcjaMinisterstw.classList.remove('hidden');
-                tytulSekcji.innerText = "Propozycje Uchwał Sejmu wg Resortu:";
-                wyswietlPropozycje(wybraneMinisterstwo);
-            } else {
+                tytulSekcji.innerText = "Rządowe Projekty Uchwał (RPU) wg Resortu:";
+            } else if (typ === 'obywatelski') {
                 sekcjaPoselska.classList.add('hidden');
-                sekcjaMinisterstw.classList.add('hidden');
+                tytulSekcji.innerText = "Propozycje Inicjatyw Obywatelskich:";
             }
+
+            wyswietlPropozycje(wybraneMinisterstwo);
         }
 
         function wygenerujPrzyciskiMinisterstw() {
@@ -478,24 +527,26 @@
         function wyswietlPropozycje(ministerstwo) {
             const lista = document.getElementById('listaPropozycji');
             lista.innerHTML = '';
-            const pozycje = bazaPropozycji[ministerstwo] || [];
+            const wszystkiePozycje = bazaPropozycji[ministerstwo] || [];
+
+            // Filtrowanie propozycji pasujących do danej kategorii lub wyświetlanie rekomendowanych
+            let pozycje = wszystkiePozycje.filter(p => p.typ === wybranyTypInicjatywy);
+
+            if (pozycje.length === 0) {
+                pozycje = wszystkiePozycje; // fallback
+            }
 
             pozycje.forEach(p => {
                 const card = document.createElement('div');
                 card.className = "glass-card p-2.5 rounded-xl border border-white/5 hover:border-blue-500/30 cursor-pointer transition-all flex flex-col justify-between";
-                
-                let wyswietlanyTytul = p.tytul;
-                if (wybranyTypInicjatywy === 'uchwala') {
-                    wyswietlanyTytul = p.tytul.replace("Ustawa o zmianie ustawy o", "Uchwała Sejmu RP w sprawie").replace("Ustawa o", "Uchwała Sejmu RP w sprawie");
-                }
 
                 card.onclick = () => {
-                    document.getElementById('kreatorTytul').value = wyswietlanyTytul;
+                    document.getElementById('kreatorTytul').value = p.tytul;
                     document.getElementById('kreatorOpis').value = p.opis;
                 };
 
                 card.innerHTML = `
-                    <h4 class="text-[11px] font-bold text-slate-200 line-clamp-1">${wyswietlanyTytul}</h4>
+                    <h4 class="text-[11px] font-bold text-slate-200 line-clamp-1">${p.tytul}</h4>
                     <p class="text-[10px] text-slate-400 line-clamp-2 mt-1 font-sans">${p.opis}</p>
                 `;
                 lista.appendChild(card);
@@ -559,8 +610,8 @@
 
             const wynikHtml = `
                 <div class="bg-slate-900/60 p-4 rounded-xl border border-blue-500/20 space-y-2">
-                    <p class="text-blue-400 font-bold">Wynik Audytu ZTP v4.0 dla: ${rodzaj}</p>
-                    <p class="text-slate-300">Przeanalizowano treść aktu pod kątem wymogów techniki prawodawczej.</p>
+                    <p class="text-blue-400 font-bold">Wynik Audytu ZTP v4.10 dla: ${rodzaj}</p>
+                    <p class="text-slate-300">Przeanalizowano treść aktu pod kątem zgodności z systematyką ZTP oraz spójności inicjatywy.</p>
                     <div class="p-2.5 bg-black/40 rounded-lg text-emerald-400 font-mono text-[11px]">
                         ✓ Brak krytycznych błędów strukturalnych w przesłanym fragmencie.
                     </div>
@@ -580,11 +631,20 @@
                 return;
             }
 
-            const wygenerowanaTresc = `PROJEKT\n\n${tytul.toUpperCase()}\n\nz dnia .................... r.\n\n${opis}\n\nArt. 1. Ustawa wchodzi w życie po upływie 14 dni od dnia ogłoszenia.`;
+            let naglowek = "PROJEKT";
+            if (wybranyTypInicjatywy === 'rpu') {
+                naglowek = "RZĄDOWY PROJEKT UCHWAŁY (RPU)";
+            } else if (wybranyTypInicjatywy === 'poselski') {
+                naglowek = "POSELSKI PROJEKT USTAWY";
+            } else if (wybranyTypInicjatywy === 'obywatelski') {
+                naglowek = "OBYWATELSKI PROJEKT USTAWY";
+            }
+
+            const wygenerowanaTresc = `${naglowek}\n\n${tytul.toUpperCase()}\n\nz dnia .................... r.\n\n${opis}\n\nArt. 1. Akt wchodzi w życie z dniem następującym po dniu ogłoszenia.`;
             
             wyniki.innerHTML = `
                 <div class="bg-slate-900/60 p-4 rounded-xl border border-emerald-500/20 space-y-2">
-                    <p class="text-emerald-400 font-bold">Sporządzono projekt (v4.0)</p>
+                    <p class="text-emerald-400 font-bold">Sporządzono projekt (v4.10)</p>
                     <pre class="text-slate-200 font-mono whitespace-pre-wrap bg-black/40 p-3 rounded-lg border border-white/5">${wygenerowanaTresc}</pre>
                 </div>
             `;
