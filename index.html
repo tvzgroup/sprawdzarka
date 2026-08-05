@@ -110,11 +110,11 @@
                 <ul class="space-y-2 font-mono text-[11px] bg-slate-900/60 p-4 rounded-2xl border border-white/5">
                     <li class="flex items-start space-x-2">
                         <span class="text-emerald-400 font-bold">✓</span>
-                        <span><strong>Aktualizacja Weryfikacji:</strong> Oczyszczenie lokalnej listy blokad pod bazę zewnętrzną.</span>
+                        <span><strong>Aktualizacja Filtru:</strong> Zaktualizowano wewnętrzną listę zabronionych fraz.</span>
                     </li>
                     <li class="flex items-start space-x-2">
                         <span class="text-emerald-400 font-bold">✓</span>
-                        <span><strong>Przygotowanie Bazy:</strong> Struktura pod integrację z zewnętrzną bazą danych.</span>
+                        <span><strong>Optymalizacja Weryfikacji:</strong> Udoskonalono algorytm sprawdzania czarnej listy.</span>
                     </li>
                 </ul>
             </div>
@@ -305,7 +305,7 @@
                 <div id="wynikiKontener" class="flex-grow overflow-y-auto my-4 pr-2 space-y-4 text-xs font-mono">
                     <div class="bg-slate-900/40 p-4 rounded-xl border border-white/5 text-slate-400 leading-relaxed">
                         <p class="text-blue-400 font-semibold mb-1">System Legislacyjny LexCorp v3.20 Gotowy</p>
-                        Wybierz rodzaj aktu. Przygotowano strukturę pod integrację z zewnętrzną bazą danych.
+                        Wybierz rodzaj aktu do zweryfikowania lub przejść do narzędzi tworzenia.
                     </div>
                 </div>
 
@@ -324,7 +324,7 @@
     </main>
 
     <script>
-        // Czarna lista lokalna (zastępowana docelowo zapytaniem do Bazy Danych / API)
+        // Czarna lista zabronionych fraz
         const BLACKLIST = [
             "jpa_pis", 
             "stachu jones", 
@@ -340,33 +340,29 @@
             return txt.toLowerCase().replace(/[^a-z0-9ąęćłńóśźż]/g, "");
         }
 
-        // Przygotowane pod asynchroniczne pobieranie danych z bazy (np. async/await z API)
-        async function sprawdzCzyZablokowanyWBazie(tekst) {
+        function sprawdzCzyZablokowany(tekst) {
             const znormalizowany = czyszczenieTekstu(tekst);
-            
-            // Miejsce na strzał do zewnętrznej bazy danych (np. fetch('/api/check-blacklist'))
             return BLACKLIST.some(item => {
                 const itemCzysty = czyszczenieTekstu(item);
                 return znormalizowany.includes(itemCzysty);
             });
         }
 
-        async function sprawdzZapisanaAutoryzacje() {
+        function sprawdzZapisanaAutoryzacje() {
             if (localStorage.getItem('lex_blacklisted') === 'true') {
                 pokazBlokadeDostepu();
                 return;
             }
-            if (localStorage.getItem('lex_user_nick')) {
-                document.getElementById('authGate').classList.add('hidden');
-                document.getElementById('modalChangelog').classList.remove('hidden');
-            }
+            
+            // Wymuszanie ponownej autoryzacji przy każdym otwarciu
+            document.getElementById('authGate').classList.remove('hidden');
         }
 
-        async function weryfikujDostep() {
+        function weryfikujDostep() {
             const rawNick = document.getElementById('userNickInput').value.trim();
             if (!rawNick) return;
 
-            const czyZablokowany = await sprawdzCzyZablokowanyWBazie(rawNick);
+            const czyZablokowany = sprawdzCzyZablokowany(rawNick);
 
             if (czyZablokowany) {
                 localStorage.setItem('lex_blacklisted', 'true');
