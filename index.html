@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LexCorp Legislator v4.10 | System ZTP</title>
+    <title>LexCorp Auditor v5.0 | System ZTP</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -12,11 +12,9 @@
                 extend: {
                     colors: {
                         brand: {
-                            50: '#eff6ff',
                             500: '#3b82f6',
                             600: '#2563eb',
                             700: '#1d4ed8',
-                            900: '#1e3a8a',
                         }
                     }
                 }
@@ -31,16 +29,6 @@
             border: 1px solid rgba(255, 255, 255, 0.08);
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
         }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-        }
-        .glass-card:hover {
-            background: rgba(255, 255, 255, 0.07);
-            border-color: rgba(59, 130, 246, 0.4);
-        }
         .glass-input {
             background: rgba(3, 7, 18, 0.7);
             border: 1px solid rgba(255, 255, 255, 0.08);
@@ -51,7 +39,6 @@
             outline: none;
             box-shadow: 0 0 20px rgba(59, 130, 246, 0.25);
         }
-
         .bg-mesh {
             background-color: #030712;
             background-image: 
@@ -59,19 +46,16 @@
                 radial-gradient(at 100% 100%, rgba(15, 23, 42, 0.95) 0px, transparent 50%),
                 radial-gradient(at 50% 50%, rgba(17, 24, 39, 1) 0px, transparent 100%);
         }
-        .glow-effect {
-            box-shadow: 0 0 35px rgba(59, 130, 246, 0.15);
-        }
-
+        .glow-effect { box-shadow: 0 0 35px rgba(59, 130, 246, 0.15); }
         ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: rgba(3, 7, 18, 0.2); }
         ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 9999px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(59, 130, 246, 0.4); }
     </style>
 </head>
-<body onload="inicjalizujSystem()" class="bg-mesh text-slate-100 h-full flex flex-col font-sans antialiased selection:bg-blue-500 selection:text-white">
+<body onload="inicjalizujSystem()" class="bg-mesh text-slate-100 h-full flex flex-col font-sans antialiased">
 
-    <!-- EKRAN LOGOWANIA / WERYFIKACJA NICKU -->
+    <!-- EKRAN LOGOWANIA / BLOKADA -->
     <div id="authGate" class="fixed inset-0 z-[200] flex items-center justify-center bg-black/90 backdrop-blur-xl p-4">
         <div class="glass-panel p-8 rounded-3xl max-w-md w-full border border-blue-500/30 shadow-2xl space-y-6 text-center relative glow-effect">
             <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-3xl mx-auto shadow-lg shadow-blue-500/30 border border-white/10">
@@ -79,133 +63,109 @@
             </div>
             
             <div>
-                <h2 class="text-xl font-bold text-white tracking-wide">Autoryzacja Dostępu v4.10</h2>
-                <p class="text-xs text-slate-400 mt-1">Wprowadź swój pseudonim, aby przejść do systemu legislacyjnego.</p>
+                <h2 class="text-xl font-bold text-white tracking-wide">Autoryzacja Dostępu v5.0</h2>
+                <p class="text-xs text-slate-400 mt-1">Wprowadź swój pseudonim, aby przejść do audytora.</p>
+            </div>
+
+            <div id="blockAlert" class="hidden p-3 bg-red-950/80 border border-red-500/50 rounded-xl text-red-300 text-xs font-mono space-y-1">
+                <p id="blockAlertText" class="font-bold">⚠️ DOSTĘP ZABLOKOWANY</p>
+                <p class="text-[11px] text-red-400">Twój identyfikator znajduje się na liście zastrzeżonej.</p>
             </div>
 
             <div class="space-y-3">
                 <input type="text" id="userNickInput" onkeydown="if(event.key==='Enter') zalogujUzytkownika()" placeholder="Twój nick / identyfikator..." class="glass-input w-full px-4 py-3 rounded-xl text-sm font-medium text-center placeholder:text-slate-600">
-                <button onclick="zalogujUzytkownika()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs py-3.5 rounded-xl transition-all shadow-lg shadow-blue-600/30 active:scale-[0.99]">
+                <button onclick="zalogujUzytkownika()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs py-3.5 rounded-xl transition-all shadow-lg shadow-blue-600/30">
                     Zaloguj i Przejdź &rarr;
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Modal 1: Changelog v4.10 -->
-    <div id="modalChangelog" class="fixed inset-0 z-[110] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 hidden">
-        <div class="glass-panel p-6 sm:p-8 rounded-3xl max-w-lg w-full border border-blue-500/30 shadow-2xl space-y-5 relative glow-effect">
+    <!-- MODAL: POLITYKA PRYWATNOŚCI -->
+    <div id="modalPrivacy" class="fixed inset-0 z-[150] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 hidden">
+        <div class="glass-panel p-6 sm:p-8 rounded-3xl max-w-md w-full border border-blue-500/30 shadow-2xl space-y-5 relative glow-effect">
             <div class="flex items-center space-x-3 border-b border-white/10 pb-4">
                 <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-xl shadow-lg shadow-blue-500/30">
-                    🚀
+                    🛡️
                 </div>
                 <div>
-                    <h3 class="text-lg font-bold text-white tracking-wide">LexCorp Legislator v4.10</h3>
-                    <p class="text-xs text-blue-400 font-mono">Dziennik Zmian & Aktualizacja Systemu</p>
+                    <h3 class="text-lg font-bold text-white tracking-wide">Polityka Prywatności</h3>
+                    <p class="text-xs text-blue-400 font-mono">LexCorp v5.0 Protection Standard</p>
                 </div>
             </div>
 
-            <div class="space-y-3 text-xs text-slate-300">
-                <p class="font-medium text-slate-200">Zaktualizowano system do wersji v4.10!</p>
-                <ul class="space-y-2 font-mono text-[11px] bg-slate-900/60 p-4 rounded-2xl border border-white/5">
-                    <li class="flex items-start space-x-2">
-                        <span class="text-emerald-400 font-bold">✓</span>
-                        <span><strong>Odblokowany Dostęp:</strong> Wszyscy użytkownicy mają dostęp do systemu.</span>
-                    </li>
-                    <li class="flex items-start space-x-2">
-                        <span class="text-emerald-400 font-bold">✓</span>
-                        <span><strong>Podział Resortowy:</strong> Ministerstwa widoczne są tylko w Projektach Rządowych oraz RPU.</span>
-                    </li>
-                    <li class="flex items-start space-x-2">
-                        <span class="text-emerald-400 font-bold">✓</span>
-                        <span><strong>Pełna Baza 5 Propozycji:</strong> Każda kategoria/resort zawiera po 5 propozycji ustaw i zmian.</span>
-                    </li>
-                </ul>
+            <div class="space-y-3 text-xs text-slate-300 font-sans leading-relaxed">
+                <div class="bg-slate-900/60 p-3.5 rounded-xl border border-white/5 space-y-2">
+                    <p class="font-bold text-white flex items-center space-x-1.5">
+                        <span>🔒</span> <span>Zero zbierania danych:</span>
+                    </p>
+                    <p class="text-slate-400 text-[11px]">
+                        Aplikacja nie gromadzi, nie przechowuje ani nie przesyła do zewnętrznych baz żadnych Twoich danych osobowych, nicków ani wprowadzanych projektów aktów prawnych.
+                    </p>
+                </div>
+
+                <div class="bg-slate-900/60 p-3.5 rounded-xl border border-white/5 space-y-2">
+                    <p class="font-bold text-white flex items-center space-x-1.5">
+                        <span>⚡</span> <span>Przetwarzanie Lokalne:</span>
+                    </p>
+                    <p class="text-slate-400 text-[11px]">
+                        Wszystkie operacje audytowe i sprawdzanie formatowania tekstu odbywają się wyłącznie tymczasowo w pamięci Twojej przeglądarki.
+                    </p>
+                </div>
+
+                <div class="bg-slate-900/60 p-3.5 rounded-xl border border-white/5 space-y-2">
+                    <p class="font-bold text-white flex items-center space-x-1.5">
+                        <span>🚫</span> <span>Brak Integracji AI:</span>
+                    </p>
+                    <p class="text-slate-400 text-[11px]">
+                        System v5.0 nie zawiera modułów sztucznej inteligencji. Żadne zapytania nie są przekazywane dostawcom modeli zewnętrznych.
+                    </p>
+                </div>
             </div>
 
-            <button onclick="zamknijChangelog()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold text-xs py-3.5 rounded-xl transition-all shadow-lg shadow-blue-600/30 active:scale-[0.99] flex items-center justify-center space-x-2">
-                <span>Przejdź do pracy</span>
-                <span>&rarr;</span>
+            <button onclick="zamknijPrywatnosc()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs py-3.5 rounded-xl transition-all shadow-lg shadow-blue-600/30">
+                Rozumiem
             </button>
         </div>
     </div>
 
-    <!-- Modal 2: Kontakt Discord -->
-    <div id="modalKontakt" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/70 backdrop-blur-md p-4">
-        <div class="glass-panel p-6 rounded-3xl max-w-sm w-full border border-indigo-500/30 shadow-2xl space-y-5 text-center relative">
-            <div class="relative">
-                <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-blue-600 border border-white/20 text-white flex items-center justify-center mx-auto text-2xl shadow-xl shadow-indigo-500/30">
-                    💬
-                </div>
-            </div>
-
-            <div>
-                <h3 class="text-base font-bold text-white tracking-wide">Kontakt z Twórcą</h3>
-                <p class="text-xs text-slate-400 mt-1">Napisz na Discordzie:</p>
-            </div>
-
-            <div class="bg-slate-950/80 p-3.5 rounded-2xl border border-indigo-500/20 flex items-center justify-between font-mono text-xs">
-                <div class="flex items-center space-x-2">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span class="text-indigo-200 font-bold select-all" id="discordTag">twojstarywilkuu</span>
-                </div>
-                <button onclick="kopiujDiscord()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-[10px] font-sans font-medium px-3 py-1.5 rounded-xl transition-all shadow-md shadow-indigo-600/30">
-                    Kopiuj
-                </button>
-            </div>
-
-            <button onclick="zamknijKontakt()" class="w-full bg-slate-800/80 hover:bg-slate-700 text-slate-300 text-xs py-2.5 rounded-xl transition-all border border-white/5">
-                Zamknij
-            </button>
-        </div>
-    </div>
-
-    <!-- Pasek Nawigacyjny -->
+    <!-- PASEK NAWIGACYJNY -->
     <header class="border-b border-white/5 bg-slate-950/70 sticky top-0 z-50 backdrop-blur-md">
         <div class="max-w-[1700px] mx-auto px-4 sm:px-6 h-16 flex justify-between items-center">
             <div class="flex items-center space-x-3">
                 <div class="h-10 w-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-emerald-500 flex items-center justify-center text-white font-bold shadow-lg shadow-blue-500/20 border border-white/10">
-                    🏛️
+                    🔍
                 </div>
                 <div>
                     <div class="flex items-center space-x-2">
-                        <span class="text-base font-bold tracking-tight text-white">LexCorp Legislator</span>
+                        <span class="text-base font-bold tracking-tight text-white">LexCorp Auditor</span>
                         <span class="text-[11px] font-mono font-semibold px-2.5 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                            v4.10
+                            v5.0
                         </span>
                     </div>
                 </div>
             </div>
 
-            <div class="flex items-center p-1 bg-slate-900/80 rounded-xl border border-white/5 shadow-inner space-x-1">
-                <button onclick="otworzKontakt()" class="text-xs px-4 py-2 rounded-lg transition-all font-medium text-indigo-400 hover:text-indigo-300 hover:bg-indigo-500/10 border border-indigo-500/20">
-                    📩 Kontakt
-                </button>
-                <div class="h-4 w-[1px] bg-white/10 my-auto"></div>
-                <button onclick="zmienTryb('sprawdzarka')" id="btnSprawdzarka" class="text-xs px-5 py-2 rounded-lg transition-all font-medium bg-blue-600 text-white shadow-md shadow-blue-600/25">
-                    🔍 Audyt & Weryfikacja Ustaw
-                </button>
-                <button onclick="zmienTryb('kreator')" id="btnKreator" class="text-xs px-5 py-2 rounded-lg transition-all font-medium text-slate-400 hover:text-slate-200">
-                    ✍️ Tworzenie & Pisanie Ustaw
+            <div class="flex items-center space-x-3">
+                <button onclick="otworzPrywatnosc()" class="text-xs px-4 py-2 rounded-xl transition-all font-medium text-slate-300 bg-slate-900 border border-white/10 hover:border-blue-500/40 hover:text-white">
+                    🛡️ Polityka Prywatności
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- Przestrzeń Robocza -->
+    <!-- GŁÓWNA PRZESTRZEŃ ROBOCZA (WYŁĄCZNIE AUDYTOR) -->
     <main class="max-w-[1700px] mx-auto px-4 sm:px-6 py-6 flex-grow w-full grid grid-cols-1 lg:grid-cols-12 gap-6 h-[calc(100vh-4rem)]">
         
-        <!-- Lewa Kolumna -->
-        <section class="lg:col-span-6 flex flex-col h-full min-h-0">
-            
-            <!-- TRYB 1: AUDYT -->
-            <div id="panelSprawdzarki" class="glass-panel rounded-2xl p-5 flex flex-col h-full relative overflow-hidden">
+        <!-- Edytor / Wklejanie Ustawy -->
+        <section class="lg:col-span-7 flex flex-col h-full min-h-0">
+            <div class="glass-panel rounded-2xl p-5 flex flex-col h-full relative overflow-hidden">
                 <div class="flex justify-between items-center pb-3 border-b border-white/5">
                     <div class="flex items-center space-x-2">
                         <span class="text-blue-400 text-sm">📜</span>
                         <h2 class="text-xs font-semibold text-slate-200 uppercase tracking-wider">Audyt Techniki Prawodawczej (ZTP)</h2>
                     </div>
-                    <select id="rodzajAktuDoSprawdzenia" class="glass-input px-3 py-1.5 rounded-lg text-xs font-medium cursor-pointer">
+                    <select id="rodzajAktu" class="glass-input px-3 py-1.5 rounded-lg text-xs font-medium cursor-pointer">
                         <option value="Ustawa" class="bg-slate-900">Ustawa</option>
                         <option value="Poselski projekt ustawy" class="bg-slate-900">Poselski projekt ustawy</option>
                         <option value="Ustawa o zmianie ustawy" class="bg-slate-900">Ustawa o zmianie ustawy (Nowelizacja)</option>
@@ -215,503 +175,136 @@
                 </div>
 
                 <div class="flex-grow flex flex-col my-4">
-                    <textarea id="trescDoSprawdzenia" placeholder="Wklej treść aktu prawnego, projektu poselskiego, nowelizacji lub RPU do oceny legislacyjnej..." class="glass-input w-full flex-grow p-4 rounded-xl text-xs font-mono resize-none leading-relaxed transition-all placeholder:text-slate-600"></textarea>
+                    <textarea id="trescAktu" placeholder="Wklej tutaj treść aktu prawnego do weryfikacji technicznej..." class="glass-input w-full flex-grow p-4 rounded-xl text-xs font-mono resize-none leading-relaxed transition-all placeholder:text-slate-600"></textarea>
                 </div>
 
                 <div class="pt-3 border-t border-white/5 flex items-center justify-between">
-                    <span class="text-[11px] text-slate-500 font-mono">Weryfikacja: Systematyka, Lex Retro Non Agit, ZTP, Inicjatywa</span>
-                    <button onclick="uruchomAudyt()" class="bg-blue-600 hover:bg-blue-500 text-white font-medium px-5 py-2.5 rounded-xl text-xs transition-all flex items-center space-x-2 shadow-lg shadow-blue-600/20 active:scale-[0.98]">
-                        <span>Uruchom Audyt ZTP</span>
+                    <span class="text-[11px] text-slate-500 font-mono">Weryfikacja: Nagłówek, Data, Artykuły/Paragrafy</span>
+                    <button onclick="uruchomAudyt()" class="bg-blue-600 hover:bg-blue-500 text-white font-medium px-5 py-2.5 rounded-xl text-xs transition-all flex items-center space-x-2 shadow-lg shadow-blue-600/20">
+                        <span>Przeprowadź Sprawdzenie</span>
                         <span>⚡</span>
                     </button>
                 </div>
             </div>
-
-            <!-- TRYB 2: KREATOR -->
-            <div id="panelKreatora" class="glass-panel rounded-2xl p-5 flex flex-col h-full relative overflow-hidden hidden space-y-4">
-                <div class="flex justify-between items-center pb-3 border-b border-white/5">
-                    <div class="flex items-center space-x-2">
-                        <span class="text-emerald-400 text-sm">🖋️</span>
-                        <h2 class="text-xs font-semibold text-slate-200 uppercase tracking-wider">Kreator Aktów Prawnych & Nowelizacji</h2>
-                    </div>
-                    <span class="text-[10px] uppercase font-mono tracking-widest text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-md border border-emerald-500/20">Standard ZTP v4.10</span>
-                </div>
-
-                <!-- Wybór Typu Inicjatywy -->
-                <div class="glass-card p-3 rounded-xl space-y-2 border border-white/5">
-                    <label class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">Inicjatywa Prawodawcza / Typ Aktu:</label>
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                        <button type="button" onclick="ustawTypInicjatywy('poselski')" id="btnTypPoselski" class="px-3 py-2 rounded-lg text-xs font-medium border border-blue-500/40 bg-blue-600/20 text-blue-300 transition-all text-center font-bold">
-                            🏛️ Poselski Projekt
-                        </button>
-                        <button type="button" onclick="ustawTypInicjatywy('rzadowy')" id="btnTypRzadowy" class="px-3 py-2 rounded-lg text-xs font-medium border border-white/10 bg-slate-900 text-slate-400 transition-all text-center hover:border-white/20">
-                            🏢 Projekt Rządowy
-                        </button>
-                        <button type="button" onclick="ustawTypInicjatywy('rpu')" id="btnTypRpu" class="px-3 py-2 rounded-lg text-xs font-medium border border-white/10 bg-slate-900 text-slate-400 transition-all text-center hover:border-white/20">
-                            📜 Rządowy Projekt Uchwały (RPU)
-                        </button>
-                        <button type="button" onclick="ustawTypInicjatywy('obywatelski')" id="btnTypObywatelski" class="px-3 py-2 rounded-lg text-xs font-medium border border-white/10 bg-slate-900 text-slate-400 transition-all text-center hover:border-white/20">
-                            👥 Obywatelski
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Sekcja Bazy Propozycji -->
-                <div id="sekcjaPropozycji" class="glass-card p-3 rounded-xl space-y-2 border border-white/5">
-                    <div class="flex items-center justify-between">
-                        <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider" id="tytulSekcjiResortowej">Baza Propozycji Ustaw i Nowelizacji:</span>
-                        <span class="text-[10px] font-mono text-slate-500" id="timerOdswiezania">Odświeżenie za: 05:00</span>
-                    </div>
-                    
-                    <!-- Przycisk Ministerstw - TYLKO DLA RZĄDOWEGO I RPU -->
-                    <div class="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto pr-1 hidden" id="kontenerMinisterstw"></div>
-
-                    <div class="pt-2">
-                        <div id="listaPropozycji" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-36 overflow-y-auto pr-1"></div>
-                    </div>
-                </div>
-
-                <!-- Formularz Redagowania -->
-                <div class="space-y-2 flex-grow flex flex-col">
-                    <div id="sekcjaPoselska" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        <input type="text" id="kreatorWnioskodawcy" placeholder="Wnioskodawcy (np. Grupa Posłów...)" value="Grupa posłów (podpisana przez 15 posłów)" class="glass-input w-full px-3 py-2 rounded-xl text-xs font-medium placeholder:text-slate-600">
-                        <input type="text" id="kreatorReprezentant" placeholder="Poseł Reprezentujący..." class="glass-input w-full px-3 py-2 rounded-xl text-xs font-medium placeholder:text-slate-600">
-                    </div>
-
-                    <input type="text" id="kreatorTytul" placeholder="Tytuł aktu..." class="glass-input w-full px-4 py-2.5 rounded-xl text-xs font-medium placeholder:text-slate-600">
-                    <textarea id="kreatorOpis" placeholder="Określ zakres przedmiotowy, modyfikowane artykuły oraz uzasadnienie..." class="glass-input w-full flex-grow p-3.5 rounded-xl text-xs font-mono resize-none leading-relaxed transition-all placeholder:text-slate-600"></textarea>
-                </div>
-
-                <div class="pt-3 border-t border-white/5 flex items-center justify-between">
-                    <span class="text-[11px] text-slate-500 font-mono">Struktura: Tytuł, Przepisy, Uzasadnienie, Skutki finansowe</span>
-                    <button onclick="generujAkt()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-5 py-2.5 rounded-xl text-xs transition-all flex items-center space-x-2 shadow-lg shadow-emerald-600/20 active:scale-[0.98]">
-                        <span>Sporządź Projekt Aktu</span>
-                        <span>✨</span>
-                    </button>
-                </div>
-            </div>
-
         </section>
 
-        <!-- Prawa Kolumna -->
-        <section class="lg:col-span-6 flex flex-col h-full min-h-0">
+        <!-- Konsola Wyników -->
+        <section class="lg:col-span-5 flex flex-col h-full min-h-0">
             <div class="glass-panel rounded-2xl p-5 flex flex-col h-full relative overflow-hidden">
-                
                 <div class="flex justify-between items-center pb-3 border-b border-white/5">
                     <div class="flex items-center space-x-2">
-                        <span class="text-indigo-400 text-sm">🤖</span>
-                        <h2 class="text-xs font-semibold text-slate-200 uppercase tracking-wider">Konsola Legislacyjna v4.10</h2>
+                        <span class="text-indigo-400 text-sm">📊</span>
+                        <h2 class="text-xs font-semibold text-slate-200 uppercase tracking-wider">Raport Zgodności</h2>
                     </div>
-                    <button onclick="skopiujOstatniTekst()" class="text-[11px] bg-slate-800/80 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg border border-white/5 transition-all flex items-center space-x-1.5">
-                        <span>📋 Skopiuj Projekt</span>
-                    </button>
                 </div>
 
-                <div id="wynikiKontener" class="flex-grow overflow-y-auto my-4 pr-2 space-y-4 text-xs font-mono">
+                <div id="wynikAudytu" class="flex-grow overflow-y-auto my-4 pr-2 space-y-4 text-xs font-mono">
                     <div class="bg-slate-900/40 p-4 rounded-xl border border-white/5 text-slate-400 leading-relaxed">
-                        <p class="text-blue-400 font-semibold mb-1">System Legislacyjny LexCorp v4.10 Gotowy</p>
-                        Wybierz rodzaj aktu. Dostępna jest rozbudowana baza propozycji po 5 pozycji dla każdego typu inicjatywy oraz wsparcie dla projektów Rządowych, RPU, Poselskich i Obywatelskich.
+                        <p class="text-blue-400 font-semibold mb-1">LexCorp Auditor v5.0 Gotowy</p>
+                        Wklej treść w oknie po lewej stronie i kliknij button weryfikacji. Moduły tworzenia treści przez AI zostały w całości usunięte.
                     </div>
                 </div>
-
-                <div class="pt-3 border-t border-white/5">
-                    <div class="flex space-x-2">
-                        <input type="text" id="userInput" onkeydown="if(event.key==='Enter') wyslijPytanie()" placeholder="Wpisz poprawkę lub zapytanie..." class="glass-input flex-grow px-4 py-2.5 rounded-xl text-xs placeholder:text-slate-600 focus:ring-1 focus:ring-blue-500">
-                        <button onclick="wyslijPytanie()" class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-xl text-xs font-medium transition-all shadow-md shadow-blue-600/20">
-                            Wyślij
-                        </button>
-                    </div>
-                </div>
-
             </div>
         </section>
 
     </main>
 
     <script>
+        const czarnaLista = [
+            'stachu j', 'stachu jones', 'stachu jons', 
+            'iwo załęcki', 'iwo zalecki', 'załęcki', 'zalecki', 
+            'dr załęcki', 'dr zalecki', 'maciej borówka', 'maciej borowka'
+        ];
+
         function inicjalizujSystem() {
-            // Ekran autoryzacji z nickiem zawsze pokazuje się przy starcie
             document.getElementById('authGate').classList.remove('hidden');
-            wygenerujPrzyciskiMinisterstw();
-            ustawTypInicjatywy('poselski');
-            startTimer();
         }
 
         function zalogujUzytkownika() {
             const rawNick = document.getElementById('userNickInput').value.trim();
+            const nickLower = rawNick.toLowerCase();
+            const alertBox = document.getElementById('blockAlert');
+            const alertText = document.getElementById('blockAlertText');
+
             if (!rawNick) return;
 
-            document.getElementById('authGate').classList.add('hidden');
-            document.getElementById('modalChangelog').classList.remove('hidden');
-        }
+            const jestZablokowany = czarnaLista.some(zabranaFraza => nickLower.includes(zabranaFraza));
 
-        let ostatniaOdpowiedz = "";
-        let wybraneMinisterstwo = "Ministerstwo Spraw Wewnętrznych i Administracji";
-        let wybranyTypInicjatywy = "poselski";
-        let sekundDoOdswiezenia = 300;
-
-        // BAZA DANYCH - Dokładnie po 5 propozycji w każdej kategorii
-        const bazaMinisterstw = {
-            "Ministerstwo Spraw Wewnętrznych i Administracji": [
-                { tytul: "Ustawa o zmianie ustawy o ochronie ludności i stanie klęski żywiołowej", opis: "Wdrożenie automatycznego systemu ostrzegania publicznego oraz dofinansowania lokalnych jednostek OSP." },
-                { tytul: "Ustawa o modernizacji służb podległych MSWiA", opis: "Zwiększenie uposażeń i zakupy nowoczesnego wyposażenia dla Policji, Państwowej Straży Pożarnej i Straży Granicznej." },
-                { tytul: "Ustawa o bezpieczeństwie imprez masowych i zgromadzeń", opis: "Modyfikacja procedur wydawania pozwoleń oraz doprecyzowanie odpowiedzialności organizatorów wydarzeń." },
-                { tytul: "Ustawa o zmianie ustawy o ewidencji ludności i dowodach osobistych", opis: "Wprowadzenie w pełni cyfrowego wniosku o wydanie pierwszego dokumentu tożsamości." },
-                { tytul: "Ustawa o cyfryzacji procedur administracji terenowej", opis: "Ujednolicenie elektronicznego obiegu dokumentów w Urzędach Wojewódzkich i Starostwach." }
-            ],
-            "Ministerstwo Sprawiedliwości": [
-                { tytul: "Ustawa o zmianie ustawy – Kodeks karny", opis: "Zaostrzenie kar za przestępstwa skarbowe, oszustwa internetowe i kradzież tożsamości." },
-                { tytul: "Ustawa o cyfryzacji doręczeń sądowych", opis: "Wprowadzenie obowiązkowych doręczeń elektronicznych dla adwokatów i radców prawnych." },
-                { tytul: "Ustawa o zmianie ustawy o Krajowym Rejestrze Sądowym", opis: "Uproszczenie wpisów spółek oraz skrócenie czasu oczekiwania na rejestrację." },
-                { tytul: "Ustawa o zmianie ustawy – Kodeks postępowania cywilnego", opis: "Rozszerzenie zakresu rozpraw zdalnych w sprawach cywilnych i gospodarczych." },
-                { tytul: "Ustawa o nieodpłatnej pomocy prawnej i poradnictwie obywatelskim", opis: "Zwiększenie dostępności punktów bezpłatnych porad dla osób o niskich dochodach." }
-            ],
-            "Ministerstwo Finansów": [
-                { tytul: "Ustawa o zmianie ustawy o podatku od towarów i usług (VAT)", opis: "Uproszczenie rozliczeń w Krajowym Systemie e-Faktur oraz podniesienie limitu podmiotowego." },
-                { tytul: "Ustawa o podatku wyrównawczym dla korporacji międzynarodowych", opis: "Implementacja dyrektyw unijnych w zakresie minimalnego opodatkowania dużych grup kapitałowych." },
-                { tytul: "Ustawa o zmianie ustawy o podatku dochodowym od osób fizycznych", opis: "Wprowadzenie nowych ulg podatkowych na inwestycje w odnawialne źródła energii." },
-                { tytul: "Ustawa o cyfryzacji Krajowej Administracji Skarbowej", opis: "Automatyzacja zwrotów podatku i wdrożenie nowoczesnych narzędzi analitycznych KAS." },
-                { tytul: "Ustawa o ułatwieniach w sukcesji firm rodzinnych", opis: "Zniesienie wybranych opłat i podatków od spadków i darowizn dla mikroprzedsiębiorstw." }
-            ],
-            "Ministerstwo Cyfryzacji": [
-                { tytul: "Ustawa o zmianie ustawy o krajowym systemie cyberbezpieczeństwa", opis: "Wdrożenie dyrektywy NIS2 oraz obowiązek audytów dla dostawców usług kluczowych." },
-                { tytul: "Ustawa o bezpiecznym stosowaniu sztucznej inteligencji", opis: "Ustanowienie zasad certyfikacji systemów wysokie ryzyka oraz ramy etyczne AI." },
-                { tytul: "Ustawa o zmianie ustawy o cyfryzacji działalności podmiotów publicznych", opis: "Wprowadzenie standardów dostępności cyfrowej dla portali rządowych i samorządowych." },
-                { tytul: "Ustawa o ochronie danych osobowych w administracji publicznej", opis: "Zaostrzenie procedur przechowywania i przetwarzania baz danych obywateli." },
-                { tytul: "Ustawa o budowie szerokopasmowego internetu w małych miejscowościach", opis: "Dofinansowanie infrastruktury światłowodowej na terenach wiejskich." }
-            ],
-            "Ministerstwo Obrony Narodowej": [
-                { tytul: "Ustawa o zmianie ustawy o obronie Ojczyzny", opis: "Nowe zasady powoływania rezerwy oraz rozbudowa bazy szkoleniowej Sił Zbrojnych." },
-                { tytul: "Ustawa o wsparciu przemysłu zbrojeniowego", opis: "Utworzenie Dedykowanego Funduszu Inwestycyjnego dla zakładów produkujących amunicję." },
-                { tytul: "Ustawa o modernizacji technicznej Wojska Polskiego", opis: "Wykup nowoczesnych systemów antydronowych i osłony przeciwlotniczej." },
-                { tytul: "Ustawa o statusie weterana i świadczeniach dla rodzin wojskowych", opis: "Zwiększenie świadczeń osłonowych oraz bezpłatny dostęp do rehabilitacji." },
-                { tytul: "Ustawa o ochronie infrastruktury krytycznej wojska", opis: "Wprowadzenie stref chronionych wokół obiektów wojskowych i magazynowych." }
-            ],
-            "Ministerstwo Zdrowia": [
-                { tytul: "Ustawa o zmianie ustawy o świadczeniach opieki zdrowotnej", opis: "Modyfikacja wyceny procedur medycznych oraz skrócenie kolejek do specjalistów." },
-                { tytul: "Ustawa o kadrach medycznych i kształceniu lekarzy", opis: "Uproszczenie procedur nostryfikacji dyplomów oraz dofinansowanie rezydentur." },
-                { tytul: "Ustawa o zmianie ustawy o refundacji leków", opis: "Poszerzenie wykazów bezpłatnych leków dla dzieci i seniorów." },
-                { tytul: "Ustawa o cyfryzacji pacjenta i e-recepcie", opis: "Wdrożenie ogólnopolskiej bazy kartotek medycznych z powiadomieniem SMS." },
-                { tytul: "Ustawa o ratownictwie medycznym i szpitalnych oddziałach ratunkowych", opis: "Reorganizacja pracy SOR-ów oraz zwiększenie obsady zespołów ratowniczych." }
-            ],
-            "Ministerstwo Edukacji Narodowej": [
-                { tytul: "Ustawa o zmianie ustawy – Prawo oświatowe", opis: "Modernizacja podstawy programowej i wdrożenie nowych przedmiotów cyfrowych." },
-                { tytul: "Ustawa o finansowaniu szkolnictwa i podwyżkach dla nauczycieli", opis: "Powiązanie wynagrodzeń nauczycieli ze średnim wynagrodzeniem w gospodarce." },
-                { tytul: "Ustawa o bezpieczeństwie i psychologach w szkołach", opis: "Obowiązek zatrudnienia psychologa w każdej placówce oświatowej." },
-                { tytul: "Ustawa o cyfrowej szkole i darmowym sprzęcie komputerowym", opis: "Program zakupu urządzeń mobilnych dla uczniów klas podstawowych." },
-                { tytul: "Ustawa o zmianie ustawy o systemie oświaty", opis: "Reforma egzaminów ósmoklasisty i ułatwienia w rekrutacji do szkół średnich." }
-            ],
-            "Ministerstwo Infrastruktury": [
-                { tytul: "Ustawa o zmianie ustawy – Prawo o ruchu drogowym", opis: "Zaostrzenie kar za jazdę pod wpływem alkoholu i przekraczanie prędkości." },
-                { tytul: "Ustawa o rozwoju kolei regionalnych", opis: "Subwencjonowanie lokalnych linii kolejowych w miastach powiatowych." },
-                { tytul: "Ustawa o zmianie ustawy o drogach publicznych", opis: "Uproszczenie procedur przetargowych przy budowie autostrad i obwodnic." },
-                { tytul: "Ustawa o bezpieczeństwie w transporcie zbiorowym", opis: "Nowe normy techniczne i obowiązkowy monitoring w pojazdach komunikacji miejskiej." },
-                { tytul: "Ustawa o CPK i kluczowych węzłach przesiadkowych", opis: "Regulacja wywłaszczeń i odszkodowań przy budowie infrastruktury węzłowej." }
-            ],
-            "Ministerstwo Klimatu i Środowiska": [
-                { tytul: "Ustawa o zmianie ustawy o odnawialnych źródłach energii", opis: "Ułatwienia w budowie mikroinstalacji oraz wdrożenie ułatwień dla prosumentów." },
-                { tytul: "Ustawa o gospodarce odpadami i systemie kaucyjnym", opis: "Rozszerzona odpowiedzialność producentów oraz nowe zasady recyklingu." },
-                { tytul: "Ustawa o ochronie zasobów leśnych i parków narodowych", opis: "Ograniczenie wycinki w lasach ochronnych i utworzenie nowych parków." },
-                { tytul: "Ustawa o zmianie ustawy – Prawo ochrony środowiska", opis: "Zwiększenie kar za nielegalne składowanie i sprowadzanie odpadów niebezpiecznych." },
-                { tytul: "Ustawa o czystym powietrzu i dopłatach do wymiany pieców", opis: "Zwiększenie budżetu na wymianę źródeł ciepła w domach jednorodzinnych." }
-            ]
-        };
-
-        const bazaInicjatywPoselskich = [
-            { tytul: "Ustawa o zmianie ustawy o podatku PIT – kwota wolna 60 tys. zł", opis: "Projekt poselski podnoszący kwotę wolną od podatku do 60 000 zł rocznie." },
-            { tytul: "Ustawa o ograniczeniu handlu w niedziele i święta", opis: "Projekt nowelizacji znoszący zakaz handlu w wybrane dwie niedziele w miesiącu." },
-            { tytul: "Ustawa o ochronie praw zwierząt i zakazie hodowli na futra", opis: "Projekt poselski wprowadzający okres przejściowy dla branży futrzarskiej." },
-            { tytul: "Ustawa o zmianie ustawy o emeryturach stażowych", opis: "Możliwość przejścia na emeryturę po przepracowaniu 35 lat dla kobiet i 40 dla mężczyzn." },
-            { tytul: "Ustawa o wsparciu budownictwa komunalnego w gminach", opis: "Dotacje celowe dla samorządów na budowę tanich mieszkań na wynajem." }
-        ];
-
-        const bazaInicjatywObywatelskich = [
-            { tytul: "Obywatelski projekt ustawy o zwolnieniu emerytur z podatku", opis: "Całkowite zwolnienie z opodatkowania świadczeń emerytalno-rentowych." },
-            { tytul: "Obywatelski projekt ustawy o bezpłatnych lekach dla dzieci", opis: "Wprowadzenie pełnej refundacji leków na receptę dla dzieci do 18 roku życia." },
-            { tytul: "Obywatelski projekt ustawy o wsparciu Ochotniczych Straży Pożarnych", opis: "Ulgi podatkowe dla druchów OSP i ich pracodawców." },
-            { tytul: "Obywatelski projekt ustawy o zakazie plastiku jednorazowego", opis: "Całkowite wycofanie plastikowych sztućców, kubków i opakowań w handlu." },
-            { tytul: "Obywatelski projekt ustawy o prawie do bycia offline", opis: "Prawo pracownika do nieodbierania telefonów służbowych po godzinach pracy." }
-        ];
-
-        const bazaRpuPrzykłady = {
-            "Ministerstwo Spraw Wewnętrznych i Administracji": [
-                { tytul: "Rządowy Projekt Uchwały w sprawie Krajowego Programu Ochrony Ludności", opis: "Wytyczne dla wojewodów w zakresie rozbudowy infrastruktury schronowej." },
-                { tytul: "Rządowy Projekt Uchwały w sprawie ramowych działań Policji w pasie przygranicznym", opis: "Przyjęcie planu operacyjnego ochrony granicy państwowej na lata 2026-2028." },
-                { tytul: "Rządowy Projekt Uchwały w sprawie podziału środków dla Straży Pożarnej", opis: "Rozdzielenie rezerwy celowej na sprzęt ratowniczo-gaśniczy." },
-                { tytul: "Rządowy Projekt Uchwały w sprawie strategii zarządzania kryzysowego", opis: "Zatwierdzenie nowego harmonogramu ćwiczeń służb ratowniczych." },
-                { tytul: "Rządowy Projekt Uchwały w sprawie powołania Zespołu ds. Cyberbezpieczeństwa MSWiA", opis: "Utworzenie międzyresortowej grupy eksperckiej." }
-            ],
-            "Ministerstwo Sprawiedliwości": [
-                { tytul: "Rządowy Projekt Uchwały w sprawie Strategii Reformy Sądownictwa", opis: "Założenia organizacji pracy sądów rejonowych i cyfryzacji protokołów." },
-                { tytul: "Rządowy Projekt Uchwały w sprawie programu modernizacji więziennictwa", opis: "Kierunki inwestycji w zakłady karne i systemy dozoru elektronicznego." },
-                { tytul: "Rządowy Projekt Uchwały w sprawie nieodpłatnej mediacji", opis: "Plan promocji i finansowania alternatywnych metod rozwiązywania sporów." },
-                { tytul: "Rządowy Projekt Uchwały w sprawie standardów biegłych sądowych", opis: "Przyjęcie wytycznych wdrożenia nowego systemu wyceny opinii." },
-                { tytul: "Rządowy Projekt Uchwały w sprawie cyfryzacji archiwów sądowych", opis: "Plan skanowania dokumentacji sądowej na lata 2026–2030." }
-            ],
-            "Ministerstwo Finansów": [
-                { tytul: "Rządowy Projekt Uchwały w sprawie Wieloletniego Planu Finansowego Państwa", opis: "Ramowe założenia budżetowe oraz prognoza długu sektora finansów publicznych." },
-                { tytul: "Rządowy Projekt Uchwały w sprawie kierunków polityki podatkowej", opis: "Wytyczne w zakresie upraszczania systemu podatkowego w latach 2026-2027." },
-                { tytul: "Rządowy Projekt Uchwały w sprawie stabilności sektora bankowego", opis: "Założenia środków osłonowych i nadzoru nad rynkiem finansowym." },
-                { tytul: "Rządowy Projekt Uchwały w sprawie restrukturyzacji długu publicznego", opis: "Kierunki emisji skarbowych papierów wartościowych." },
-                { tytul: "Rządowy Projekt Uchwały w sprawie cyfryzacji poboru podatków", opis: "Harmonogram rozbudowy centrów analitycznych Krajowej Administracji Skarbowej." }
-            ],
-            "Ministerstwo Cyfryzacji": [
-                { tytul: "Rządowy Projekt Uchwały w sprawie Państwowej Strategii Cyfryzacji 2030", opis: "Harmonogram cyfryzacji procedur urzędowych oraz rozbudowy światłowodów." },
-                { tytul: "Rządowy Projekt Uchwały w sprawie bezpieczeństwa chmury rządowej", opis: "Wytyczne migracji zasobów państwowych do bezpiecznych serwerowni." },
-                { tytul: "Rządowy Projekt Uchwały w sprawie rozwoju sztucznej inteligencji w Polsce", opis: "Zasady grantów dla polskich uczelni i startupów technologicznych." },
-                { tytul: "Rządowy Projekt Uchwały w sprawie cyfrowej tożsamości mObywatel", opis: "Wdrożenie nowego standardu dokumentów cyfrowych zgodnych z UE." },
-                { tytul: "Rządowy Projekt Uchwały w sprawie walki z dezinformacją sieciową", opis: "Utworzenie zespołu reagowania na fałszywe narracje w internecie." }
-            ],
-            "Ministerstwo Obrony Narodowej": [
-                { tytul: "Rządowy Projekt Uchwały w sprawie Celów Operacyjnych Sił Zbrojnych", opis: "Rozbudowa jednostek operacyjnych we wschodnich rejonach kraju." },
-                { tytul: "Rządowy Projekt Uchwały w sprawie Programu Wsparcia Państw Sojuszniczych", opis: "Harmonogram wspólnych ćwiczeń wojskowych z armiami NATO." },
-                { tytul: "Rządowy Projekt Uchwały w sprawie rozwoju Wojsk Obrony Terytorialnej", opis: "Plan utworzenia nowych brygad WOT." },
-                { tytul: "Rządowy Projekt Uchwały w sprawie zakupów uzbrojenia w latach 2026-2035", opis: "Plan finansowania strategicznych kontraktów zbrojeniowych." },
-                { tytul: "Rządowy Projekt Uchwały w sprawie rezerwy wojskowej", opis: "Zasady prowadzenia powszechnych ćwiczeń dla rezerwistów." }
-            ],
-            "Ministerstwo Zdrowia": [
-                { tytul: "Rządowy Projekt Uchwały w sprawie Narodowej Strategii Onkologicznej", opis: "Kierunki dofinansowania szpitali onkologicznych i zakupu aparatury." },
-                { tytul: "Rządowy Projekt Uchwały w sprawie Ochrony Zdrowia Psychicznego", opis: "Plan rozbudowy sieci środowiskowych poradni psychologicznych." },
-                { tytul: "Rządowy Projekt Uchwały w sprawie profilaktyki chorób cywilizacyjnych", opis: "Program badań przesiewowych dla osób powyżej 40 roku życia." },
-                { tytul: "Rządowy Projekt Uchwały w sprawie informatyzacji szpitali", opis: "Dotacje na wdrożenie elektronicznej dokumentacji medycznej." },
-                { tytul: "Rządowy Projekt Uchwały w sprawie kadr medycznych", opis: "Założenia zachęt dla młodych lekarzy do pracy w mniejszych miastach." }
-            ],
-            "Ministerstwo Edukacji Narodowej": [
-                { tytul: "Rządowy Projekt Uchwały w sprawie Polityki Oświatowej Państwa", opis: "Priorytety rozwijania kompetencji cyfrowych w szkolnictwie." },
-                { tytul: "Rządowy Projekt Uchwały w sprawie bezpiecznej szkoły", opis: "Kierunki działań antywirusowych i profilaktycznych w placówkach oświatowych." },
-                { tytul: "Rządowy Projekt Uchwały w sprawie budowy horyzontów naukowych", opis: "Plan wsparcia dla olimpijczyków oraz kół naukowych." },
-                { tytul: "Rządowy Projekt Uchwały w sprawie dofinansowania wycieczek szkolnych", opis: "Program Poznaj Polskę – dotacje dla szkół." },
-                { tytul: "Rządowy Projekt Uchwały w sprawie modernizacji pracowni przedmiotowych", opis: "Finansowanie nowoczesnych laboratoriów chemicznych i fizycznych." }
-            ],
-            "Ministerstwo Infrastruktury": [
-                { tytul: "Rządowy Projekt Uchwały w sprawie Budowy Dróg Krajowych do 2035 r.", opis: "Plan inwestycji autostradowych i ekspresowych." },
-                { tytul: "Rządowy Projekt Uchwały w sprawie Krajowego Programu Kolejowego", opis: "Założenia modernizacji linii magistralnych i taboru pasażerskiego." },
-                { tytul: "Rządowy Projekt Uchwały w sprawie poprawy bezpieczeństwa drogowego", opis: "Plan przebudowy przejść dla pieszych i niebezpiecznych skrzyżowań." },
-                { tytul: "Rządowy Projekt Uchwały w sprawie rozwoju portów morskich", opis: "Kierunki inwestycji w portach w Gdańsku, Gdyni i Świnoujściu." },
-                { tytul: "Rządowy Projekt Uchwały w sprawie zrównoważonego transportu", opis: "Założenia wspierania niskoemisyjnego transportu zbiorowego." }
-            ],
-            "Ministerstwo Klimatu i Środowiska": [
-                { tytul: "Rządowy Projekt Uchwały w sprawie Polityki Energetycznej Polski do 2040 r.", opis: "Harmonogram transformacji jądrowej i wygaszania bloków węglowych." },
-                { tytul: "Rządowy Projekt Uchwały w sprawie Strategii Ochrony Rzek i Jezior", opis: "Program ciągłego monitorowania jakości wód śródlądowych." },
-                { tytul: "Rządowy Projekt Uchwały w sprawie zalesiania kraju", opis: "Plan zwiększenia lesistości Polski do 33% powierzchni." },
-                { tytul: "Rządowy Projekt Uchwały w sprawie wsparcia gospodarki obiegu zamkniętego", opis: "Wytyczne dla branży przemysłowej w zakresie recyklingu." },
-                { tytul: "Rządowy Projekt Uchwały w sprawie rozwoju energetyki wiatrowej na Bałtyku", opis: "Kierunki budowy morskich farm wiatrowych (offshore)." }
-            ]
-        };
-
-        function ustawTypInicjatywy(typ) {
-            wybranyTypInicjatywy = typ;
-            const sekcjaPoselska = document.getElementById('sekcjaPoselska');
-            const tytulSekcji = document.getElementById('tytulSekcjiResortowej');
-            const kontenerMin = document.getElementById('kontenerMinisterstw');
-            
-            const przyciski = {
-                poselski: document.getElementById('btnTypPoselski'),
-                rzadowy: document.getElementById('btnTypRzadowy'),
-                rpu: document.getElementById('btnTypRpu'),
-                obywatelski: document.getElementById('btnTypObywatelski')
-            };
-
-            Object.keys(przyciski).forEach(k => {
-                if (przyciski[k]) {
-                    przyciski[k].className = "px-3 py-2 rounded-lg text-xs font-medium border border-white/10 bg-slate-900 text-slate-400 transition-all text-center hover:border-white/20";
+            if (jestZablokowany) {
+                alertBox.classList.remove('hidden');
+                if (nickLower.includes('dr załęcki') || nickLower.includes('dr zalecki')) {
+                    alertText.innerText = '🚩 FLAG: DR ZAŁĘCKI - ODMOWA DOSTĘPU';
+                } else if (nickLower.includes('maciej borówka') || nickLower.includes('maciej borowka')) {
+                    alertText.innerText = '🚫 BLOKADA: MACIEJ BORÓWKA - BRAK UPRAWNIEŃ';
+                } else {
+                    alertText.innerText = '⛔ BRAK DOSTĘPU - OSOBA WSKAZANA NA LIŚCIE ZASTRZEŻONEJ';
                 }
-            });
-
-            if (przyciski[typ]) {
-                przyciski[typ].className = "px-3 py-2 rounded-lg text-xs font-medium border border-blue-500/40 bg-blue-600/20 text-blue-300 transition-all text-center font-bold";
+                return;
             }
 
-            // Resorty widoczne są TYLKO dla projektów Rządowych oraz RPU
-            if (typ === 'rzadowy' || typ === 'rpu') {
-                kontenerMin.classList.remove('hidden');
-            } else {
-                kontenerMin.classList.add('hidden');
-            }
-
-            if (typ === 'poselski') {
-                sekcjaPoselska.classList.remove('hidden');
-                tytulSekcji.innerText = "Propozycje Inicjatyw Poselskich (5 propozycji):";
-            } else if (typ === 'rzadowy') {
-                sekcjaPoselska.classList.add('hidden');
-                tytulSekcji.innerText = "Rządowe Propozycje Ustaw wg Resortu (po 5 propozycji):";
-            } else if (typ === 'rpu') {
-                sekcjaPoselska.classList.add('hidden');
-                tytulSekcji.innerText = "Rządowe Projekty Uchwał (RPU) wg Resortu (po 5 propozycji):";
-            } else if (typ === 'obywatelski') {
-                sekcjaPoselska.classList.add('hidden');
-                tytulSekcji.innerText = "Propozycje Inicjatyw Obywatelskich (5 propozycji):";
-            }
-
-            wyswietlPropozycje();
+            alertBox.classList.add('hidden');
+            document.getElementById('authGate').classList.add('hidden');
         }
 
-        function wygenerujPrzyciskiMinisterstw() {
-            const kontener = document.getElementById('kontenerMinisterstw');
-            kontener.innerHTML = '';
-            
-            Object.keys(bazaMinisterstw).forEach(min => {
-                const btn = document.createElement('button');
-                btn.type = 'button';
-                const isSelected = min === wybraneMinisterstwo;
-                btn.className = `text-[10px] px-2.5 py-1 rounded-lg border transition-all ${isSelected ? 'bg-blue-600 text-white border-blue-400 font-semibold' : 'bg-slate-900/80 text-slate-400 border-white/5 hover:border-white/20'}`;
-                btn.innerText = min.replace("Ministerstwo ", "");
-                btn.onclick = () => {
-                    wybraneMinisterstwo = min;
-                    wygenerujPrzyciskiMinisterstw();
-                    wyswietlPropozycje();
-                };
-                kontener.appendChild(btn);
-            });
-        }
-
-        function wyswietlPropozycje() {
-            const lista = document.getElementById('listaPropozycji');
-            lista.innerHTML = '';
-            let pozycje = [];
-
-            if (wybranyTypInicjatywy === 'rzadowy') {
-                pozycje = bazaMinisterstw[wybraneMinisterstwo] || [];
-            } else if (wybranyTypInicjatywy === 'rpu') {
-                pozycje = bazaRpuPrzykłady[wybraneMinisterstwo] || [];
-            } else if (wybranyTypInicjatywy === 'poselski') {
-                pozycje = bazaInicjatywPoselskich;
-            } else if (wybranyTypInicjatywy === 'obywatelski') {
-                pozycje = bazaInicjatywObywatelskich;
-            }
-
-            pozycje.forEach(p => {
-                const card = document.createElement('div');
-                card.className = "glass-card p-2.5 rounded-xl border border-white/5 hover:border-blue-500/30 cursor-pointer transition-all flex flex-col justify-between";
-
-                card.onclick = () => {
-                    document.getElementById('kreatorTytul').value = p.tytul;
-                    document.getElementById('kreatorOpis').value = p.opis;
-                };
-
-                card.innerHTML = `
-                    <h4 class="text-[11px] font-bold text-slate-200 line-clamp-1">${p.tytul}</h4>
-                    <p class="text-[10px] text-slate-400 line-clamp-2 mt-1 font-sans">${p.opis}</p>
-                `;
-                lista.appendChild(card);
-            });
-        }
-
-        function startTimer() {
-            setInterval(() => {
-                sekundDoOdswiezenia--;
-                if (sekundDoOdswiezenia <= 0) sekundDoOdswiezenia = 300;
-                const min = Math.floor(sekundDoOdswiezenia / 60).toString().padStart(2, '0');
-                const sec = (sekundDoOdswiezenia % 60).toString().padStart(2, '0');
-                document.getElementById('timerOdswiezania').innerText = `Odświeżenie za: ${min}:${sec}`;
-            }, 1000);
-        }
-
-        function zmienTryb(tryb) {
-            const panelSprawdzarki = document.getElementById('panelSprawdzarki');
-            const panelKreatora = document.getElementById('panelKreatora');
-            const btnSprawdzarka = document.getElementById('btnSprawdzarka');
-            const btnKreator = document.getElementById('btnKreator');
-
-            if (tryb === 'sprawdzarka') {
-                panelSprawdzarki.classList.remove('hidden');
-                panelKreatora.classList.add('hidden');
-                btnSprawdzarka.className = "text-xs px-5 py-2 rounded-lg transition-all font-medium bg-blue-600 text-white shadow-md shadow-blue-600/25";
-                btnKreator.className = "text-xs px-5 py-2 rounded-lg transition-all font-medium text-slate-400 hover:text-slate-200";
-            } else {
-                panelSprawdzarki.classList.add('hidden');
-                panelKreatora.classList.remove('hidden');
-                btnKreator.className = "text-xs px-5 py-2 rounded-lg transition-all font-medium bg-emerald-600 text-white shadow-md shadow-emerald-600/25";
-                btnSprawdzarka.className = "text-xs px-5 py-2 rounded-lg transition-all font-medium text-slate-400 hover:text-slate-200";
-            }
-        }
-
-        function otworzKontakt() { document.getElementById('modalKontakt').classList.remove('hidden'); }
-        function zamknijKontakt() { document.getElementById('modalKontakt').classList.add('hidden'); }
-        function zamknijChangelog() { document.getElementById('modalChangelog').classList.add('hidden'); }
-
-        function kopiujDiscord() {
-            const tag = document.getElementById('discordTag').innerText;
-            navigator.clipboard.writeText(tag);
-            alert('Skopiowano nick Discord: ' + tag);
-        }
-
-        function skopiujOstatniTekst() {
-            if (!ostatniaOdpowiedz) return;
-            navigator.clipboard.writeText(ostatniaOdpowiedz);
-            alert('Skopiowano treść z konsoli.');
-        }
+        function otworzPrywatnosc() { document.getElementById('modalPrivacy').classList.remove('hidden'); }
+        function zamknijPrywatnosc() { document.getElementById('modalPrivacy').classList.add('hidden'); }
 
         function uruchomAudyt() {
-            const tresc = document.getElementById('trescDoSprawdzenia').value;
-            const rodzaj = document.getElementById('rodzajAktuDoSprawdzenia').value;
-            const wyniki = document.getElementById('wynikiKontener');
+            const tresc = document.getElementById('trescAktu').value.trim();
+            const rodzaj = document.getElementById('rodzajAktu').value;
+            const WynikContainer = document.getElementById('wynikAudytu');
 
-            if (!tresc.trim()) {
-                alert('Wklej treść aktu do sprawdzenia.');
+            if (!tresc) {
+                alert('Proszę wpisać lub wkleić treść przed uruchomieniem weryfikacji.');
                 return;
             }
 
-            const wynikHtml = `
-                <div class="bg-slate-900/60 p-4 rounded-xl border border-blue-500/20 space-y-2">
-                    <p class="text-blue-400 font-bold">Wynik Audytu ZTP v4.10 dla: ${rodzaj}</p>
-                    <p class="text-slate-300">Przeanalizowano treść aktu pod kątem zgodności z systematyką ZTP oraz spójności inicjatywy.</p>
-                    <div class="p-2.5 bg-black/40 rounded-lg text-emerald-400 font-mono text-[11px]">
-                        ✓ Brak krytycznych błędów strukturalnych w przesłanym fragmencie.
+            const bledy = [];
+            const ostrzezenia = [];
+
+            if (!tresc.toUpperCase().includes('USTAWA') && !tresc.toUpperCase().includes('UCHWAŁA') && !tresc.toUpperCase().includes('ROZPORZĄDZENIE')) {
+                bledy.push('Brak wymaganego słowa kluczowego w nagłówku (USTAWA / UCHWAŁA / ROZPORZĄDZENIE).');
+            }
+            if (!tresc.toLowerCase().includes('z dnia')) {
+                bledy.push('Brak oznaczenia daty ("z dnia ...").');
+            }
+            if (!tresc.includes('Art.') && !tresc.includes('§')) {
+                bledy.push('Brak podziału jednostkowego na artykuły (Art.) lub paragrafy (§).');
+            }
+            if (tresc.length < 80) {
+                ostrzezenia.push('Zbyt krótka treść aktu do wygenerowania pełnego audytu.');
+            }
+
+            const jestPoprawny = bledy.length === 0;
+
+            WynikContainer.innerHTML = `
+                <div class="bg-slate-900/60 p-4 rounded-xl border ${jestPoprawny ? 'border-emerald-500/30' : 'border-red-500/30'} space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-slate-200">Weryfikacja: ${rodzaj}</span>
+                        <span class="text-[10px] px-2 py-0.5 rounded ${jestPoprawny ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-red-500/20 text-red-400 border border-red-500/30'} font-semibold">
+                            ${jestPoprawny ? 'POZYTYWNA' : 'WYKRYTO BŁĘDY'}
+                        </span>
                     </div>
+                    
+                    ${bledy.length > 0 ? `
+                        <div class="space-y-1">
+                            <p class="text-red-400 font-bold text-[11px]">Błędy formalne:</p>
+                            <ul class="list-disc list-inside text-red-300/80 text-[11px] space-y-0.5">
+                                ${bledy.map(b => `<li>${b}</li>`).join('')}
+                            </ul>
+                        </div>
+                    ` : '<p class="text-emerald-400 text-[11px]">✓ Akt spełnia podstawowe kryteria formalne ZTP.</p>'}
+
+                    ${ostrzezenia.length > 0 ? `
+                        <div class="space-y-1 pt-1 border-t border-white/5">
+                            <p class="text-amber-400 font-bold text-[11px]">Ostrzeżenia:</p>
+                            <ul class="list-disc list-inside text-amber-300/80 text-[11px]">
+                                ${ostrzezenia.map(o => `<li>${o}</li>`).join('')}
+                            </ul>
+                        </div>
+                    ` : ''}
                 </div>
             `;
-            wyniki.innerHTML = wynikHtml;
-            ostatniaOdpowiedz = tresc;
-        }
-
-        function generujAkt() {
-            const tytul = document.getElementById('kreatorTytul').value;
-            const opis = document.getElementById('kreatorOpis').value;
-            const wyniki = document.getElementById('wynikiKontener');
-
-            if (!tytul.trim()) {
-                alert('Wprowadź tytuł aktu.');
-                return;
-            }
-
-            let naglowek = "PROJEKT USTAWY";
-            if (wybranyTypInicjatywy === 'rpu') {
-                naglowek = "RZĄDOWY PROJEKT UCHWAŁY (RPU)";
-            } else if (wybranyTypInicjatywy === 'poselski') {
-                naglowek = "POSELSKI PROJEKT USTAWY";
-            } else if (wybranyTypInicjatywy === 'obywatelski') {
-                naglowek = "OBYWATELSKI PROJEKT USTAWY";
-            } else if (wybranyTypInicjatywy === 'rzadowy') {
-                naglowek = "RZĄDOWY PROJEKT USTAWY";
-            }
-
-            const wygenerowanaTresc = `${naglowek}\n\n${tytul.toUpperCase()}\n\nz dnia .................... r.\n\n${opis}\n\nArt. 1. Akt wchodzi w życie z dniem następującym po dniu ogłoszenia.`;
-            
-            wyniki.innerHTML = `
-                <div class="bg-slate-900/60 p-4 rounded-xl border border-emerald-500/20 space-y-2">
-                    <p class="text-emerald-400 font-bold">Sporządzono projekt (v4.10)</p>
-                    <pre class="text-slate-200 font-mono whitespace-pre-wrap bg-black/40 p-3 rounded-lg border border-white/5">${wygenerowanaTresc}</pre>
-                </div>
-            `;
-            ostatniaOdpowiedz = wygenerowanaTresc;
-        }
-
-        function wyslijPytanie() {
-            const input = document.getElementById('userInput');
-            const wyniki = document.getElementById('wynikiKontener');
-            if (!input.value.trim()) return;
-
-            const userMsg = input.value;
-            input.value = '';
-
-            const msgHtml = `
-                <div class="bg-slate-900/60 p-3 rounded-xl border border-white/5 text-slate-300">
-                    <span class="text-indigo-400 font-bold">Zapytanie/Poprawka:</span> ${userMsg}
-                </div>
-            `;
-            wyniki.insertAdjacentHTML('beforeend', msgHtml);
-            wyniki.scrollTop = wyniki.scrollHeight;
         }
     </script>
 </body>
