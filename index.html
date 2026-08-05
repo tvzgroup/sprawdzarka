@@ -13,12 +13,10 @@
                     colors: {
                         brand: {
                             50: '#eff6ff',
-                            100: '#dbeafe',
                             500: '#3b82f6',
                             600: '#2563eb',
                             700: '#1d4ed8',
                             900: '#1e3a8a',
-                            950: '#172554',
                         }
                     }
                 }
@@ -26,29 +24,74 @@
         }
     </script>
     <style>
+        /* Zaawansowane Efekty Szkła (Glassmorphism) */
         .glass-panel {
             background: rgba(15, 23, 42, 0.65);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.07);
+            border-color: rgba(59, 130, 246, 0.3);
         }
         .glass-input {
-            background: rgba(3, 7, 18, 0.5);
+            background: rgba(3, 7, 18, 0.6);
             border: 1px solid rgba(255, 255, 255, 0.08);
             color: #f3f4f6;
         }
         .glass-input:focus {
             border-color: rgba(59, 130, 246, 0.6);
             outline: none;
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.15);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
         }
+
+        /* Animowane Gradienty */
         .bg-mesh {
             background-color: #030712;
             background-image: 
-                radial-gradient(at 0% 0%, rgba(30, 58, 138, 0.3) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(15, 23, 42, 0.8) 0px, transparent 50%),
+                radial-gradient(at 0% 0%, rgba(30, 58, 138, 0.35) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(15, 23, 42, 0.9) 0px, transparent 50%),
                 radial-gradient(at 50% 50%, rgba(17, 24, 39, 1) 0px, transparent 100%);
         }
+        .gradient-text-animated {
+            background: linear-gradient(-45deg, #60a5fa, #818cf8, #34d399, #fb7185);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientMove 6s ease infinite;
+        }
+        .gradient-border-animated {
+            position: relative;
+        }
+        .gradient-border-animated::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: 0.75rem;
+            padding: 1px;
+            background: linear-gradient(90deg, #3b82f6, #818cf8, #10b981, #3b82f6);
+            background-size: 200% 100%;
+            animation: gradientMove 4s linear infinite;
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
         ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: rgba(3, 7, 18, 0.2); }
         ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 9999px; }
@@ -57,125 +100,142 @@
 </head>
 <body class="bg-mesh text-slate-100 h-full flex flex-col font-sans antialiased selection:bg-blue-500 selection:text-white">
 
-    <!-- Pasek nawigacyjny -->
+    <!-- Pasek Nawigacyjny -->
     <header class="border-b border-white/5 bg-slate-950/60 sticky top-0 z-50 backdrop-blur-md">
-        <div class="max-w-[1600px] mx-auto px-4 sm:px-6 h-16 flex justify-between items-center">
+        <div class="max-w-[1700px] mx-auto px-4 sm:px-6 h-16 flex justify-between items-center">
             <div class="flex items-center space-x-3">
-                <div class="h-9 w-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white font-bold shadow-lg shadow-blue-500/20 border border-white/10">
+                <div class="h-10 w-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-emerald-500 flex items-center justify-center text-white font-bold shadow-lg shadow-blue-500/20 border border-white/10">
                     🏛️
                 </div>
                 <div>
                     <div class="flex items-center space-x-2">
                         <span class="text-base font-bold tracking-tight text-white">LexCorp Legislator</span>
-                        <span class="text-[10px] font-mono font-medium text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">Gemini 3.6 Flash</span>
+                        <span class="text-[11px] font-mono font-semibold px-2.5 py-0.5 rounded-full gradient-border-animated text-white bg-slate-900/80">
+                            <span class="gradient-text-animated">v1.10 Engine</span>
+                        </span>
                     </div>
                 </div>
             </div>
 
-            <!-- Przełącznik trybów -->
-            <div class="flex items-center p-1 bg-slate-900/80 rounded-xl border border-white/5">
-                <button onclick="zmienTryb('sprawdzarka')" id="btnSprawdzarka" class="text-xs px-4 py-1.5 rounded-lg transition-all font-medium bg-blue-600 text-white shadow-md shadow-blue-600/25">
-                    Audyt ZTP
+            <!-- Nawigacja Trybów -->
+            <div class="flex items-center p-1 bg-slate-900/80 rounded-xl border border-white/5 shadow-inner">
+                <button onclick="zmienTryb('sprawdzarka')" id="btnSprawdzarka" class="text-xs px-5 py-2 rounded-lg transition-all font-medium bg-blue-600 text-white shadow-md shadow-blue-600/25">
+                    🔍 Audyt & Weryfikacja Ustaw
                 </button>
-                <button onclick="zmienTryb('kreator')" id="btnKreator" class="text-xs px-4 py-1.5 rounded-lg transition-all font-medium text-slate-400 hover:text-slate-200">
-                    Kreator Aktu
+                <button onclick="zmienTryb('kreator')" id="btnKreator" class="text-xs px-5 py-2 rounded-lg transition-all font-medium text-slate-400 hover:text-slate-200">
+                    ✍️ Tworzenie & Pisanie Ustaw
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- Główna przestrzeń robocza -->
-    <main class="max-w-[1600px] mx-auto px-4 sm:px-6 py-6 flex-grow w-full grid grid-cols-1 lg:grid-cols-12 gap-6 h-[calc(100vh-4rem)]">
+    <!-- Główna Przestrzeń Robocza -->
+    <main class="max-w-[1700px] mx-auto px-4 sm:px-6 py-6 flex-grow w-full grid grid-cols-1 lg:grid-cols-12 gap-6 h-[calc(100vh-4rem)]">
         
-        <!-- Lewa kolumna: Formularze i Edytor -->
+        <!-- Lewa Kolumna: Kontenery Operacyjne -->
         <section class="lg:col-span-6 flex flex-col h-full min-h-0">
-            <div class="glass-panel rounded-2xl p-5 flex flex-col h-full relative overflow-hidden">
-                
-                <!-- Tryb Audytu ZTP -->
-                <div id="panelSprawdzarki" class="flex flex-col h-full space-y-4">
-                    <div class="flex justify-between items-center pb-3 border-b border-white/5">
-                        <div class="flex items-center space-x-2">
-                            <span class="text-blue-400 text-sm">📋</span>
-                            <h2 class="text-xs font-semibold text-slate-200 uppercase tracking-wider">Projekt do Weryfikacji ZTP</h2>
-                        </div>
-                        <select id="rodzajAktuDoSprawdzenia" class="glass-input px-3 py-1.5 rounded-lg text-xs font-medium cursor-pointer focus:ring-1 focus:ring-blue-500">
-                            <option value="Ustawa" class="bg-slate-900">Ustawa</option>
-                            <option value="Uchwała" class="bg-slate-900">Uchwała</option>
-                            <option value="Rozporządzenie" class="bg-slate-900">Rozporządzenie</option>
-                        </select>
+            
+            <!-- TRYB 1: AUDYT / WERYFIKACJA USTAW -->
+            <div id="panelSprawdzarki" class="glass-panel rounded-2xl p-5 flex flex-col h-full relative overflow-hidden">
+                <div class="flex justify-between items-center pb-3 border-b border-white/5">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-blue-400 text-sm">📜</span>
+                        <h2 class="text-xs font-semibold text-slate-200 uppercase tracking-wider">Audyt Techniki Prawodawczej (ZTP)</h2>
                     </div>
-
-                    <div class="flex-grow flex flex-col">
-                        <textarea id="trescDoSprawdzenia" placeholder="Wklej tutaj projekt uchwały, ustawy lub rozporządzenia..." class="glass-input w-full flex-grow p-4 rounded-xl text-xs font-mono resize-none leading-relaxed transition-all placeholder:text-slate-600"></textarea>
-                    </div>
-
-                    <div class="pt-3 border-t border-white/5 flex items-center justify-between">
-                        <span class="text-[11px] text-slate-500 font-mono">Standard ZTP | Rozdziały 1–6</span>
-                        <button onclick="uruchomAudytGemini()" class="bg-blue-600 hover:bg-blue-500 text-white font-medium px-4 py-2 rounded-xl text-xs transition-all flex items-center space-x-2 shadow-lg shadow-blue-600/20 active:scale-[0.98]">
-                            <span>Przeprowadź Audyt ZTP</span>
-                            <span>⚡</span>
-                        </button>
-                    </div>
+                    <select id="rodzajAktuDoSprawdzenia" class="glass-input px-3 py-1.5 rounded-lg text-xs font-medium cursor-pointer">
+                        <option value="Ustawa" class="bg-slate-900">Ustawa</option>
+                        <option value="Uchwała" class="bg-slate-900">Uchwała</option>
+                        <option value="Rozporządzenie" class="bg-slate-900">Rozporządzenie</option>
+                    </select>
                 </div>
 
-                <!-- Tryb Kreatora -->
-                <div id="panelKreatora" class="flex flex-col h-full space-y-4 hidden">
-                    <div class="flex justify-between items-center pb-3 border-b border-white/5">
-                        <div class="flex items-center space-x-2">
-                            <span class="text-emerald-400 text-sm">✍️</span>
-                            <h2 class="text-xs font-semibold text-slate-200 uppercase tracking-wider">Kreator Aktu Prawnego</h2>
-                        </div>
-                        <select id="rodzajTworzonegoAktu" class="glass-input px-3 py-1.5 rounded-lg text-xs font-medium cursor-pointer focus:ring-1 focus:ring-blue-500">
-                            <option value="Ustawa" class="bg-slate-900">Ustawa</option>
-                            <option value="Uchwała" class="bg-slate-900">Uchwała</option>
-                        </select>
-                    </div>
-
-                    <div class="space-y-3 flex-grow flex flex-col">
-                        <input type="text" id="kreatorTytul" placeholder="Tytuł aktu prawno-legislacyjnego..." class="glass-input w-full px-4 py-2.5 rounded-xl text-xs font-medium placeholder:text-slate-600">
-                        <textarea id="kreatorOpis" placeholder="Opisz wytyczne, zakres przedmiotowy i podmiotowy oraz założenia aktu..." class="glass-input w-full flex-grow p-4 rounded-xl text-xs font-mono resize-none leading-relaxed transition-all placeholder:text-slate-600"></textarea>
-                    </div>
-
-                    <div class="pt-3 border-t border-white/5 flex items-center justify-between">
-                        <span class="text-[11px] text-slate-500 font-mono">Struktura artykułowa ZTP</span>
-                        <button onclick="generujAktGemini()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-4 py-2 rounded-xl text-xs transition-all flex items-center space-x-2 shadow-lg shadow-emerald-600/20 active:scale-[0.98]">
-                            <span>Wygeneruj Akt</span>
-                            <span>✨</span>
-                        </button>
-                    </div>
+                <div class="flex-grow flex flex-col my-4">
+                    <textarea id="trescDoSprawdzenia" placeholder="Wklej tutaj treść aktu prawnego do oceny legislacyjnej..." class="glass-input w-full flex-grow p-4 rounded-xl text-xs font-mono resize-none leading-relaxed transition-all placeholder:text-slate-600"></textarea>
                 </div>
 
+                <div class="pt-3 border-t border-white/5 flex items-center justify-between">
+                    <span class="text-[11px] text-slate-500 font-mono">Weryfikacja: Systematyka, Lex Retro Non Agit, ZTP</span>
+                    <button onclick="uruchomAudytGemini()" class="bg-blue-600 hover:bg-blue-500 text-white font-medium px-5 py-2.5 rounded-xl text-xs transition-all flex items-center space-x-2 shadow-lg shadow-blue-600/20 active:scale-[0.98]">
+                        <span>Uruchom Audyt ZTP</span>
+                        <span>⚡</span>
+                    </button>
+                </div>
             </div>
+
+            <!-- TRYB 2: PISANIE & GENEROWANIE USTAW -->
+            <div id="panelKreatora" class="glass-panel rounded-2xl p-5 flex flex-col h-full relative overflow-hidden hidden space-y-4">
+                <div class="flex justify-between items-center pb-3 border-b border-white/5">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-emerald-400 text-sm">🖋️</span>
+                        <h2 class="text-xs font-semibold text-slate-200 uppercase tracking-wider">Kreator Nowych Ustaw</h2>
+                    </div>
+                    <span class="text-[10px] uppercase font-mono tracking-widest text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-md border border-emerald-500/20">Wysoki Standard Legislacyjny</span>
+                </div>
+
+                <!-- Sekcja Ministerstw i Generowania Inicjatyw -->
+                <div class="glass-card p-3 rounded-xl space-y-2 border border-white/5">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Inicjatywy Rządowe wg Resortów:</span>
+                        <span id="rotacjaTimer" class="text-[10px] text-slate-500 font-mono">Odświeżanie propozycji...</span>
+                    </div>
+                    
+                    <!-- Przyciski Ministerstw -->
+                    <div class="flex flex-wrap gap-1.5" id="kontenerMinisterstw">
+                        <!-- Generowane dynamicznie w JS -->
+                    </div>
+
+                    <!-- Lista Propozycji Ustaw (Dynamicznie Zmieniająca się) -->
+                    <div class="pt-2">
+                        <div id="listaPropozycji" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            <!-- Karty propozycji generowane dynamicznie -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formularz Redagowania Aktu -->
+                <div class="space-y-3 flex-grow flex flex-col">
+                    <input type="text" id="kreatorTytul" placeholder="Tytuł ustawy (np. Ustawa o zmianie ustawy o cyfryzacji...)" class="glass-input w-full px-4 py-2.5 rounded-xl text-xs font-medium placeholder:text-slate-600">
+                    <textarea id="kreatorOpis" placeholder="Określ szczegółowy zakres przedmiotowy, cele i założenia nowej regulacji legislacyjnej..." class="glass-input w-full flex-grow p-4 rounded-xl text-xs font-mono resize-none leading-relaxed transition-all placeholder:text-slate-600"></textarea>
+                </div>
+
+                <div class="pt-3 border-t border-white/5 flex items-center justify-between">
+                    <span class="text-[11px] text-slate-500 font-mono">Formatowanie: Artykuły, Ustępy, Punkty, Litery</span>
+                    <button onclick="generujAktGemini()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-5 py-2.5 rounded-xl text-xs transition-all flex items-center space-x-2 shadow-lg shadow-emerald-600/20 active:scale-[0.98]">
+                        <span>Sporządź Projekt Ustawy</span>
+                        <span>✨</span>
+                    </button>
+                </div>
+            </div>
+
         </section>
 
-        <!-- Prawa kolumna: Czat i Wyniki -->
+        <!-- Prawa Kolumna: Czat & Wyniki Prawodawcze -->
         <section class="lg:col-span-6 flex flex-col h-full min-h-0">
             <div class="glass-panel rounded-2xl p-5 flex flex-col h-full relative overflow-hidden">
                 
-                <!-- Nagłówek wyników -->
                 <div class="flex justify-between items-center pb-3 border-b border-white/5">
                     <div class="flex items-center space-x-2">
                         <span class="text-indigo-400 text-sm">🤖</span>
-                        <h2 class="text-xs font-semibold text-slate-200 uppercase tracking-wider">Wyniki & Analiza AI</h2>
+                        <h2 class="text-xs font-semibold text-slate-200 uppercase tracking-wider">Konsola Legislacyjna AI</h2>
                     </div>
                     <button onclick="skopiujOstatniTekst()" class="text-[11px] bg-slate-800/80 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg border border-white/5 transition-all flex items-center space-x-1.5">
-                        <span>📋 Skopiuj wynik</span>
+                        <span>📋 Skopiuj Projekt</span>
                     </button>
                 </div>
 
-                <!-- Kontener wiadomości / konsola -->
+                <!-- Wyniki -->
                 <div id="wynikiKontener" class="flex-grow overflow-y-auto my-4 pr-2 space-y-4 text-xs font-mono">
                     <div class="bg-slate-900/40 p-4 rounded-xl border border-white/5 text-slate-400 leading-relaxed">
-                        <p class="text-blue-400 font-semibold mb-1">Gotowość systemu legislacyjnego</p>
-                        Wklej treść projektu aktu po lewej stronie, aby rozpocząć proces weryfikacji ZTP lub skorzystaj z Kreatora. System wskazuje błędy strukturalne, jednostki redakcyjne i generuje poprawne zapisy.
+                        <p class="text-blue-400 font-semibold mb-1">System Legislacyjny Gotowy do Pracy (v1.10)</p>
+                        Wybierz tryb pracy po lewej stronie. W trybie pisania ustaw możesz wybrać sugerowany projekt z ramienia wybranego ministerstwa. Wszelkie wpisy są weryfikowane pod kątem spójności i zasad Techniki Prawodawczej.
                     </div>
                 </div>
 
-                <!-- Input konwersacyjny -->
+                <!-- Czat -->
                 <div class="pt-3 border-t border-white/5">
                     <div class="flex space-x-2">
-                        <input type="text" id="userInput" onkeydown="if(event.key==='Enter') wyslijPytanieGemini()" placeholder="Polecenie dla AI (np. 'Skoryguj art. 3 ust. 2 według ZTP')..." class="glass-input flex-grow px-4 py-2.5 rounded-xl text-xs placeholder:text-slate-600 focus:ring-1 focus:ring-blue-500">
-                        <button onclick="wyslijPytanieGemini()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2.5 rounded-xl text-xs font-medium transition-all shadow-md shadow-blue-600/20">
+                        <input type="text" id="userInput" onkeydown="if(event.key==='Enter') wyslijPytanieGemini()" placeholder="Wpisz poprawkę lub zapytanie legislacyjne (np. 'Dopisz przepis przejściowy')..." class="glass-input flex-grow px-4 py-2.5 rounded-xl text-xs placeholder:text-slate-600 focus:ring-1 focus:ring-blue-500">
+                        <button onclick="wyslijPytanieGemini()" class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-xl text-xs font-medium transition-all shadow-md shadow-blue-600/20">
                             Wyślij
                         </button>
                     </div>
@@ -186,12 +246,98 @@
 
     </main>
 
-    <!-- Skrypt funkcjonalny -->
     <script>
         const API_KEY = "AQ.Ab8RN6KoCiu6evIvJ1qAkq5dcquqN7MkXQOU8m1nqrRED-CDfg";
         let ostatniaOdpowiedz = "";
         let historiaKonwersacji = [];
+        let wybraneMinisterstwo = "MSWiA";
 
+        // Bazowe Dane Ministerstw i Propozycji Ustaw
+        const bazaPropozycji = {
+            "MSWiA": [
+                { tytul: "Ustawa o wzmocnieniu ochrony granic i infrastruktury krytycznej", opis: "Wprowadza nowe normy prawne dotyczące cyfryzacji nadzoru granicznego oraz zwiększenia uprawnień służb podległych w strefach przygranicznych." },
+                { tytul: "Ustawa o modernizacji Krajowego Systemu Ratowniczego", opis: "Zapewnia automatyzację przydziału zasobów ratowniczych przy użyciu algorytmów analitycznych oraz standaryzację wyposażenia." },
+                { tytul: "Ustawa o bezpieczeństwie imprez masowych i cyfryzacji nadzoru", opis: "Wprowadza obowiązek centralnej weryfikacji tożsamości uczestników wydarzających się w strefach wysokiego ryzyka." }
+            ],
+            "Ministerstwo Cyfryzacji": [
+                { tytul: "Ustawa o wytycznych dla systemów autonomicznych i AI", opis: "Reguluje odpowiedzialność prawną dostawców rozwiązań sztucznej inteligencji wykorzystywanych w administracji publicznej." },
+                { tytul: "Ustawa o zmianie ustawy o krajowym systemie cyberbezpieczeństwa", opis: "Wprowadza zaostrzone wymogi raportowania incydentów dla podmiotów kluczowych oraz wysokie kary administracyjne." },
+                { tytul: "Ustawa o centralnej tożsamości cyfrowej i usługach zaufania", opis: "Ujednolica standardy uwierzytelniania w rejestrach państwowych z uwzględnieniem pełnego szyfrowania." }
+            ],
+            "Ministerstwo Sprawiedliwości": [
+                { tytul: "Ustawa o digitalizacji akt sądowych i doręczeń elektronicznych", opis: "Eliminuje papierowy obieg dokumentów w postępowaniach cywilnych i karnych na rzecz dedykowanego portalu sądowego." },
+                { tytul: "Ustawa o zmianie Kodeksu Karnego w zakresie przestępczości gospodarczej", opis: "Podwyższa sankcje za przestępstwa finansowe z użyciem nowoczesnych technologii oraz ułatwia zabezpieczanie mienia." },
+                { tytul: "Ustawa o usprawnieniu procedur arbitrażowych i mediacji", opis: "Wprowadza obowiązkową e-mediację przed skierowaniem sprawy gospodarczej na drogę sądową." }
+            ],
+            "Ministerstwo Finansów": [
+                { tytul: "Ustawa o automatyzacji raportowania podatkowego spółek technologicznych", opis: "Wprowadza jednolity cyfrowy standard audytu transakcji międzynarodowych w czasie rzeczywistym." },
+                { tytul: "Ustawa o uszczelnieniu systemu obrotu kryptowalutami", opis: "Nakłada obowiązek rejestracji giełd oraz raportowania transakcji powyżej określonych progów wartościowych." },
+                { tytul: "Ustawa o funduszach rozwoju innowacji gospodarczych", opis: "System ulg podatkowych dla przedsiębiorstw inwestujących powyżej 15% przychodu w badania i rozwój." }
+            ]
+        };
+
+        // Inicjalizacja Przycisków Ministerstw i Propozycji
+        function inicjalizujMinisterstwa() {
+            const kontener = document.getElementById('kontenerMinisterstw');
+            kontener.innerHTML = "";
+
+            Object.keys(bazaPropozycji).forEach(min => {
+                const btn = document.createElement('button');
+                const jestWybrane = min === wybraneMinisterstwo;
+                btn.className = `text-[11px] px-3 py-1.5 rounded-lg border transition-all font-medium ${jestWybrane ? 'bg-blue-600 border-blue-400 text-white shadow-md shadow-blue-500/20' : 'glass-card border-white/5 text-slate-400 hover:text-white'}`;
+                btn.innerText = min;
+                btn.onclick = () => {
+                    wybraneMinisterstwo = min;
+                    inicjalizujMinisterstwa();
+                    odswiezPropozycje();
+                };
+                kontener.appendChild(btn);
+            });
+            odswiezPropozycje();
+        }
+
+        // Losowanie i Odświeżanie Propozycji Ustaw
+        function odswiezPropozycje() {
+            const kontener = document.getElementById('listaPropozycji');
+            kontener.innerHTML = "";
+
+            const lista = bazaPropozycji[wybraneMinisterstwo] || [];
+            // Losowe mieszanie listy dla efektu dynamicznego
+            const przetasowana = [...lista].sort(() => 0.5 - Math.random());
+
+            przetasowana.slice(0, 2).forEach(prop => {
+                const card = document.createElement('div');
+                card.className = "glass-card p-2.5 rounded-xl border border-white/5 hover:border-blue-500/40 cursor-pointer transition-all flex flex-col justify-between group";
+                card.onclick = () => przeniesDoKreatora(prop.tytul, prop.opis);
+
+                card.innerHTML = `
+                    <div>
+                        <div class="text-[11px] font-semibold text-slate-200 group-hover:text-blue-400 transition-colors line-clamp-1">${prop.tytul}</div>
+                        <div class="text-[10px] text-slate-400 line-clamp-2 mt-1 leading-relaxed">${prop.opis}</div>
+                    </div>
+                    <div class="mt-2 flex items-center justify-between text-[9px] text-blue-400 font-medium">
+                        <span>Użyj tej ustawy</span>
+                        <span>➔</span>
+                    </div>
+                `;
+                kontener.appendChild(card);
+            });
+        }
+
+        // Przenoszenie wybranej ustawy do formularza
+        function przeniesDoKreatora(tytul, opis) {
+            document.getElementById('kreatorTytul').value = tytul;
+            document.getElementById('kreatorOpis').value = opis;
+        }
+
+        // Cykliczne losowe zmiana propozycji co 12 sekund
+        setInterval(() => {
+            const ministerstwa = Object.keys(bazaPropozycji);
+            wybraneMinisterstwo = ministerstwa[Math.floor(Math.random() * ministerstwa.length)];
+            inicjalizujMinisterstwa();
+        }, 12000);
+
+        // Nawigacja Trybów
         function zmienTryb(tryb) {
             const btnS = document.getElementById('btnSprawdzarka');
             const btnK = document.getElementById('btnKreator');
@@ -199,51 +345,55 @@
             const pK = document.getElementById('panelKreatora');
 
             if (tryb === 'sprawdzarka') {
-                btnS.className = "text-xs px-4 py-1.5 rounded-lg transition-all font-medium bg-blue-600 text-white shadow-md shadow-blue-600/25";
-                btnK.className = "text-xs px-4 py-1.5 rounded-lg transition-all font-medium text-slate-400 hover:text-slate-200";
+                btnS.className = "text-xs px-5 py-2 rounded-lg transition-all font-medium bg-blue-600 text-white shadow-md shadow-blue-600/25";
+                btnK.className = "text-xs px-5 py-2 rounded-lg transition-all font-medium text-slate-400 hover:text-slate-200";
                 pS.classList.remove('hidden');
                 pK.classList.add('hidden');
             } else {
-                btnK.className = "text-xs px-4 py-1.5 rounded-lg transition-all font-medium bg-blue-600 text-white shadow-md shadow-blue-600/25";
-                btnS.className = "text-xs px-4 py-1.5 rounded-lg transition-all font-medium text-slate-400 hover:text-slate-200";
+                btnK.className = "text-xs px-5 py-2 rounded-lg transition-all font-medium bg-blue-600 text-white shadow-md shadow-blue-600/25";
+                btnS.className = "text-xs px-5 py-2 rounded-lg transition-all font-medium text-slate-400 hover:text-slate-200";
                 pK.classList.remove('hidden');
                 pS.classList.add('hidden');
+                inicjalizujMinisterstwa();
             }
         }
 
+        // Wyświetlanie w Wynikach
         function dodajWiadomoscDoOkna(nadawca, tresc) {
             const kontener = document.getElementById('wynikiKontener');
             const div = document.createElement('div');
             
             if (nadawca === 'AI') {
-                div.className = "bg-blue-950/20 border border-blue-500/20 p-4 rounded-xl text-slate-200 leading-relaxed";
-                div.innerHTML = `<div class="font-semibold text-blue-400 mb-2 flex items-center space-x-2"><span>🤖</span> <span>Ekspert Legislacyjny AI</span></div><div class="whitespace-pre-wrap leading-relaxed">${tresc}</div>`;
+                div.className = "bg-blue-950/30 border border-blue-500/20 p-4 rounded-xl text-slate-200 leading-relaxed glass-card";
+                div.innerHTML = `<div class="font-semibold text-blue-400 mb-2 flex items-center justify-between">
+                    <span class="flex items-center space-x-2"><span>🏛️</span> <span>Ekspert Legislacji v1.10</span></span>
+                    <span class="text-[9px] font-mono bg-blue-500/10 px-2 py-0.5 rounded text-blue-300 border border-blue-500/20">ZTP Standard</span>
+                </div><div class="whitespace-pre-wrap leading-relaxed">${tresc}</div>`;
                 ostatniaOdpowiedz = tresc;
             } else {
                 div.className = "bg-slate-900/60 border border-white/5 p-3 rounded-xl text-slate-300 ml-6";
-                div.innerHTML = `<div class="font-semibold text-slate-500 mb-1">Użytkownik:</div><div>${tresc}</div>`;
+                div.innerHTML = `<div class="font-semibold text-slate-500 mb-1 text-[10px] uppercase">Zlecenie / Zapytanie:</div><div>${tresc}</div>`;
             }
             
             kontener.appendChild(div);
             kontener.scrollTop = kontener.scrollHeight;
         }
 
+        // Komunikacja z API Gemini 1.10
         async function wywolajAPI(promptTekst) {
             historiaKonwersacji.push({ role: "user", parts: [{ text: promptTekst }] });
 
             const payload = {
                 system_instruction: {
-                    parts: [{ text: "Jesteś ekspertem ds. legislacji oraz Zasad Techniki Prawodawczej (ZTP). Analizujesz projekty aktów prawnych (ustaw, uchwał, rozporządzeń), weryfikujesz poprawność jednostek redakcyjnych (artykuły, paragrafy, ustępy, punkty, litery), wskazujesz błędne zapisy i formułujesz poprawne brzmienie przepisów." }]
+                    parts: [{ text: "Jesteś najwyższej klasy polskim legislatorem, ekspertem Biura Analiz Sejmowych i znawcą Zasad Techniki Prawodawczej (ZTP). Zachowujesz bezwzględnie najwyższy poziom legislacyjny: stosujesz poprawną systematykę aktu (tytuł, przepisy ogólne, szczegółowe, epizodyczne, przejściowe, dostosowujące, końcowe), precyzyjną strukturę jednostek redakcyjnych (art., ust., pkt, lit.) oraz terminologię prawniczą. Twoim zadaniem jest ocena lub redagowanie aktów normatywnych." }]
                 },
                 contents: historiaKonwersacji
             };
 
             try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${API_KEY}`, {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.10:generateContent?key=${API_KEY}`, {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(payload)
                 });
 
@@ -271,38 +421,46 @@
             const rodzaj = document.getElementById('rodzajAktuDoSprawdzenia').value;
 
             if (!tresc) {
-                alert("Wklej treść aktu do analizy.");
+                alert("Wklej treść aktu prawnego do oceny.");
                 return;
             }
 
-            const prompt = `Przeprowadź audyt ZTP dla poniższego projektu typu: ${rodzaj}.\n1. Wskaż błędy strukturalne i techniczno-prawodawcze.\n2. Wskaż konkretne przepisy (artykuły/paragrafy) wymagające poprawy.\n3. Przygotuj skorygowaną treść projektu.\n\nTreść:\n${tresc}`;
+            const prompt = `Przeprowadź wyczerpujący i krytyczny audyt legislacyjny pod kątem ZTP dla aktu typu: ${rodzaj}.\n\n` +
+                `Wymagania audytu:\n` +
+                `1. Weryfikacja strukturalna (podział na artykuły, ustępy, punkty, litery).\n` +
+                `2. Zgodność z Dyrektywami ZTP (czy brak zwrotów ocennych, czy przepisy są jednoznaczne).\n` +
+                `3. Wskazanie uchybień formalno-prawnych wraz z ich uzasadnieniem.\n` +
+                `4. Przygotowanie jednolitego, poprawionego tekstu aktu normatywnego.\n\n` +
+                `Treść do audytu:\n${tresc}`;
             
-            dodajWiadomoscDoOkna('Ty', `[Audyt ZTP: ${rodzaj}]\n${tresc.substring(0, 80)}...`);
+            dodajWiadomoscDoOkna('Ty', `[Audyt ZTP: ${rodzaj}]\n${tresc.substring(0, 100)}...`);
             
             const wynik = await wywolajAPI(prompt);
-            if (wynik) {
-                dodajWiadomoscDoOkna('AI', wynik);
-            }
+            if (wynik) dodajWiadomoscDoOkna('AI', wynik);
         }
 
         async function generujAktGemini() {
-            const rodzaj = document.getElementById('rodzajTworzonegoAktu').value;
-            const tytul = document.getElementById('kreatorTytul').value.trim() || "o zmianie przepisów";
+            const tytul = document.getElementById('kreatorTytul').value.trim();
             const opis = document.getElementById('kreatorOpis').value.trim();
 
-            if (!opis) {
-                alert("Opisz założenia aktu w polu tekstowym.");
+            if (!tytul || !opis) {
+                alert("Podaj tytuł oraz opisz założenia nowej ustawy.");
                 return;
             }
 
-            const prompt = `Napisz pełny projekt ${rodzaj} zgodny z ZTP.\nTytuł: ${tytul}\nZałożenia i regulacje: ${opis}`;
+            const prompt = `Sporządź pełny, profesjonalny projekt Ustawy zgodnie z wytycznymi Zasady Techniki Prawodawczej (ZTP).\n` +
+                `Tytuł aktu: ${tytul}\n` +
+                `Resort / Wytyczne: ${wybraneMinisterstwo}\n` +
+                `Założenia merytoryczne: ${opis}\n\n` +
+                `Wymagania:\n` +
+                `- Zastosuj pełną strukturę (Przepisy ogólne, Szczegółowe, Zmiany w przepisach, Przejściowe i Końcowe).\n` +
+                `- Stosuj prawidłowe odesłania i jednostki redakcyjne (art., ust., pkt, lit.).\n` +
+                `- Zapewnij wysoki, oficjalny poziom języka prawnego.`;
             
-            dodajWiadomoscDoOkna('Ty', `[Kreator: ${rodzaj}] ${tytul}`);
+            dodajWiadomoscDoOkna('Ty', `[Tworzenie Ustawy: ${wybraneMinisterstwo}] ${tytul}`);
 
             const wynik = await wywolajAPI(prompt);
-            if (wynik) {
-                dodajWiadomoscDoOkna('AI', wynik);
-            }
+            if (wynik) dodajWiadomoscDoOkna('AI', wynik);
         }
 
         async function wyslijPytanieGemini() {
@@ -314,19 +472,20 @@
             input.value = '';
 
             const wynik = await wywolajAPI(tekst);
-            if (wynik) {
-                dodajWiadomoscDoOkna('AI', wynik);
-            }
+            if (wynik) dodajWiadomoscDoOkna('AI', wynik);
         }
 
         function skopiujOstatniTekst() {
             if (!ostatniaOdpowiedz) {
-                alert("Brak wygenerowanego tekstu do skopiowania.");
+                alert("Brak tekstu do skopiowania.");
                 return;
             }
             navigator.clipboard.writeText(ostatniaOdpowiedz);
-            alert("Skopiowano tekst do schowka.");
+            alert("Skopiowano projekt ustawy do schowka.");
         }
+
+        // Startup
+        inicjalizujMinisterstwa();
     </script>
 </body>
 </html>
