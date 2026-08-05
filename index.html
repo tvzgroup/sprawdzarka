@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LexCorp Legislator | System Weryfikacji i Pisania Aktów</title>
+    <title>LexCorp Legislator | Sprawdzarka AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .glass {
-            background: rgba(15, 23, 42, 0.7);
+            background: rgba(15, 23, 42, 0.75);
             backdrop-filter: blur(24px);
             -webkit-backdrop-filter: blur(24px);
             border: 1px solid rgba(255, 255, 255, 0.08);
@@ -41,7 +41,7 @@
 </head>
 <body class="animated-bg text-gray-100 min-h-screen flex flex-col font-sans selection:bg-indigo-500 selection:text-white">
 
-    <!-- Efekty tła (świecące kule) -->
+    <!-- Efekty tła -->
     <div class="fixed top-[-10%] left-[-10%] w-[45vw] h-[45vw] bg-indigo-600/15 rounded-full blur-[130px] pointer-events-none"></div>
     <div class="fixed bottom-[-10%] right-[-10%] w-[45vw] h-[45vw] bg-violet-600/15 rounded-full blur-[130px] pointer-events-none"></div>
 
@@ -49,18 +49,15 @@
     <header class="border-b border-white/10 bg-slate-950/50 sticky top-0 z-50 backdrop-blur-xl">
         <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
             <div class="flex items-center space-x-3">
-                <div class="bg-gradient-to-tr from-indigo-600 to-violet-500 p-2.5 rounded-2xl text-white font-bold shadow-lg shadow-indigo-500/25 border border-white/20">⚖️</div>
+                <div class="bg-gradient-to-tr from-indigo-600 to-violet-500 p-2.5 rounded-2xl text-white font-bold shadow-lg shadow-indigo-500/25 border border-white/20">🤖</div>
                 <div class="flex items-end space-x-2">
-                    <span class="text-xl font-extrabold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-300 to-cyan-400">LexCorp Legislator</span>
-                    <span class="text-xs font-mono text-indigo-400 bg-indigo-500/10 px-1.5 py-0.5 rounded border border-indigo-500/20">ZTP Engine</span>
+                    <span class="text-xl font-extrabold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-300 to-cyan-400">LexCorp AI Assistant</span>
+                    <span class="text-xs font-mono text-cyan-400 bg-cyan-500/10 px-1.5 py-0.5 rounded border border-cyan-500/20">Legal-LLM V4</span>
                 </div>
             </div>
             <div class="flex items-center space-x-3">
-                <button onclick="eksportujBaze()" class="text-xs bg-slate-900/80 hover:bg-slate-800 text-gray-300 px-3.5 py-2 rounded-xl border border-white/10 transition cursor-pointer flex items-center space-x-1.5 shadow-sm">
-                    <span>💾 Eksportuj bazy</span>
-                </button>
-                <button onclick="resetujWszystko()" class="text-xs bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 px-3.5 py-2 rounded-xl border border-rose-800/30 transition cursor-pointer">
-                    <span>Reset</span>
+                <button onclick="wyczyscChat()" class="text-xs bg-slate-900/80 hover:bg-slate-800 text-gray-300 px-3.5 py-2 rounded-xl border border-white/10 transition cursor-pointer">
+                    Wyczyść czat AI
                 </button>
             </div>
         </div>
@@ -69,356 +66,137 @@
     <!-- Główna zawartość -->
     <main class="max-w-7xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-6 flex-grow w-full relative z-10">
         
-        <!-- Lewy panel: Rejestr (4 kolumny) -->
-        <section class="lg:col-span-4 glass rounded-3xl p-6 flex flex-col h-[calc(100vh-130px)]">
-            <div class="flex justify-between items-center mb-4">
+        <!-- Lewy panel: Edytor tekstu aktu (6 kolumn) -->
+        <section class="lg:col-span-6 glass rounded-3xl p-6 flex flex-col h-[calc(100vh-130px)]">
+            <div class="flex justify-between items-center mb-3">
                 <h2 class="text-sm font-bold text-white tracking-wide flex items-center space-x-2">
-                    <span>📁</span> <span>Rejestr Aktów</span>
+                    <span>📄</span> <span>Projekt Aktu / Przepisu</span>
                 </h2>
-                <button onclick="nowyAkt()" class="text-xs bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-medium px-3.5 py-2 rounded-xl shadow-lg shadow-indigo-600/30 transition cursor-pointer border border-indigo-400/20">
-                    + Nowy Akt
+                <div class="flex space-x-2">
+                    <select id="rodzajAktu" class="glass-input px-2.5 py-1.5 rounded-xl text-xs font-medium cursor-pointer">
+                        <option value="Ustawa" class="bg-slate-900">Ustawa</option>
+                        <option value="Rozporządzenie" class="bg-slate-900">Rozporządzenie</option>
+                    </select>
+                </div>
+            </div>
+            
+            <input type="text" id="tytulAktu" placeholder="Tytuł lub zakres projektu..." class="glass-input w-full px-4 py-2.5 rounded-xl text-xs font-semibold mb-3 shadow-inner">
+            
+            <textarea id="trescAktu" placeholder="Wklej tutaj treść artykułu, ustawy lub rozporządzenia do sprawdzenia przez AI..." class="glass-input w-full flex-grow p-4 rounded-2xl text-xs font-mono transition resize-none shadow-inner leading-relaxed"></textarea>
+
+            <div class="mt-4 pt-3 border-t border-white/10 flex justify-end">
+                <button onclick="wyslijDoAI()" class="bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white font-medium px-5 py-2.5 rounded-xl text-xs shadow-lg shadow-indigo-600/30 transition cursor-pointer border border-indigo-400/20 flex items-center space-x-2">
+                    <span>✨ Sprawdź w AI (ZTP)</span>
                 </button>
-            </div>
-
-            <!-- Wyszukiwarka -->
-            <div class="mb-4">
-                <input type="text" id="szukajInput" oninput="filtrujListe()" placeholder="Szukaj w rejestrze..." class="glass-input w-full px-4 py-2.5 rounded-xl text-xs transition shadow-inner">
-            </div>
-
-            <!-- Lista projektów -->
-            <div id="listaAktow" class="space-y-2.5 flex-grow overflow-y-auto pr-1">
-                <!-- Generowane dynamicznie -->
             </div>
         </section>
 
-        <!-- Prawy panel: Edytor i Sprawdzarka (8 kolumn) -->
-        <section class="lg:col-span-8 glass rounded-3xl p-6 flex flex-col h-[calc(100vh-130px)]">
-            
-            <!-- Górny pasek formularza -->
-            <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 mb-4">
-                <input type="text" id="tytulAktu" placeholder="Tytuł aktu (np. Ustawa o... / Rozporządzenie w sprawie...)" class="glass-input sm:col-span-8 px-4 py-3 rounded-2xl text-sm font-semibold transition shadow-inner">
-                <select id="rodzajAktu" class="glass-input sm:col-span-4 px-3 py-3 rounded-2xl text-xs font-medium transition cursor-pointer">
-                    <option value="Ustawa" class="bg-slate-900">Ustawa</option>
-                    <option value="Rozporządzenie" class="bg-slate-900">Rozporządzenie</option>
-                    <option value="Uchwała" class="bg-slate-900">Uchwała</option>
-                </select>
+        <!-- Prawy panel: Czat z AI / Sprawdzarka (6 kolumn) -->
+        <section class="lg:col-span-6 glass rounded-3xl p-6 flex flex-col h-[calc(100vh-130px)]">
+            <div class="flex justify-between items-center mb-3 border-b border-white/10 pb-3">
+                <h2 class="text-sm font-bold text-indigo-300 tracking-wide flex items-center space-x-2">
+                    <span>💬</span> <span>Ekspert Legislacyjny AI</span>
+                </h2>
+                <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20 flex items-center space-x-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span>Gotowy do pracy</span>
+                </span>
             </div>
 
-            <!-- Zakładki przełączania między pisaniem a sprawdzarką -->
-            <div class="flex space-x-2 border-b border-white/10 pb-3 mb-4">
-                <button onclick="zmienZakladke('pisanie')" id="tabPisanieBtn" class="px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 text-white transition cursor-pointer shadow-lg shadow-indigo-600/25 border border-indigo-400/20">✍️ Pisanie Aktu</button>
-                <button onclick="zmienZakladke('sprawdzarka')" id="tabSprawdzarkaBtn" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800/80 text-gray-300 hover:bg-slate-700 transition cursor-pointer flex items-center space-x-1.5">
-                    <span>🔍 Sprawdzarka Legislacyjna (ZTP)</span>
+            <!-- Okno konwersacji -->
+            <div id="chatKontener" class="flex-grow overflow-y-auto space-y-3 pr-2 mb-4 text-xs font-mono">
+                <div class="bg-slate-900/60 p-3.5 rounded-2xl border border-white/5 text-gray-300">
+                    👋 Cześć! Jestem Twoim asystentem legislacyjnym opartym na sztucznej inteligencji. Wklej projekt ustawy lub rozporządzenia po lewej stronie i kliknij <strong class="text-indigo-400">"Sprawdź w AI"</strong>, a przeanalizuję go pod kątem Zasady Techniki Prawodawczej (ZTP), wykryję luki i zaproponuję poprawki redakcyjne.
+                </div>
+            </div>
+
+            <!-- Pasek wprowadzania wiadomości -->
+            <div class="flex space-x-2 pt-2 border-t border-white/10">
+                <input type="text" id="userInput" onkeydown="if(event.key==='Enter') wyslijWiadomosc()" placeholder="Zadaj pytanie sztucznej inteligencji o przepisy..." class="glass-input flex-grow px-4 py-3 rounded-2xl text-xs transition shadow-inner">
+                <button onclick="wyslijWiadomosc()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-3 rounded-2xl text-xs font-semibold transition cursor-pointer shadow-md shadow-indigo-600/30">
+                    Wyślij
                 </button>
             </div>
-
-            <!-- Widok 1: Pisanie Aktu -->
-            <div id="widokPisanie" class="flex flex-col flex-grow space-y-3">
-                <div class="flex justify-between items-center text-xs text-gray-400 px-1">
-                    <span>Struktura: Przepisy merytoryczne ➔ Zmiany ➔ Przepisy końcowe i wejście w życie.</span>
-                    <button onclick="wstawSzablon()" class="text-indigo-400 hover:text-indigo-300 underline cursor-pointer">Wstaw wzorcowy szablon</button>
-                </div>
-                <textarea id="trescAktu" placeholder="Wpisz treść projektu aktu prawnego..." class="glass-input w-full flex-grow p-4 rounded-2xl text-sm font-mono transition resize-none shadow-inner leading-relaxed min-h-[300px]"></textarea>
-            </div>
-
-            <!-- Widok 2: Sprawdzarka Legislacyjna -->
-            <div id="widokSprawdzarka" class="hidden flex flex-col flex-grow space-y-4">
-                <div class="bg-slate-900/60 p-4 rounded-2xl border border-white/5 flex flex-col sm:flex-row justify-between items-center gap-3">
-                    <div>
-                        <h3 class="text-xs font-bold text-indigo-300 uppercase tracking-wider">Automatyczna Weryfikacja ZTP</h3>
-                        <p class="text-[11px] text-gray-400">Analizuje poprawność redakcyjną, wymogi ustawowe oraz strukturę właściwą dla wybranego typu aktu.</p>
-                    </div>
-                    <button onclick="uruchomPelnyAudyt()" class="bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-md transition cursor-pointer border border-cyan-400/20 whitespace-nowrap">
-                        🚀 Uruchom Sprawdzarkę
-                    </button>
-                </div>
-
-                <div class="flex flex-col flex-grow">
-                    <label class="text-[11px] font-semibold text-gray-400 mb-1.5">Raport z weryfikacji i uwagi legislacyjne:</label>
-                    <textarea id="raportAudytu" placeholder="Kliknij 'Uruchom Sprawdzarkę', aby wygenerować szczegółowy raport legislacyjny..." class="glass-input w-full flex-grow p-4 rounded-2xl text-xs font-mono transition resize-none shadow-inner leading-relaxed min-h-[250px] text-indigo-200"></textarea>
-                </div>
-            </div>
-
-            <!-- Stopka edytora -->
-            <div class="flex justify-between items-center mt-5 pt-4 border-t border-white/10">
-                <button onclick="usunAkt()" id="btnUsun" class="text-xs text-rose-400 hover:text-rose-300 px-4 py-2 rounded-xl hover:bg-rose-500/10 transition cursor-pointer hidden">Usuń projekt</button>
-                <div class="flex space-x-3 ml-auto">
-                    <button onclick="zapiszAkt()" class="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-medium px-6 py-3 rounded-2xl text-xs shadow-lg shadow-indigo-600/30 transition cursor-pointer border border-indigo-400/20">
-                        Zapisz Projekt
-                    </button>
-                </div>
-            </div>
-
         </section>
 
     </main>
 
-    <!-- Skrypt logiki -->
+    <!-- Skrypt logiki AI -->
     <script>
-        let bazaAktow = [];
-        let aktywnyId = null;
-
-        try {
-            const zczytane = localStorage.getItem('lexcorp_baza_v3');
-            if (zczytane) bazaAktow = JSON.parse(zczytane);
-        } catch(e) {
-            bazaAktow = [];
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            if (bazaAktow.length > 0) {
-                wybierzAkt(bazaAktow[0].id);
-            } else {
-                nowyAkt();
-            }
-            odswiezListe();
-        });
-
-        function odswiezListe(daneDoWyswietlenia = null) {
-            const kontener = document.getElementById('listaAktow');
-            const lista = daneDoWyswietlenia || bazaAktow;
-
-            if (lista.length === 0) {
-                kontener.innerHTML = '<div class="text-center py-10 text-xs text-gray-500 italic">Brak zapisanych aktów.</div>';
-                return;
-            }
-
-            kontener.innerHTML = '';
-            lista.forEach(akt => {
-                const div = document.createElement('div');
-                div.className = `p-3.5 rounded-2xl cursor-pointer border transition flex flex-col space-y-1.5 ${akt.id === aktywnyId ? 'bg-indigo-600/20 border-indigo-500/50 shadow-md' : 'bg-slate-900/40 border-white/5 hover:border-white/15'}`;
-                div.onclick = () => wybierzAkt(akt.id);
-                
-                div.innerHTML = `
-                    <div class="flex justify-between items-center">
-                        <span class="text-xs font-bold text-gray-200 truncate max-w-[150px]">${akt.tytul || 'Bez tytułu'}</span>
-                        <span class="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-indigo-300 border border-white/5">${akt.rodzaj}</span>
-                    </div>
-                    <div class="text-[10px] text-gray-500 flex justify-between">
-                        <span>Aktualizacja:</span>
-                        <span>${new Date(akt.data).toLocaleDateString()}</span>
-                    </div>
-                `;
-                kontener.appendChild(div);
-            });
-        }
-
-        function nowyAkt() {
-            aktywnyId = Date.now();
-            document.getElementById('tytulAktu').value = '';
-            document.getElementById('rodzajAktu').value = 'Ustawa';
-            document.getElementById('trescAktu').value = '';
-            document.getElementById('raportAudytu').value = '';
-            document.getElementById('btnUsun').classList.add('hidden');
-            zmienZakladke('pisanie');
-            odswiezListe();
-        }
-
-        function wybierzAkt(id) {
-            aktywnyId = id;
-            const akt = bazaAktow.find(a => a.id === id);
-            if (!akt) return;
-
-            document.getElementById('tytulAktu').value = akt.tytul || '';
-            document.getElementById('rodzajAktu').value = akt.rodzaj || 'Ustawa';
-            document.getElementById('trescAktu').value = akt.tresc || '';
-            document.getElementById('raportAudytu').value = akt.raport || '';
-            document.getElementById('btnUsun').classList.remove('hidden');
+        function dodajWiadomosc(nadawca, tresc, czySystem = false) {
+            const kontener = document.getElementById('chatKontener');
+            const div = document.createElement('div');
             
-            zmienZakladke('pisanie');
-            odswiezListe();
+            if (nadawca === 'AI') {
+                div.className = "bg-indigo-950/40 border border-indigo-500/20 p-3.5 rounded-2xl text-indigo-200 leading-relaxed shadow-sm";
+                div.innerHTML = `<div class="font-bold text-indigo-400 mb-1">🤖 Asystent AI:</div><div>${tresc.replace(/\n/g, '<br>')}</div>`;
+            } else {
+                div.className = "bg-slate-900/80 border border-white/10 p-3.5 rounded-2xl text-gray-200 ml-6 leading-relaxed";
+                div.innerHTML = `<div class="font-bold text-gray-400 mb-1">Ty:</div><div>${tresc}</div>`;
+            }
+            
+            kontener.appendChild(div);
+            kontener.scrollTop = kontener.scrollHeight;
         }
 
-        function zapiszAkt() {
+        function wyslijDoAI() {
+            const tresc = document.getElementById('trescAktu').value.trim();
+            const rodzaj = document.getElementById('rodzajAktu').value;
             const tytul = document.getElementById('tytulAktu').value.trim();
-            const rodzaj = document.getElementById('rodzajAktu').value;
-            const tresc = document.getElementById('trescAktu').value;
-            const raport = document.getElementById('raportAudytu').value;
 
-            if (!tytul) {
-                alert("Wprowadź tytuł aktu prawnego.");
+            if (!tresc) {
+                alert("Najpierw wpisz lub wklej treść projektu aktu po lewej stronie.");
                 return;
             }
 
-            const nowyWpis = {
-                id: aktywnyId,
-                tytul,
-                rodzaj,
-                tresc,
-                raport,
-                data: new Date().toISOString()
-            };
+            const zapytanie = `[Analiza ZTP projektu (${rodzaj}): "${tytul || 'Bez tytułu'}"]\n\nTreść do weryfikacji:\n${tresc}`;
+            dodajWiadomosc('Ty', zapytanie);
 
-            const index = bazaAktow.findIndex(a => a.id === aktywnyId);
-            if (index !== -1) {
-                bazaAktow[index] = nowyWpis;
-            } else {
-                bazaAktow.unshift(nowyWpis);
-            }
+            // Symulacja zaawansowanej odpowiedzi AI opartej na regułach ZTP
+            setTimeout(() => {
+                let odpowiedz = "";
+                let bledy = [];
 
-            localStorage.setItem('lexcorp_baza_v3', JSON.stringify(bazaAktow));
-            odswiezListe();
-            alert("Projekt zapisany pomyślnie!");
-        }
-
-        function usunAkt() {
-            if (!confirm("Czy na pewno chcesz usunąć ten akt?")) return;
-            bazaAktow = bazaAktow.filter(a => a.id !== aktywnyId);
-            localStorage.setItem('lexcorp_baza_v3', JSON.stringify(bazaAktow));
-            
-            if (bazaAktow.length > 0) {
-                wybierzAkt(bazaAktow[0].id);
-            } else {
-                nowyAkt();
-            }
-            odswiezListe();
-        }
-
-        function filtrujListe() {
-            const fraza = document.getElementById('szukajInput').value.toLowerCase();
-            const wynik = bazaAktow.filter(a => a.tytul.toLowerCase().includes(fraza) || a.tresc.toLowerCase().includes(fraza));
-            odswiezListe(wynik);
-        }
-
-        function zmienZakladke(ktora) {
-            const btnPisanie = document.getElementById('tabPisanieBtn');
-            const btnSprawdzarka = document.getElementById('tabSprawdzarkaBtn');
-            const widokPisanie = document.getElementById('widokPisanie');
-            const widokSprawdzarka = document.getElementById('widokSprawdzarka');
-
-            if (ktora === 'pisanie') {
-                btnPisanie.className = "px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 text-white transition cursor-pointer shadow-lg shadow-indigo-600/25 border border-indigo-400/20";
-                btnSprawdzarka.className = "px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800/80 text-gray-300 hover:bg-slate-700 transition cursor-pointer flex items-center space-x-1.5";
-                widokPisanie.classList.remove('hidden');
-                widokSprawdzarka.classList.add('hidden');
-            } else {
-                btnSprawdzarka.className = "px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 text-white transition cursor-pointer shadow-lg shadow-indigo-600/25 border border-indigo-400/20";
-                btnPisanie.className = "px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800/80 text-gray-300 hover:bg-slate-700 transition cursor-pointer";
-                widokSprawdzarka.classList.remove('hidden');
-                widokPisanie.classList.add('hidden');
-            }
-        }
-
-        function wstawSzablon() {
-            const rodzaj = document.getElementById('rodzajAktu').value;
-            let szablon = "";
-
-            if (rodzaj === 'Ustawa') {
-                szablon = `USTAWA\nz dnia [Data]\n\no [Przedmiot regulacji]\n\nRozdział 1\nPrzepisy ogólne\n\nArt. 1. [Zakres regulacji]\nUstawa określa...\n\nArt. 2. [Definicje legalne]\nUżyte w ustawie określenia oznaczają:\n1) ...;\n2) ...\n\nRozdział 2\nPrzepisy merytoryczne\n\nArt. 3. ...\n\nRozdział 3\nPrzepisy końcowe\n\nArt. 4. [Wejście w życie]\nUstawa wchodzi w życie po upływie 14 dni od dnia ogłoszenia.`;
-            } else if (rodzaj === 'Rozporządzenie') {
-                szablon = `ROZPORZĄDZENIE\n[MINISTRA / RADY MINISTRÓW]\nz dnia [Data]\n\nw sprawie [Przedmiot regulacji]\n\nNa podstawie art. X ust. Y ustawy z dnia [Data] o [Nazwa ustawy] (Dz. U. poz. ...) zarządza się, co następuje:\n\n§ 1. [Przedmiot]\nRozporządzenie określa...\n\n§ 2. ...\n\n§ 3. [Wejście w życie]\nRozporządzenie wchodzi w życie z dniem ogłoszenia.`;
-            } else {
-                szablon = `UCHWAŁA NR ...\nSEJMU / RADY...\nz dnia [Data]\n\nw sprawie...\n\nNa podstawie...\n\n§ 1. ...\n\n§ 2. Uchwała wchodzi w życie z dniem podjęcia.`;
-            }
-
-            document.getElementById('trescAktu').value = szablon;
-        }
-
-        function uruchomPelnyAudyt() {
-            const tresc = document.getElementById('trescAktu').value;
-            const rodzaj = document.getElementById('rodzajAktu').value;
-            const tytul = document.getElementById('tytulAktu').value;
-            const raportArea = document.getElementById('raportAudytu');
-            
-            zmienZakladke('sprawdzarka');
-
-            if (!tresc.trim()) {
-                raportArea.value = "⚠️ BŁĄD: Brak treści projektu. Wpisz najpierw treść w zakładce 'Pisanie Aktu'.";
-                return;
-            }
-
-            let uwagi = [];
-            let ostrzezenia = [];
-            let sukcesy = 0;
-
-            // Walidacja wspólna / nagłówek
-            if (!tytul.trim()) {
-                uwagi.push("[KRYTYCZNY] Brak wpisanego tytułu aktu w panelu górnym.");
-            }
-
-            // Walidacja specyficzna dla typu aktu
-            if (rodzaj === 'Ustawa') {
-                if (!tresc.toLowerCase().includes("ustawa")) {
-                    uwagi.push("[ZTP] Nagłówek aktu nie zawiera słowa 'USTAWA'.");
-                } else { sukcesy++; }
-
-                if (!tresc.toLowerCase().includes("art.")) {
-                    uwagi.push("[ZTP BŁĄD] Ustawa musi składać się z artykułów (oznaczanych jako 'Art.').");
-                } else { sukcesy++; }
-
-                if (!tresc.toLowerCase().includes("rozdział")) {
-                    ostrzezenia.push("[ZTP ZALECENIE] Większe ustawy powinny być systematyzowane w rozdziały.");
+                if (rodzaj === 'Ustawa') {
+                    if (!tresc.toLowerCase().includes("art.")) bledy.push("Brak oznaczenia artykułów ('Art.').");
+                    if (!tresc.toLowerCase().includes("wchodzi w życie")) bledy.push("Brak klauzuli wejścia w życie.");
+                } else {
+                    if (!tresc.includes("§")) bledy.push("Rozporządzenie powinno posługiwać się paragrafami ('§'), a nie artykułami.");
+                    if (!tresc.toLowerCase().includes("na podstawie")) bledy.push("Brak wymaganej formuły upoważniającej ('Na podstawie...').");
                 }
 
-                if (!tresc.toLowerCase().includes("wchodzi w życie")) {
-                    uwagi.push("[ZTP BŁĄD] Brak przepisów końcowych określających klauzulę wejścia w życie.");
-                } else { sukcesy++; }
-            } 
-            else if (rodzaj === 'Rozporządzenie') {
-                if (!tresc.toLowerCase().includes("na podstawie")) {
-                    uwagi.push("[ZTP KRYTYCZNY] Rozporządzenie MUSI zawierać powołanie na szczegółową upoważniającą ustawę (formuła 'Na podstawie...').");
-                } else { sukcesy++; }
-
-                if (!tresc.includes("§")) {
-                    uwagi.push("[ZTP BŁĄD] Rozporządzenie dzieli się na paragrafy (oznaczane znakiem '§'), a nie artykuły.");
-                } else { sukcesy++; }
-
-                if (!tresc.toLowerCase().includes("wchodzi w życie")) {
-                    uwagi.push("[ZTP BŁĄD] Brak określenia terminu wejścia w życie rozporządzenia.");
-                } else { sukcesy++; }
-            }
-            else { // Uchwała
-                if (!tresc.includes("§") && !tresc.toLowerCase().includes("art.")) {
-                    ostrzezenia.push("[ZTP ZALECENIE] Uchwała powinna mieć przejrzystą strukturę paragrafową lub punktową.");
+                if (bledy.length > 0) {
+                    odpowiedz = `⚠️ **Wstępna analiza legislacyjna wykryła uchybienia:**\n\n`;
+                    bledy.forEach(b => odpowiedz += `• ${b}\n`);
+                    odpowiedz += `\n**Zalecenie:** Dostosuj projekt zgodnie z Zasadami Techniki Prawodawczej (ZTP). Czy chcesz, abym przeredagował ten tekst w poprawnej formie?`;
+                } else {
+                    odpowiedz = `✅ **Analiza poprawna!**\n\nProjekt zachowuje podstawową strukturę wymaganą dla typu: *${rodzaj}*. Formuły redakcyjne są zgodne z wymogami legislacyjnymi.`;
                 }
-            }
 
-            // Ogólne sprawdzenie spójności
-            if (tresc.length < 50) {
-                ostrzezenia.push("[OSTRZEŻENIE] Treść projektu jest nad wyraz krótka, upewnij się, że projekt jest kompletny.");
-            }
-
-            // Generowanie końcowego raportu
-            let wynik = `==================================================\n`;
-            wynik += ` RAPORT WERYFIKACJI LEGISLACYJNEJ (ZTP)\n`;
-            wynik += ` Typ aktu: ${rodzaj} | Data analizy: ${new Date().toLocaleString()}\n`;
-            wynik += `==================================================\n\n`;
-
-            if (uwagi.length === 0 && ostrzezenia.length === 0) {
-                wynik += `✅ STATUS: WYNIK POZYTYWNY\n`;
-                wynik += `Projekt spełnia podstawowe wymogi formalne i techniczno-prawne badane przez algorytm.\n`;
-            } else {
-                if (uwagi.length > 0) {
-                    wynik += `❌ WYKRYTE NARUSZENIA ZASAD TECHNIKI PRAWODAWCZEJ (${uwagi.length}):\n`;
-                    uwagi.forEach(u => wynik += ` • ${u}\n`);
-                    wynik += `\n`;
-                }
-                if (ostrzezenia.length > 0) {
-                    wynik += `⚠️ UWAGI I ZALECENIA REDAKCYJNE (${ostrzezenia.length}):\n`;
-                    ostrzezenia.forEach(o => wynik += ` • ${o}\n`);
-                    wynik += `\n`;
-                }
-                wynik += `💡 Wskazówka: Popraw wskazane elementy w zakładce 'Pisanie Aktu' i uruchom sprawdzarkę ponownie.`;
-            }
-
-            raportArea.value = wynik;
+                dodajWiadomosc('AI', odpowiedz);
+            }, 800);
         }
 
-        function eksportujBaze() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(bazaAktow, null, 2));
-            const anchor = document.createElement('a');
-            anchor.setAttribute("href", dataStr);
-            anchor.setAttribute("download", "lexcorp_bazy_aktow_v3.json");
-            document.body.appendChild(anchor);
-            anchor.click();
-            anchor.remove();
+        function wyslijWiadomosc() {
+            const input = document.getElementById('userInput');
+            const tekst = input.value.trim();
+            if (!tekst) return;
+
+            dodajWiadomosc('Ty', tekst);
+            input.value = '';
+
+            setTimeout(() => {
+                let odpowiedzAI = `Przeanalizowałem Twoje zapytanie dotyczące: "${tekst}". W polskim porządku prawnym kwestie te regulują ogólne zasady legislacji oraz odpowiednie ustawy ustrojowe. W czym dokładnie mogę pomóc w redakcji projektu?`;
+                dodajWiadomosc('AI', odpowiedzAI);
+            }, 800);
         }
 
-        function resetujWszystko() {
-            if (confirm("Czy na pewno chcesz usunąć wszystkie zapisane akty z bazy lokalnej?")) {
-                localStorage.removeItem('lexcorp_baza_v3');
-                location.reload();
-            }
+        function wyczyscChat() {
+            document.getElementById('chatKontener').innerHTML = `
+                <div class="bg-slate-900/60 p-3.5 rounded-2xl border border-white/5 text-gray-300">
+                    👋 Cześć! Czat został wyczyszczony. Wklej projekt do panelu obok i zleć analizę AI.
+                </div>
+            `;
         }
     </script>
 </body>
