@@ -111,7 +111,7 @@
                     <div class="flex items-center space-x-2">
                         <span class="text-base font-bold tracking-tight text-white">LexCorp Legislator</span>
                         <span class="text-[11px] font-mono font-semibold px-2.5 py-0.5 rounded-full gradient-border-animated text-white bg-slate-900/80">
-                            <span class="gradient-text-animated">v1.10 Engine</span>
+                            <span class="gradient-text-animated">Gemini 3.6 Flash Engine</span>
                         </span>
                     </div>
                 </div>
@@ -176,11 +176,11 @@
                 <div class="glass-card p-3 rounded-xl space-y-2 border border-white/5">
                     <div class="flex items-center justify-between">
                         <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Inicjatywy Rządowe wg Resortów:</span>
-                        <span id="rotacjaTimer" class="text-[10px] text-slate-500 font-mono">Odświeżanie propozycji...</span>
+                        <span class="text-[10px] text-slate-500 font-mono">Rotacja propozycji w wybranym resorcie</span>
                     </div>
                     
                     <!-- Przyciski Ministerstw -->
-                    <div class="flex flex-wrap gap-1.5" id="kontenerMinisterstw">
+                    <div class="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto pr-1" id="kontenerMinisterstw">
                         <!-- Generowane dynamicznie w JS -->
                     </div>
 
@@ -226,8 +226,8 @@
                 <!-- Wyniki -->
                 <div id="wynikiKontener" class="flex-grow overflow-y-auto my-4 pr-2 space-y-4 text-xs font-mono">
                     <div class="bg-slate-900/40 p-4 rounded-xl border border-white/5 text-slate-400 leading-relaxed">
-                        <p class="text-blue-400 font-semibold mb-1">System Legislacyjny Gotowy do Pracy (v1.10)</p>
-                        Wybierz tryb pracy po lewej stronie. W trybie pisania ustaw możesz wybrać sugerowany projekt z ramienia wybranego ministerstwa. Wszelkie wpisy są weryfikowane pod kątem spójności i zasad Techniki Prawodawczej.
+                        <p class="text-blue-400 font-semibold mb-1">System Legislacyjny Gotowy do Pracy (Gemini 3.6 Flash)</p>
+                        Wybierz tryb pracy po lewej stronie. Wybierz ministerstwo, aby wyświetlić dedykowane propozycje inicjatyw ustawodawczych. Wybrane ministerstwo pozostaje stałe podczas odświeżania propozycji.
                     </div>
                 </div>
 
@@ -252,31 +252,51 @@
         let historiaKonwersacji = [];
         let wybraneMinisterstwo = "MSWiA";
 
-        // Bazowe Dane Ministerstw i Propozycji Ustaw
+        // Baza Rozbudowanych Ministerstw i Propozycji Ustaw
         const bazaPropozycji = {
             "MSWiA": [
                 { tytul: "Ustawa o wzmocnieniu ochrony granic i infrastruktury krytycznej", opis: "Wprowadza nowe normy prawne dotyczące cyfryzacji nadzoru granicznego oraz zwiększenia uprawnień służb podległych w strefach przygranicznych." },
                 { tytul: "Ustawa o modernizacji Krajowego Systemu Ratowniczego", opis: "Zapewnia automatyzację przydziału zasobów ratowniczych przy użyciu algorytmów analitycznych oraz standaryzację wyposażenia." },
-                { tytul: "Ustawa o bezpieczeństwie imprez masowych i cyfryzacji nadzoru", opis: "Wprowadza obowiązek centralnej weryfikacji tożsamości uczestników wydarzających się w strefach wysokiego ryzyka." }
+                { tytul: "Ustawa o bezpieczeństwie imprez masowych i cyfryzacji nadzoru", opis: "Wprowadza obowiązek centralnej weryfikacji tożsamości uczestników wydarzających się w strefach wysokiego ryzyka." },
+                { tytul: "Ustawa o ochronie ludności oraz stanie klęski żywiołowej", opis: "Określa zasady budowy schronów, rezerw strategicznych oraz systemów ostrzegania mieszkańców." }
             ],
             "Ministerstwo Cyfryzacji": [
                 { tytul: "Ustawa o wytycznych dla systemów autonomicznych i AI", opis: "Reguluje odpowiedzialność prawną dostawców rozwiązań sztucznej inteligencji wykorzystywanych w administracji publicznej." },
                 { tytul: "Ustawa o zmianie ustawy o krajowym systemie cyberbezpieczeństwa", opis: "Wprowadza zaostrzone wymogi raportowania incydentów dla podmiotów kluczowych oraz wysokie kary administracyjne." },
-                { tytul: "Ustawa o centralnej tożsamości cyfrowej i usługach zaufania", opis: "Ujednolica standardy uwierzytelniania w rejestrach państwowych z uwzględnieniem pełnego szyfrowania." }
+                { tytul: "Ustawa o centralnej tożsamości cyfrowej i usługach zaufania", opis: "Ujednolica standardy uwierzytelniania w rejestrach państwowych z uwzględnieniem pełnego szyfrowania." },
+                { tytul: "Ustawa o udostępnianiu danych sektora publicznego i otwartych danych", opis: "Reguluje standardy API dla komercyjnego i naukowego ponownego wykorzystywania baz państwowych." }
             ],
             "Ministerstwo Sprawiedliwości": [
                 { tytul: "Ustawa o digitalizacji akt sądowych i doręczeń elektronicznych", opis: "Eliminuje papierowy obieg dokumentów w postępowaniach cywilnych i karnych na rzecz dedykowanego portalu sądowego." },
                 { tytul: "Ustawa o zmianie Kodeksu Karnego w zakresie przestępczości gospodarczej", opis: "Podwyższa sankcje za przestępstwa finansowe z użyciem nowoczesnych technologii oraz ułatwia zabezpieczanie mienia." },
-                { tytul: "Ustawa o usprawnieniu procedur arbitrażowych i mediacji", opis: "Wprowadza obowiązkową e-mediację przed skierowaniem sprawy gospodarczej na drogę sądową." }
+                { tytul: "Ustawa o usprawnieniu procedur arbitrażowych i mediacji", opis: "Wprowadza obowiązkową e-mediację przed skierowaniem sprawy gospodarczej na drogę sądową." },
+                { tytul: "Ustawa o nadzorze nad biegłymi sądowymi i cyfryzacji opinii", opis: "Powołuje centralną bazę certyfikowanych ekspertów sądowych oraz określa terminy wydawania ekspertyz." }
             ],
             "Ministerstwo Finansów": [
                 { tytul: "Ustawa o automatyzacji raportowania podatkowego spółek technologicznych", opis: "Wprowadza jednolity cyfrowy standard audytu transakcji międzynarodowych w czasie rzeczywistym." },
                 { tytul: "Ustawa o uszczelnieniu systemu obrotu kryptowalutami", opis: "Nakłada obowiązek rejestracji giełd oraz raportowania transakcji powyżej określonych progów wartościowych." },
-                { tytul: "Ustawa o funduszach rozwoju innowacji gospodarczych", opis: "System ulg podatkowych dla przedsiębiorstw inwestujących powyżej 15% przychodu w badania i rozwój." }
+                { tytul: "Ustawa o funduszach rozwoju innowacji gospodarczych", opis: "System ulg podatkowych dla przedsiębiorstw inwestujących powyżej 15% przychodu w badania i rozwój." },
+                { tytul: "Ustawa o elektronicznym fakturowaniu w obrocie B2B", opis: "Standaryzuje centralny rejestr faktur oraz procedury automatycznego zwrotu podatku VAT." }
+            ],
+            "Ministerstwo Obrony Narodowej": [
+                { tytul: "Ustawa o rozwoju obrony cyfrowej i Wojsk Obrony Cyberprzestrzeni", opis: "Tworzy dedykowany program finansowania kadr oraz zakupów technologii obronnych w domenie cyber." },
+                { tytul: "Ustawa o rezerwach strategicznych sprzętu wojskowego", opis: "Reguluje zasady pozyskiwania i utrzymywania zasobów obronnych przez podmioty prywatne na rzecz MON." }
+            ],
+            "Ministerstwo Klimatu i Środowiska": [
+                { tytul: "Ustawa o sprawiedliwej transformacji energetycznej i OZE", opis: "Wprowadza ułatwienia w wydawaniu decyzji środowiskowych dla wielkoskalowych magazynów energii." },
+                { tytul: "Ustawa o systemie monitorowania emisji i czystości powietrza", opis: "Narzuca samorządom instalację ciągłego cyfrowego opomiarowania zanieczyszczeń." }
+            ],
+            "Ministerstwo Zdrowia": [
+                { tytul: "Ustawa o centralnej Recepturze i e-Zdrowiu 2.0", opis: "Automatyzuje analizę interakcji leków przy pomocy algorytmów analitycznych w systemach szpitalnych." },
+                { tytul: "Ustawa o państwowym ratownictwie medycznym i telemedycynie", opis: "Standardyzuje zdalną diagnostykę w karetkach pogotowia oraz e-konsultacje specjalistyczne." }
+            ],
+            "Ministerstwo Infrastruktury": [
+                { tytul: "Ustawa o cyfryzacji procesów budowlanych i planowania przestrzennego", opis: "Cyfryzuje składanie wniosków o pozwolenia na budowę i standardyzuje plany zagospodarowania." },
+                { tytul: "Ustawa o autonomicznych pojazdach i nowej mobilności", opis: "Duszcza testy i eksploatację transportu bezzałogowego na drogach publicznych." }
             ]
         };
 
-        // Inicjalizacja Przycisków Ministerstw i Propozycji
+        // Inicjalizacja Przycisków Ministerstw
         function inicjalizujMinisterstwa() {
             const kontener = document.getElementById('kontenerMinisterstw');
             kontener.innerHTML = "";
@@ -284,7 +304,7 @@
             Object.keys(bazaPropozycji).forEach(min => {
                 const btn = document.createElement('button');
                 const jestWybrane = min === wybraneMinisterstwo;
-                btn.className = `text-[11px] px-3 py-1.5 rounded-lg border transition-all font-medium ${jestWybrane ? 'bg-blue-600 border-blue-400 text-white shadow-md shadow-blue-500/20' : 'glass-card border-white/5 text-slate-400 hover:text-white'}`;
+                btn.className = `text-[11px] px-3 py-1.5 rounded-lg border transition-all font-medium whitespace-nowrap ${jestWybrane ? 'bg-blue-600 border-blue-400 text-white shadow-md shadow-blue-500/20' : 'glass-card border-white/5 text-slate-400 hover:text-white'}`;
                 btn.innerText = min;
                 btn.onclick = () => {
                     wybraneMinisterstwo = min;
@@ -296,13 +316,13 @@
             odswiezPropozycje();
         }
 
-        // Losowanie i Odświeżanie Propozycji Ustaw
+        // Odświeżanie Propozycji Ustaw (BEZ zmiany wybranego ministerstwa)
         function odswiezPropozycje() {
             const kontener = document.getElementById('listaPropozycji');
             kontener.innerHTML = "";
 
             const lista = bazaPropozycji[wybraneMinisterstwo] || [];
-            // Losowe mieszanie listy dla efektu dynamicznego
+            // Losowe mieszanie ustaw w obrębie CIĄGLE TEGO SAMEGO ministerstwa
             const przetasowana = [...lista].sort(() => 0.5 - Math.random());
 
             przetasowana.slice(0, 2).forEach(prop => {
@@ -330,11 +350,9 @@
             document.getElementById('kreatorOpis').value = opis;
         }
 
-        // Cykliczne losowe zmiana propozycji co 12 sekund
+        // Odświeżanie wyłącznie propozycji ustaw bez przełączania ministerstwa
         setInterval(() => {
-            const ministerstwa = Object.keys(bazaPropozycji);
-            wybraneMinisterstwo = ministerstwa[Math.floor(Math.random() * ministerstwa.length)];
-            inicjalizujMinisterstwa();
+            odswiezPropozycje();
         }, 12000);
 
         // Nawigacja Trybów
@@ -366,7 +384,7 @@
             if (nadawca === 'AI') {
                 div.className = "bg-blue-950/30 border border-blue-500/20 p-4 rounded-xl text-slate-200 leading-relaxed glass-card";
                 div.innerHTML = `<div class="font-semibold text-blue-400 mb-2 flex items-center justify-between">
-                    <span class="flex items-center space-x-2"><span>🏛️</span> <span>Ekspert Legislacji v1.10</span></span>
+                    <span class="flex items-center space-x-2"><span>🏛️</span> <span>Ekspert Legislacji Gemini 3.6 Flash</span></span>
                     <span class="text-[9px] font-mono bg-blue-500/10 px-2 py-0.5 rounded text-blue-300 border border-blue-500/20">ZTP Standard</span>
                 </div><div class="whitespace-pre-wrap leading-relaxed">${tresc}</div>`;
                 ostatniaOdpowiedz = tresc;
@@ -379,7 +397,7 @@
             kontener.scrollTop = kontener.scrollHeight;
         }
 
-        // Komunikacja z API Gemini 1.10
+        // Komunikacja z API Gemini 3.6 Flash
         async function wywolajAPI(promptTekst) {
             historiaKonwersacji.push({ role: "user", parts: [{ text: promptTekst }] });
 
@@ -391,7 +409,7 @@
             };
 
             try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.10:generateContent?key=${API_KEY}`, {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${API_KEY}`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(payload)
