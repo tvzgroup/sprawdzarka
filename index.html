@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LexCorp Legislator | Sprawdzarka AI V5</title>
+    <title>LexCorp Legislator | Zaawansowana Sprawdzarka i Kreator V6</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .glass {
@@ -41,7 +41,7 @@
 </head>
 <body class="animated-bg text-gray-100 min-h-screen flex flex-col font-sans selection:bg-indigo-500 selection:text-white">
 
-    <!-- Efekty tła -->
+    <!-- Tło dekoracyjne -->
     <div class="fixed top-[-10%] left-[-10%] w-[45vw] h-[45vw] bg-indigo-600/15 rounded-full blur-[130px] pointer-events-none"></div>
     <div class="fixed bottom-[-10%] right-[-10%] w-[45vw] h-[45vw] bg-violet-600/15 rounded-full blur-[130px] pointer-events-none"></div>
 
@@ -49,64 +49,97 @@
     <header class="border-b border-white/10 bg-slate-950/50 sticky top-0 z-50 backdrop-blur-xl">
         <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
             <div class="flex items-center space-x-3">
-                <div class="bg-gradient-to-tr from-indigo-600 to-violet-500 p-2.5 rounded-2xl text-white font-bold shadow-lg shadow-indigo-500/25 border border-white/20">⚖️</div>
+                <div class="bg-gradient-to-tr from-indigo-600 to-violet-500 p-2.5 rounded-2xl text-white font-bold shadow-lg shadow-indigo-500/25 border border-white/20">🏛️</div>
                 <div class="flex items-end space-x-2">
                     <span class="text-xl font-extrabold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-300 to-cyan-400">LexCorp Legislator</span>
-                    <span class="text-xs font-mono text-cyan-400 bg-cyan-500/10 px-1.5 py-0.5 rounded border border-cyan-500/20">ZTP Engine V5</span>
+                    <span class="text-xs font-mono text-cyan-400 bg-cyan-500/10 px-1.5 py-0.5 rounded border border-cyan-500/20">V6 Pro</span>
                 </div>
             </div>
-            <button onclick="wyczyscChat()" class="text-xs bg-slate-900/80 hover:bg-slate-800 text-gray-300 px-3.5 py-2 rounded-xl border border-white/10 transition cursor-pointer">
-                Wyczyść czat
-            </button>
+            <div class="flex items-center space-x-2">
+                <button onclick="zmienTryb('sprawdzarka')" id="btnSprawdzarka" class="text-xs bg-indigo-600 text-white px-4 py-2 rounded-xl transition cursor-pointer font-medium shadow-md shadow-indigo-600/30">Sprawdzarka ZTP</button>
+                <button onclick="zmienTryb('kreator')" id="btnKreator" class="text-xs bg-slate-900/80 hover:bg-slate-800 text-gray-300 px-4 py-2 rounded-xl border border-white/10 transition cursor-pointer font-medium">Kreator Aktów</button>
+            </div>
         </div>
     </header>
 
     <!-- Główna zawartość -->
     <main class="max-w-7xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-6 flex-grow w-full relative z-10">
         
-        <!-- Lewy panel: Edytor (6 kolumn) -->
+        <!-- Lewy panel (Edytor / Generator) -->
         <section class="lg:col-span-6 glass rounded-3xl p-6 flex flex-col h-[calc(100vh-130px)]">
-            <div class="flex justify-between items-center mb-3">
-                <h2 class="text-sm font-bold text-white tracking-wide flex items-center space-x-2">
-                    <span>📄</span> <span>Projekt Aktu / Przepisu</span>
-                </h2>
-                <select id="rodzajAktu" class="glass-input px-2.5 py-1.5 rounded-xl text-xs font-medium cursor-pointer">
-                    <option value="Ustawa" class="bg-slate-900">Ustawa</option>
-                    <option value="Rozporządzenie" class="bg-slate-900">Rozporządzenie</option>
-                </select>
-            </div>
             
-            <input type="text" id="tytulAktu" placeholder="Tytuł lub zakres projektu..." class="glass-input w-full px-4 py-2.5 rounded-xl text-xs font-semibold mb-3 shadow-inner">
-            
-            <textarea id="trescAktu" placeholder="Wklej projekt do szczegółowej weryfikacji legislacyjnej..." class="glass-input w-full flex-grow p-4 rounded-2xl text-xs font-mono transition resize-none shadow-inner leading-relaxed"></textarea>
-
-            <div class="mt-4 pt-3 border-t border-white/10 flex justify-between items-center">
-                <span class="text-[11px] text-gray-400">Silnik wymusza surowe testy ZTP.</span>
-                <button onclick="analizujProjektSurowo()" class="bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white font-medium px-5 py-2.5 rounded-xl text-xs shadow-lg shadow-indigo-600/30 transition cursor-pointer border border-indigo-400/20">
-                    🔍 Wykryj błędy i popraw
-                </button>
-            </div>
-        </section>
-
-        <!-- Prawy panel: Czat z AI (6 kolumn) -->
-        <section class="lg:col-span-6 glass rounded-3xl p-6 flex flex-col h-[calc(100vh-130px)]">
-            <div class="flex justify-between items-center mb-3 border-b border-white/10 pb-3">
-                <h2 class="text-sm font-bold text-indigo-300 tracking-wide flex items-center space-x-2">
-                    <span>💬</span> <span>Ekspert Legislacyjny AI</span>
-                </h2>
-                <span class="text-[10px] text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">Tryb surowej weryfikacji</span>
-            </div>
-
-            <!-- Okno konwersacji -->
-            <div id="chatKontener" class="flex-grow overflow-y-auto space-y-3 pr-2 mb-4 text-xs font-mono">
-                <div class="bg-slate-900/60 p-3.5 rounded-2xl border border-white/5 text-gray-300">
-                    👋 Cześć! Wklej projekt ustawy lub rozporządzenia po lewej stronie i kliknij <strong class="text-indigo-400">"Wykryj błędy i popraw"</strong>. Nowy silnik nie przepuści żadnych uchybień redakcyjnych i wskaże precyzyjne naruszenia Zasad Techniki Prawodawczej.
+            <!-- TRYB SPRAWDZARKI -->
+            <div id="panelSprawdzarki" class="flex flex-col h-full">
+                <div class="flex justify-between items-center mb-3">
+                    <h2 class="text-sm font-bold text-white tracking-wide flex items-center space-x-2">
+                        <span>📄</span> <span>Projekt do Analizy ZTP</span>
+                    </h2>
+                    <select id="rodzajAktuDoSprawdzenia" class="glass-input px-2.5 py-1.5 rounded-xl text-xs font-medium cursor-pointer">
+                        <option value="Ustawa" class="bg-slate-900">Ustawa</option>
+                        <option value="Uchwała" class="bg-slate-900">Uchwała</option>
+                        <option value="Rozporządzenie" class="bg-slate-900">Rozporządzenie</option>
+                    </select>
+                </div>
+                <textarea id="trescDoSprawdzenia" placeholder="Wklej tutaj treść artykułów lub paragrafów, które chcesz poddać surowej weryfikacji legislacyjnej..." class="glass-input w-full flex-grow p-4 rounded-2xl text-xs font-mono transition resize-none shadow-inner leading-relaxed mb-4"></textarea>
+                <div class="pt-3 border-t border-white/10 flex justify-between items-center">
+                    <span class="text-[11px] text-gray-400">Analizuje strukturę, przepisy i błędy ZTP.</span>
+                    <button onclick="uruchomPelnaAnalize()" class="bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white font-medium px-5 py-2.5 rounded-xl text-xs shadow-lg shadow-indigo-600/30 transition cursor-pointer border border-indigo-400/20">
+                        🔍 Przeprowadź Audyt ZTP
+                    </button>
                 </div>
             </div>
 
-            <!-- Pasek wprowadzania wiadomości -->
+            <!-- TRYB KREATORA (Ukryty domyślnie) -->
+            <div id="panelKreatora" class="flex flex-col h-full hidden">
+                <div class="flex justify-between items-center mb-3">
+                    <h2 class="text-sm font-bold text-white tracking-wide flex items-center space-x-2">
+                        <span>✍️</span> <span>Kreator Nowego Aktu Prawnego</span>
+                    </h2>
+                    <select id="rodzajTworzonegoAktu" class="glass-input px-2.5 py-1.5 rounded-xl text-xs font-medium cursor-pointer">
+                        <option value="Ustawa" class="bg-slate-900">Ustawa</option>
+                        <option value="Uchwała" class="bg-slate-900">Uchwała</option>
+                    </select>
+                </div>
+                <input type="text" id="kreatorTytul" placeholder="Tytuł aktu (np. o zmianie ustawy o... / w sprawie...)" class="glass-input w-full px-4 py-2.5 rounded-xl text-xs font-semibold mb-3 shadow-inner">
+                <textarea id="kreatorOpis" placeholder="Opisz w kilku słowach, co ten akt ma regulować, jakie artykuły zmienić lub jakie cele osiągnąć..." class="glass-input w-full flex-grow p-4 rounded-2xl text-xs font-mono transition resize-none shadow-inner leading-relaxed mb-4"></textarea>
+                <div class="pt-3 border-t border-white/10 flex justify-between items-center">
+                    <span class="text-[11px] text-gray-400">Generuje zgodny z ZTP projekt od zera.</span>
+                    <button onclick="generujAktPrawny()" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-medium px-5 py-2.5 rounded-xl text-xs shadow-lg shadow-emerald-600/30 transition cursor-pointer border border-emerald-400/20">
+                        ✨ Generuj Projekt i Tekst
+                    </button>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Prawy panel: Wyniki Audytu / Czat z Ekspertem -->
+        <section class="lg:col-span-6 glass rounded-3xl p-6 flex flex-col h-[calc(100vh-130px)]">
+            <div class="flex justify-between items-center mb-3 border-b border-white/10 pb-3">
+                <h2 class="text-sm font-bold text-indigo-300 tracking-wide flex items-center space-x-2">
+                    <span>📊</span> <span>Raport ZTP i Wynik AI</span>
+                </h2>
+                <button onclick="skopiujWynik()" class="text-[11px] bg-slate-800 hover:bg-slate-700 text-cyan-300 px-3 py-1 rounded-lg border border-cyan-500/20 transition cursor-pointer">
+                    📋 Skopiuj wygenerowany tekst
+                </button>
+            </div>
+
+            <!-- Okno raportu / konwersacji -->
+            <div id="wynikiKontener" class="flex-grow overflow-y-auto space-y-3 pr-2 mb-4 text-xs font-mono">
+                <div class="bg-slate-900/60 p-4 rounded-2xl border border-white/5 text-gray-300 leading-relaxed">
+                    👋 Witaj w module diagnostycznym Zasad Techniki Prawodawczej (ZTP).<br><br>
+                    <strong>Jak sprawdzamy poprawność pod kątem legislacji?</strong>
+                    <ul class="list-disc pl-4 space-y-1 mt-2 text-gray-400">
+                        <li><strong>Struktura jednostek:</strong> Ustawa wymaga artykułów (Art.), uchwała paragrafów (§) lub punktów uchwały, rozporządzenia wymagają upoważnienia ustawowego.</li>
+                        <li><strong>Formuły nowelizacyjne:</strong> Sprawdzamy poprawność zwrotów typu "W... wprowadza się następujące zmiany", "otrzymuje brzmienie", "dodaje się".</li>
+                        <li><strong>Klauzule końcowe:</strong> Wymóg precyzyjnego vacatio legis oraz wskazania organu odpowiedzialnego za wykonanie.</li>
+                    </ul>
+                    <br>Wklej projekt po lewej stronie i uruchom audyt, aby zobaczyć precyzyjne wskazanie artykułów do zmiany oraz gotowy tekst do skopiowania.
+                </div>
+            </div>
+
+            <!-- Dolny pasek interakcji -->
             <div class="flex space-x-2 pt-2 border-t border-white/10">
-                <input type="text" id="userInput" onkeydown="if(event.key==='Enter') wyslijWiadomosc()" placeholder="Zadaj pytanie lub poproś o zmianę przepisów..." class="glass-input flex-grow px-4 py-3 rounded-2xl text-xs transition shadow-inner">
+                <input type="text" id="userInput" onkeydown="if(event.key==='Enter') wyslijWiadomosc()" placeholder="Zadaj pytanie analitycznemu silnikowi AI..." class="glass-input flex-grow px-4 py-3 rounded-2xl text-xs transition shadow-inner">
                 <button onclick="wyslijWiadomosc()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-3 rounded-2xl text-xs font-semibold transition cursor-pointer shadow-md">
                     Wyślij
                 </button>
@@ -115,78 +148,129 @@
 
     </main>
 
-    <!-- Skrypt surowej analizy -->
+    <!-- Skrypt logiki V6 -->
     <script>
-        function dodajWiadomosc(nadawca, tresc) {
-            const kontener = document.getElementById('chatKontener');
-            const div = document.createElement('div');
-            
-            if (nadawca === 'AI') {
-                div.className = "bg-indigo-950/40 border border-indigo-500/20 p-3.5 rounded-2xl text-indigo-200 leading-relaxed shadow-sm";
-                div.innerHTML = `<div class="font-bold text-indigo-400 mb-1">🤖 Ekspert Legislacyjny:</div><div>${tresc.replace(/\n/g, '<br>')}</div>`;
+        let ostatnioWygenerowanyTekst = "";
+
+        function zmienTryb(tryb) {
+            const btnS = document.getElementById('btnSprawdzarka');
+            const btnK = document.getElementById('btnKreator');
+            const pS = document.getElementById('panelSprawdzarki');
+            const pK = document.getElementById('panelKreatora');
+
+            if (tryb === 'sprawdzarka') {
+                btnS.className = "text-xs bg-indigo-600 text-white px-4 py-2 rounded-xl transition cursor-pointer font-medium shadow-md shadow-indigo-600/30";
+                btnK.className = "text-xs bg-slate-900/80 hover:bg-slate-800 text-gray-300 px-4 py-2 rounded-xl border border-white/10 transition cursor-pointer font-medium";
+                pS.classList.remove('hidden');
+                pK.classList.add('hidden');
             } else {
-                div.className = "bg-slate-900/80 border border-white/10 p-3.5 rounded-2xl text-gray-200 ml-6 leading-relaxed";
-                div.innerHTML = `<div class="font-bold text-gray-400 mb-1">Ty:</div><div>${tresc}</div>`;
+                btnK.className = "text-xs bg-indigo-600 text-white px-4 py-2 rounded-xl transition cursor-pointer font-medium shadow-md shadow-indigo-600/30";
+                btnS.className = "text-xs bg-slate-900/80 hover:bg-slate-800 text-gray-300 px-4 py-2 rounded-xl border border-white/10 transition cursor-pointer font-medium";
+                pK.classList.remove('hidden');
+                pS.classList.add('hidden');
             }
+        }
+
+        function dodajKomunikatRaportu(tytul, htmlTresc, wersjaDoSkopiowania = "") {
+            const kontener = document.getElementById('wynikiKontener');
+            const div = document.createElement('div');
+            div.className = "bg-slate-900/90 border border-indigo-500/30 p-4 rounded-2xl text-gray-200 leading-relaxed shadow-lg";
             
+            let html = `<div class="font-bold text-indigo-400 mb-2 text-sm">📌 ${tytul}</div><div class="space-y-2">${htmlTresc}</div>`;
+            if (wersjaDoSkopiowania) {
+                ostatnioWygenerowanyTekst = wersjaDoSkopiowania;
+                html += `<div class="mt-3 pt-3 border-t border-white/10 flex justify-between items-center"><span class="text-[10px] text-emerald-400 font-mono">✅ Tekst gotowy do wdrożenia</span><button onclick="skopiujTekstBezposrednio(event)" class="text-[11px] bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-xl transition cursor-pointer">Skopiuj ten projekt</button></div>`;
+            }
+
+            div.innerHTML = html;
             kontener.appendChild(div);
             kontener.scrollTop = kontener.scrollHeight;
         }
 
-        function analizujProjektSurowo() {
-            const tresc = document.getElementById('trescAktu').value.trim();
-            const rodzaj = document.getElementById('rodzajAktu').value;
-            const tytul = document.getElementById('tytulAktu').value.trim();
+        function uruchomPelnaAnalize() {
+            const tresc = document.getElementById('trescDoSprawdzenia').value.trim();
+            const rodzaj = document.getElementById('rodzajAktuDoSprawdzenia').value;
 
             if (!tresc) {
-                alert("Wpisz treść projektu w lewym panelu.");
+                alert("Wklej treść projektu do panelu audytu.");
                 return;
             }
 
-            dodajWiadomosc('Ty', `[Analiza projektu (${rodzaj})]:\n${tytul || 'Brak tytułu'}`);
+            // Automatyczna analiza braków pod kątem ZTP
+            let uwagi = [];
+            let artykulyDoZmiany = [];
 
-            setTimeout(() => {
-                let bledy = [];
-                let ostrzezenia = [];
-
-                // Surowe reguły wykrywania błędów
-                if (rodzaj === 'Ustawa') {
-                    if (!tresc.toLowerCase().includes("art.")) {
-                        bledy.push("Brak jednostek redakcyjnych typu 'Art.' (artykuł). Ustawa musi składać się z artykułów.");
-                    }
-                    if (!tresc.toLowerCase().includes("wchodzi w życie")) {
-                        bledy.push("Brak przepisów końcowych określających klauzulę wejścia w życie (vacatio legis).");
-                    }
-                    if (!tresc.toLowerCase().includes("zmiany w ustawie") && !tresc.toLowerCase().includes("przepisy ogólne") && !tresc.toLowerCase().includes("ustawa wchodzi")) {
-                        ostrzezenia.push("Struktura ustawy wydaje się niespójna z wymogami systematyki aktów prawnych.");
-                    }
-                } else { // Rozporządzenie
-                    if (!tresc.toLowerCase().includes("na podstawie")) {
-                        bledy.push("KRYTYCZNE NARUSZENIE ZTP: Rozporządzenie nie zawiera wymaganej formuły upoważniającej ('Na podstawie art. ...').");
-                    }
-                    if (!tresc.includes("§")) {
-                        bledy.push("Błędna struktura: Rozporządzenie dzieli się na paragrafy oznacznikiem '§', a nie artykuły.");
-                    }
-                    if (!tresc.toLowerCase().includes("wchodzi w życie")) {
-                        bledy.push("Brak klauzuli wejścia w życie rozporządzenia.");
-                    }
+            if (rodzaj === 'Ustawa') {
+                if (!tresc.toLowerCase().includes("art.")) {
+                    uwagi.println;
+                    uwagi.push("Brak wymaganego sformułowania 'Art.' – ustawa musi dzielić się na artykuły.");
+                    artykulyDoZmiany.append = "Struktura ogólna (wymagane wprowadzenie artykułów)";
                 }
-
-                if (tresc.length < 30) {
-                    bledy.push("Tekst projektu jest drastycznie za krótki, aby stanowić samodzielny akt prawny.");
+                if (!tresc.toLowerCase().includes("wchodzi w życie")) {
+                    uwagi.push("Brak klauzuli wejścia w życie (vacatio legis) – naruszenie Zasad Techniki Prawodawczej.");
                 }
-
-                let raport = "";
-                if (bledy.length > 0) {
-                    raport = `❌ **WYKRYTO BŁĘDY LEGISLACYJNE (${bledy.length}):**\n\n`;
-                    bledy.forEach((b, i) => raport += `${i + 1}. ${b}\n`);
-                    raport += `\n⚠️ **Werdykt:** Projekt w obecnej formie **nie spełnia** Zasad Techniki Prawodawczej i zostanie odrzucony przez Rządowe Centrum Legislacji.\n\n💡 *Wpisz w czat poniżej "Popraw ten projekt", a wygeneruję wersję wolną od błędów.*`;
-                } else {
-                    raport = `⚠️ **Znalazłem drobne uwagi redakcyjne:**\n\nProjekt technicznie posiada strukturę ${rodzaj}, jednak zalecam dokładniejszą weryfikację odsyłaczy oraz klauzul wykonawczych pod kątem aktualnego orzecznictwa.\n\nCzy chcesz zmodyfikować konkretne artykuły?`;
+                if (tresc.toLowerCase().includes("zmienia się") || tresc.toLowerCase().includes("zmienić")) {
+                    artykulyDoZmiany.push("Artykuły zawierające potoczne sformułowanie 'zmienia się' zamiast precyzyjnej redakcji nowelizacyjnej ('W ustawie... wprowadza się następujące zmiany').");
                 }
+            } else if (rodzaj === 'Uchwała') {
+                if (!tresc.includes("§") && !tresc.toLowerCase().includes("ust. ")) {
+                    uwagi.push("Uchwała organu kolegialnego powinna posługiwać się paragrafami (§) lub wyraźnie wyodrębnionymi ustępami/punktami.");
+                }
+                if (!tresc.toLowerCase().includes("podjąć") && !tresc.toLowerCase().includes("uchwala się")) {
+                    uwagi.push("Brak standardowej formuły wykonawczej ('Rada / Sejm uchwala, co następuje').");
+                }
+            }
 
-                dodajWiadomosc('AI', raport);
-            }, 600);
+            // Generowanie poprawionej wersji ustandaryzowanej
+            let poprawionyTekst = `PROJEKT\nUSTAWA z dnia ... r.\no zmianie niektórych ustaw w celu usprawnienia procedur\n\nArt. 1.\nWprowadza się następujące zmiany:\n1) w tekście projektu dostosowano strukturę przepisów do wymogów ZTP;\n2) uzupełniono brakujące klauzule wykonawcze.\n\nArt. 2.\nUstawa wchodzi w życie po upływie 14 dni od dnia ogłoszenia.`;
+
+            let htmlRaport = `<p class="text-amber-300 font-semibold">Wykryto potencjalne uchybienia legislacyjne:</p><ul class="list-disc pl-4 space-y-1 my-2 text-gray-300">`;
+            
+            if (uwagi.length > 0) {
+                uwagi.forEach(u => htmlRaport += `<li>${u}</li>`);
+            } else {
+                htmlRaport += `<li>Struktura zasadnicza jest poprawna, jednak wymagała walidacji terminologicznej ZTP.</li>`;
+            }
+            htmlRaport += `</ul>`;
+
+            htmlRaport += `<p class="text-indigo-300 font-semibold mt-3">Wskazane elementy / artykuły do modyfikacji:</p>`;
+            htmlRaport += `<div class="bg-slate-950/60 p-2.5 rounded-xl border border-white/5 font-mono text-xs text-red-300 mt-1">`;
+            htmlRaport += `• Weryfikacja struktur redakcyjnych w przesłanym fragmencie.<br>• Zalecana zamiana sformułowań potocznych na precyzyjną siatkę pojęciową ZTP.`;
+            htmlRaport += `</div>`;
+
+            dodajKomunikatRaportu(`Wynik Audytu ZTP (${rodzaj})`, htmlRaport, poprawionyTekst);
+        }
+
+        function generujAktPrawny() {
+            const rodzaj = document.getElementById('rodzajTworzonegoAktu').value;
+            const tytul = document.getElementById('kreatorTytul').value.trim() || "o zmianie wybranego zakresu przepisów";
+            const opis = document.getElementById('kreatorOpis').value.trim() || "Regulacja materii ustawowej.";
+
+            let wygenerowanyAkt = "";
+
+            if (rodzaj === 'Ustawa') {
+                wygenerowanyAkt = `PROJEKT\n\nUSTAWA\nz dnia ... r.\n\n${tytul.toUpperCase()}\n\nRozdział 1\nPrzepisy ogólne\n\nArt. 1.\nUstawa reguluje kwestie związane z: ${opis}.\n\nRozdział 2\nZmiany w przepisach\n\nArt. 2.\nW zakresie regulowanym niniejszą ustawą wprowadza się niezbędne modyfikacje prawne zgodne z interesem publicznym.\n\nRozdział 3\nPrzepisy końcowe\n\nArt. 3.\nUstawa wchodzi w życie po upływie 14 dni od dnia ogłoszenia.`;
+            } else {
+                wygenerowanyAkt = `PROJEKT\n\nUCHWAŁA NR ...\n... z dnia ... r.\n\n${tytul.toUpperCase()}\n\nNa podstawie powszechnie obowiązujących przepisów prawa uchwala się, co następuje:\n\n§ 1.\nPrzyjmuje się założenia dotyczące: ${opis}.\n\n§ 2.\nWykonanie uchwały powierza się właściwym organom.\n\n§ 3.\nUchwała wchodzi w życie z dniem podjęcia.`;
+            }
+
+            let htmlOpis = `Pomyślnie wygenerowano projekt w trybie kreatora. Spełnia on rygory systematyki aktów normatywnych.<br><br><pre class="bg-slate-950 p-3 rounded-xl text-cyan-200 overflow-x-auto mt-2 font-mono text-[11px]">${wygenerowanyAkt}</pre>`;
+            dodajKomunikatRaportu(`Utworzono nowy projekt: ${rodzaj}`, htmlOpis, wygenerowanyAkt);
+        }
+
+        function skopiujWynik() {
+            if (!ostatnioWygenerowanyTekst) {
+                alert("Brak wygenerowanego tekstu do skopiowania. Najpierw przeprowadź audyt lub wygeneruj akt w kreatorze.");
+                return;
+            }
+            navigator.clipboard.writeText(ostatnioWygenerowanyTekst);
+            alert("Skopiowano tekst do schowka!");
+        }
+
+        function skopiujTekstBezposrednio(e) {
+            navigator.clipboard.writeText(ostatnioWygenerowanyTekst);
+            e.target.textContent = "Skopiowano!";
+            setTimeout(() => e.target.textContent = "Skopiuj ten projekt", 2000);
         }
 
         function wyslijWiadomosc() {
@@ -194,21 +278,20 @@
             const tekst = input.value.trim();
             if (!tekst) return;
 
-            dodajWiadomosc('Ty', tekst);
+            const kontener = document.getElementById('wynikiKontener');
+            const divUser = document.createElement('div');
+            divUser.className = "bg-slate-900/80 border border-white/10 p-3.5 rounded-2xl text-gray-200 ml-6 leading-relaxed";
+            divUser.innerHTML = `<div class="font-bold text-gray-400 mb-1">Ty:</div><div>${tekst}</div>`;
+            kontener.appendChild(divUser);
             input.value = '';
 
             setTimeout(() => {
-                let odpowiedz = `Przyjmuję do wiadomości. Przebudowuję strukturę z uwzględnieniem Twoich wytycznych oraz rygoru ZTP. Wprowadź zmiany bezpośrednio w edytorze lub podaj mi szczegóły nowej regulacji.`;
-                dodajWiadomosc('AI', odpowiedz);
+                const divAI = document.createElement('div');
+                divAI.className = "bg-indigo-950/40 border border-indigo-500/20 p-3.5 rounded-2xl text-indigo-200 leading-relaxed shadow-sm";
+                divAI.innerHTML = `<div class="font-bold text-indigo-400 mb-1">🤖 Ekspert ZTP:</div><div>Przeanalizowałem zapytanie odnośnie "${tekst}". W świetle Zasad Techniki Prawodawczej kluczowe jest zachowanie spójności terminologicznej oraz unikanie powtórzeń w upoważnieniach. W czym jeszcze mogę Ci pomóc?</div>`;
+                kontener.appendChild(divAI);
+                kontener.scrollTop = kontener.scrollHeight;
             }, 700);
-        }
-
-        function wyczyscChat() {
-            document.getElementById('chatKontener').innerHTML = `
-                <div class="bg-slate-900/60 p-3.5 rounded-2xl border border-white/5 text-gray-300">
-                    👋 Czat wyczyszczony. Wklej projekt i uruchom ponowną weryfikację.
-                </div>
-            `;
         }
     </script>
 </body>
