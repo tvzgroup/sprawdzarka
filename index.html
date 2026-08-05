@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LexCorp Legislator | System ZTP</title>
+    <title>LexCorp Legislator v2.10 | System ZTP</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -100,6 +100,28 @@
 </head>
 <body class="bg-mesh text-slate-100 h-full flex flex-col font-sans antialiased selection:bg-blue-500 selection:text-white">
 
+    <!-- Modal Kontaktowy -->
+    <div id="modalKontakt" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+        <div class="glass-panel p-6 rounded-2xl max-w-sm w-full border border-white/10 shadow-2xl space-y-4 text-center relative">
+            <div class="w-12 h-12 rounded-full bg-indigo-500/20 border border-indigo-500/40 text-indigo-400 flex items-center justify-center mx-auto text-xl">
+                💬
+            </div>
+            <div>
+                <h3 class="text-base font-bold text-white">Kontakt Discord</h3>
+                <p class="text-xs text-slate-400 mt-1">Skontaktuj się ze mną bezpośrednio na Discordzie:</p>
+            </div>
+            <div class="bg-slate-900/80 p-3 rounded-xl border border-white/5 flex items-center justify-between font-mono text-xs">
+                <span class="text-indigo-300 font-semibold select-all" id="discordTag">twojstarywilkuu</span>
+                <button onclick="kopiujDiscord()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-[10px] px-2.5 py-1 rounded-lg transition-all">
+                    Kopiuj
+                </button>
+            </div>
+            <button onclick="zamknijKontakt()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs py-2 rounded-xl transition-all border border-white/5">
+                Zamknij
+            </button>
+        </div>
+    </div>
+
     <!-- Pasek Nawigacyjny -->
     <header class="border-b border-white/5 bg-slate-950/60 sticky top-0 z-50 backdrop-blur-md">
         <div class="max-w-[1700px] mx-auto px-4 sm:px-6 h-16 flex justify-between items-center">
@@ -109,16 +131,20 @@
                 </div>
                 <div>
                     <div class="flex items-center space-x-2">
-                        <span class="text-base font-bold tracking-tight text-white">LexCorp Legislator</span>
+                        <span class="text-base font-bold tracking-tight text-white">LexCorp Legislator <span class="text-xs text-indigo-400 font-mono">v2.10</span></span>
                         <span class="text-[11px] font-mono font-semibold px-2.5 py-0.5 rounded-full gradient-border-animated text-white bg-slate-900/80">
-                            <span class="gradient-text-animated">v2.0</span>
+                            <span class="gradient-text-animated">Gemini 3.6 Flash Engine</span>
                         </span>
                     </div>
                 </div>
             </div>
 
-            <!-- Nawigacja Trybów -->
-            <div class="flex items-center p-1 bg-slate-900/80 rounded-xl border border-white/5 shadow-inner">
+            <!-- Nawigacja Trybów (Z przyciskiem Kontakt na początku) -->
+            <div class="flex items-center p-1 bg-slate-900/80 rounded-xl border border-white/5 shadow-inner space-x-1">
+                <button onclick="otworzKontakt()" class="text-xs px-4 py-2 rounded-lg transition-all font-medium text-indigo-400 hover:text-indigo-300 hover:bg-indigo-500/10 border border-indigo-500/20">
+                    📩 Kontakt
+                </button>
+                <div class="h-4 w-[1px] bg-white/10 my-auto"></div>
                 <button onclick="zmienTryb('sprawdzarka')" id="btnSprawdzarka" class="text-xs px-5 py-2 rounded-lg transition-all font-medium bg-blue-600 text-white shadow-md shadow-blue-600/25">
                     🔍 Audyt & Weryfikacja Ustaw
                 </button>
@@ -185,7 +211,7 @@
                         <!-- Generowane dynamicznie w JS -->
                     </div>
 
-                    <!-- Lista Propozycji Ustaw (Dynamicznie Zmieniająca się) -->
+                    <!-- Lista Propozycji Ustaw -->
                     <div class="pt-2">
                         <div id="listaPropozycji" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                             <!-- Karty propozycji generowane dynamicznie -->
@@ -227,8 +253,8 @@
                 <!-- Wyniki -->
                 <div id="wynikiKontener" class="flex-grow overflow-y-auto my-4 pr-2 space-y-4 text-xs font-mono">
                     <div class="bg-slate-900/40 p-4 rounded-xl border border-white/5 text-slate-400 leading-relaxed">
-                        <p class="text-blue-400 font-semibold mb-1">System Legislacyjny Gotowy do Pracy (Gemini 3.6 Flash)</p>
-                        Wybierz resort spośród 19 oficjalnych ministerstw. Możesz tworzyć zarówno nowe ustawy, jak i ustawy o zmianie ustaw (nowelizacje) w pełnym rygorze Zasad Techniki Prawodawczej. Wybrane ministerstwo pozostaje stałe podczas odświeżania.
+                        <p class="text-blue-400 font-semibold mb-1">System Legislacyjny LexCorp v2.10 Gotowy do Pracy (Gemini 3.6 Flash)</p>
+                        Wybierz resort spośród 19 oficjalnych ministerstw. Kliknięcie propozycji aktu automatycznie ustawi formularz i uruchomi generowanie po prawej stronie.
                     </div>
                 </div>
 
@@ -253,7 +279,6 @@
         let historiaKonwersacji = [];
         let wybraneMinisterstwo = "Ministerstwo Spraw Wewnętrznych i Administracji";
 
-        // Kompleksowa Baza 19 Ministerstw z Zestawem Projektów Nowych Ustaw oraz Ustaw o Zmianie Ustaw
         const bazaPropozycji = {
             "Ministerstwo Aktywów Państwowych": [
                 { tytul: "Ustawa o zmianie ustawy o zarządzaniu mieniem państwowym", opis: "Wprowadza zaostrzone kryteria nadzoru nad spółkami z udziałem Skarbu Państwa oraz obowiązkowe audyty efektywności zarządczej." },
@@ -356,6 +381,41 @@
             ]
         };
 
+        // Funkcje obsługi modalu kontaktowego
+        function otworzKontakt() {
+            document.getElementById('modalKontakt').classList.remove('hidden');
+        }
+
+        function zamknijKontakt() {
+            document.getElementById('modalKontakt').classList.add('hidden');
+        }
+
+        function kopiujDiscord() {
+            const tag = document.getElementById('discordTag').innerText;
+            navigator.clipboard.writeText(tag);
+            alert("Skopiowano nick Discord: " + tag);
+        }
+
+        // Przełączanie trybów
+        function zmienTryb(tryb) {
+            const panelSprawdzarki = document.getElementById('panelSprawdzarki');
+            const panelKreatora = document.getElementById('panelKreatora');
+            const btnSprawdzarka = document.getElementById('btnSprawdzarka');
+            const btnKreator = document.getElementById('btnKreator');
+
+            if (tryb === 'sprawdzarka') {
+                panelSprawdzarki.classList.remove('hidden');
+                panelKreatora.classList.add('hidden');
+                btnSprawdzarka.className = "text-xs px-5 py-2 rounded-lg transition-all font-medium bg-blue-600 text-white shadow-md shadow-blue-600/25";
+                btnKreator.className = "text-xs px-5 py-2 rounded-lg transition-all font-medium text-slate-400 hover:text-slate-200";
+            } else {
+                panelSprawdzarki.classList.add('hidden');
+                panelKreatora.classList.remove('hidden');
+                btnKreator.className = "text-xs px-5 py-2 rounded-lg transition-all font-medium bg-emerald-600 text-white shadow-md shadow-emerald-600/25";
+                btnSprawdzarka.className = "text-xs px-5 py-2 rounded-lg transition-all font-medium text-slate-400 hover:text-slate-200";
+            }
+        }
+
         // Inicjalizacja Przycisków Ministerstw
         function inicjalizujMinisterstwa() {
             const kontener = document.getElementById('kontenerMinisterstw');
@@ -376,13 +436,12 @@
             odswiezPropozycje();
         }
 
-        // Odświeżanie Propozycji Ustaw (BEZ zmiany wybranego ministerstwa)
+        // Odświeżanie Propozycji Ustaw
         function odswiezPropozycje() {
             const kontener = document.getElementById('listaPropozycji');
             kontener.innerHTML = "";
 
             const lista = bazaPropozycji[wybraneMinisterstwo] || [];
-            // Losowe mieszanie ustaw w obrębie TEGO SAMEGO ministerstwa
             const przetasowana = [...lista].sort(() => 0.5 - Math.random());
 
             przetasowana.slice(0, 2).forEach(prop => {
@@ -395,186 +454,142 @@
                 card.innerHTML = `
                     <div>
                         <div class="flex items-center space-x-1.5 mb-1">
-                            <span class="text-[9px] font-mono px-1.5 py-0.2 rounded ${jestNowelizacja ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'}">
-                                ${jestNowelizacja ? 'NOWELIZACJA' : 'NOWA USTAWA'}
+                            <span class="text-[9px] uppercase font-mono font-bold px-1.5 py-0.5 rounded ${jestNowelizacja ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : 'bg-blue-500/10 text-blue-400 border border-blue-500/20'}">
+                                ${jestNowelizacja ? 'Nowelizacja' : 'Ustawa Pierwotna'}
                             </span>
                         </div>
-                        <div class="text-[11px] font-semibold text-slate-200 group-hover:text-blue-400 transition-colors line-clamp-1">${prop.tytul}</div>
-                        <div class="text-[10px] text-slate-400 line-clamp-2 mt-1 leading-relaxed">${prop.opis}</div>
+                        <h4 class="text-xs font-semibold text-slate-200 group-hover:text-blue-400 transition-colors line-clamp-1">${prop.tytul}</h4>
+                        <p class="text-[11px] text-slate-400 mt-1 line-clamp-2 font-mono leading-tight">${prop.opis}</p>
                     </div>
-                    <div class="mt-2 flex items-center justify-between text-[9px] text-blue-400 font-medium">
-                        <span>Wstaw do kreatora</span>
-                        <span>➔</span>
+                    <div class="mt-2 flex items-center justify-end text-[10px] text-blue-400 font-medium">
+                        <span>Użyj propozycji &rarr;</span>
                     </div>
                 `;
                 kontener.appendChild(card);
             });
         }
 
-        // Przenoszenie wybranej ustawy do formularza
         function przeniesDoKreatora(tytul, opis) {
             document.getElementById('kreatorTytul').value = tytul;
             document.getElementById('kreatorOpis').value = opis;
+            generujAktGemini();
         }
 
-        // Odświeżanie propozycji co 12 sekund
-        setInterval(() => {
-            odswiezPropozycje();
-        }, 12000);
-
-        // Nawigacja Trybów
-        function zmienTryb(tryb) {
-            const btnS = document.getElementById('btnSprawdzarka');
-            const btnK = document.getElementById('btnKreator');
-            const pS = document.getElementById('panelSprawdzarki');
-            const pK = document.getElementById('panelKreatora');
-
-            if (tryb === 'sprawdzarka') {
-                btnS.className = "text-xs px-5 py-2 rounded-lg transition-all font-medium bg-blue-600 text-white shadow-md shadow-blue-600/25";
-                btnK.className = "text-xs px-5 py-2 rounded-lg transition-all font-medium text-slate-400 hover:text-slate-200";
-                pS.classList.remove('hidden');
-                pK.classList.add('hidden');
-            } else {
-                btnK.className = "text-xs px-5 py-2 rounded-lg transition-all font-medium bg-blue-600 text-white shadow-md shadow-blue-600/25";
-                btnS.className = "text-xs px-5 py-2 rounded-lg transition-all font-medium text-slate-400 hover:text-slate-200";
-                pK.classList.remove('hidden');
-                pS.classList.add('hidden');
-                inicjalizujMinisterstwa();
-            }
-        }
-
-        // Wyświetlanie w Wynikach
-        function dodajWiadomoscDoOkna(nadawca, tresc) {
+        function dodajWiadomoscDoKonsoli(rola, tekst) {
             const kontener = document.getElementById('wynikiKontener');
-            const div = document.createElement('div');
+            const el = document.createElement('div');
             
-            if (nadawca === 'AI') {
-                div.className = "bg-blue-950/30 border border-blue-500/20 p-4 rounded-xl text-slate-200 leading-relaxed glass-card";
-                div.innerHTML = `<div class="font-semibold text-blue-400 mb-2 flex items-center justify-between">
-                    <span class="flex items-center space-x-2"><span>🏛️</span> <span>Ekspert Legislacji Gemini 3.6 Flash</span></span>
-                    <span class="text-[9px] font-mono bg-blue-500/10 px-2 py-0.5 rounded text-blue-300 border border-blue-500/20">Standard ZTP</span>
-                </div><div class="whitespace-pre-wrap leading-relaxed font-mono">${tresc}</div>`;
-                ostatniaOdpowiedz = tresc;
+            if (rola === 'user') {
+                el.className = "bg-blue-950/30 p-3 rounded-xl border border-blue-500/20 text-blue-200 font-sans text-xs ml-8";
+                el.innerHTML = `<span class="font-bold text-blue-400 block mb-1">Użytkownik:</span>${tekst}`;
             } else {
-                div.className = "bg-slate-900/60 border border-white/5 p-3 rounded-xl text-slate-300 ml-6";
-                div.innerHTML = `<div class="font-semibold text-slate-500 mb-1 text-[10px] uppercase">Zlecenie / Zapytanie:</div><div>${tresc}</div>`;
+                el.className = "bg-slate-900/80 p-4 rounded-xl border border-white/10 text-slate-200 font-mono text-xs space-y-2 leading-relaxed";
+                el.innerHTML = `<div class="text-emerald-400 font-bold border-b border-white/5 pb-1 flex justify-between items-center">
+                    <span>Odp. LexCorp Legislator:</span>
+                    <span class="text-[10px] text-slate-500">ZTP Verified</span>
+                </div>
+                <div class="whitespace-pre-wrap">${tekst}</div>`;
+                ostatniaOdpowiedz = tekst;
             }
             
-            kontener.appendChild(div);
+            kontener.appendChild(el);
             kontener.scrollTop = kontener.scrollHeight;
         }
 
-        // Komunikacja z API Gemini 3.6 Flash
-        async function wywolajAPI(promptTekst) {
-            historiaKonwersacji.push({ role: "user", parts: [{ text: promptTekst }] });
+        async function wywolajGeminiAPI(promptSystemowy, promptUzytkownika) {
+            dodajWiadomoscDoKonsoli('user', promptUzytkownika);
+            
+            historiaKonwersacji.push({ role: "user", parts: [{ text: promptUzytkownika }] });
 
             const payload = {
-                system_instruction: {
-                    parts: [{ text: "Jesteś wybitnym polskim legislatorem, ekspertem Biura Analiz Sejmowych i bezwzględnym znawcą Zasad Techniki Prawodawczej (ZTP). Zachowujesz absolutnie najwyższy standard formalny i prawny.\n\nZasady przygotowywania projektów:\n1. Jeśli tytuł zawiera frazę 'o zmianie ustawy' (NOWELIZACJA), bezwzględnie stosuj strukturę z art. 1: 'W ustawy z dnia ... (Dz. U. z ... r. poz. ...) wprowadza się następujące zmiany:', a następnie wyliczaj zmieniane jednostki redakcyjne (np. '1) w art. 4 ust. 2 otrzymuje brzmienie...', '2) w art. 7 dodaje się ust. 3a w brzmieniu...').\n2. Jeśli jest to nowa ustawa pierwotna, stosuj pełną systematykę aktu (Rozdział 1 Przepisy ogólne, Rozdział 2 Przepisy szczegółowe, Przepisy przejściowe i końcowe).\n3. Zachowaj rygorystyczny, podniosły i precyzyjny język legislacyjny bez jakichkolwiek kolokwializmów czy ogólników." }]
-                },
-                contents: historiaKonwersacji
+                contents: historiaKonwersacji,
+                systemInstruction: {
+                    parts: [{ text: promptSystemowy }]
+                }
             };
 
             try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${API_KEY}`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
 
                 const data = await response.json();
                 
-                if (data.error) {
-                    alert("Błąd API: " + data.error.message);
-                    historiaKonwersacji.pop();
-                    return null;
+                if (data.candidates && data.candidates[0].content.parts[0].text) {
+                    const wynik = data.candidates[0].content.parts[0].text;
+                    historiaKonwersacji.push({ role: "model", parts: [{ text: wynik }] });
+                    dodajWiadomoscDoKonsoli('model', wynik);
+                } else {
+                    dodajWiadomoscDoKonsoli('model', "Błąd: Nie udało się uzyskać prawidłowej odpowiedzi z API.");
                 }
-
-                const odpowiedzAI = data.candidates[0].content.parts[0].text;
-                historiaKonwersacji.push({ role: "model", parts: [{ text: odpowiedzAI }] });
-                return odpowiedzAI;
-
-            } catch (error) {
-                alert("Błąd połączenia z API: " + error.message);
-                historiaKonwersacji.pop();
-                return null;
+            } catch (err) {
+                dodajWiadomoscDoKonsoli('model', "Błąd połączenia z API Gemini: " + err.message);
             }
         }
 
-        async function uruchomAudytGemini() {
-            const tresc = document.getElementById('trescDoSprawdzenia').value.trim();
+        function uruchomAudytGemini() {
+            const tresc = document.getElementById('trescDoSprawdzenia').value;
             const rodzaj = document.getElementById('rodzajAktuDoSprawdzenia').value;
 
-            if (!tresc) {
-                alert("Wklej treść aktu prawnego lub nowelizacji do oceny.");
+            if (!tresc.trim()) {
+                alert("Wklej treść aktu do audytu.");
                 return;
             }
 
-            const prompt = `Przeprowadź wyczerpujący i krytyczny audyt legislacyjny pod kątem ZTP dla aktu typu: ${rodzaj}.\n\n` +
-                `Wymagania audytu:\n` +
-                `1. Weryfikacja strukturalna (podział na artykuły, ustępy, punkty, litery oraz poprawność zwrotów nowelizacyjnych).\n` +
-                `2. Zgodność z Dyrektywami ZTP (czy brak zwrotów ocennych, czy przepisy są jednoznaczne i rygorystyczne).\n` +
-                `3. Wskazanie uchybień formalno-prawnych wraz z ich uzasadnieniem.\n` +
-                `4. Przygotowanie jednolitego, w pełni poprawionego tekstu aktu normatywnego.\n\n` +
-                `Treść do audytu:\n${tresc}`;
-            
-            dodajWiadomoscDoOkna('Ty', `[Audyt ZTP: ${rodzaj}]\n${tresc.substring(0, 100)}...`);
-            
-            const wynik = await wywolajAPI(prompt);
-            if (wynik) dodajWiadomoscDoOkna('AI', wynik);
+            const promptSystemowy = `Jesteś ekspertem ds. techniki prawodawczej i polskiego prawa (Zapisy ZTP - Zasad Techniki Prawodawczej). Przeprowadź szczegółowy audyt pod podanym kątem:
+            1. Poprawność struktury i systematyki aktu.
+            2. Zgodność ze regułami nowelizacji (zastępowanie, dodawanie, uchylanie).
+            3. Zasada Lex Retro Non Agit oraz poprawność przepisów przejściowych i końcowych.
+            4. Czytelność, brak luk prawnych i wewnętrznych sprzeczności.
+            Przedstaw zwięzły raport z podziałem na zalety, wykryte błędy oraz gotowe poprawki legislacyjne.`;
+
+            const promptUzytkownika = `Przeprowadź audyt ZTP dla następującego aktu (${rodzaj}):\n\n${tresc}`;
+            wywolajGeminiAPI(promptSystemowy, promptUzytkownika);
         }
 
-        async function generujAktGemini() {
-            const tytul = document.getElementById('kreatorTytul').value.trim();
-            const opis = document.getElementById('kreatorOpis').value.trim();
+        function generujAktGemini() {
+            const tytul = document.getElementById('kreatorTytul').value;
+            const opis = document.getElementById('kreatorOpis').value;
 
-            if (!tytul || !opis) {
-                alert("Podaj tytuł oraz opisz założenia aktu prawnego.");
+            if (!tytul.trim() || !opis.trim()) {
+                alert("Uzupełnij tytuł oraz opis aktu prawnego.");
                 return;
             }
 
-            const czyNowelizacja = tytul.toLowerCase().includes("zmianie ustawy");
+            const promptSystemowy = `Jesteś profesjonalnym legislatorem tworzącym polskie akty prawne i nowelizacje w najwyższym standardzie Zasad Techniki Prawodawczej (ZTP).
+            Stwórz pełną, profesjonalnie sformatowaną treść aktu prawnego (lub nowelizacji).
+            Stosuj poprawną formułę sankcjonującą, artykuły, ustępy, punkty, litery oraz odpowiednie przepisy przejściowe i o wejściu w życie.`;
 
-            const prompt = `Sporządź pełny, oficjalny projekt normatywny najwyższej jakości legislacyjnej zgodnie z ZTP.\n` +
-                `Tytuł aktu: ${tytul}\n` +
-                `Wnioskodawca/Resort: ${wybraneMinisterstwo}\n` +
-                `Typ aktu: ${czyNowelizacja ? 'Ustawa o zmianie ustawy (Nowelizacja)' : 'Ustawa pierwotna'}\n` +
-                `Założenia merytoryczne i zakres zmian: ${opis}\n\n` +
-                `Wymagania formalne:\n` +
-                (czyNowelizacja ? 
-                `- Zastosuj pełną technikę nowelizacyjną (Art. 1 'W ustawie... wprowadza się następujące zmiany...', Art. 2 Przepis przejściowy, Art. 3 Przepis o wejściu w życie).\n` :
-                `- Zastosuj pełną strukturę ustawy pierwotnej z podziałem na rozdziały, przepisy ogólne, materialne oraz końcowe.\n`) +
-                `- Zapewnij bezwzględny rygor języka prawnego.`;
-            
-            dodajWiadomoscDoOkna('Ty', `[Tworzenie Aktu: ${wybraneMinisterstwo}] ${tytul}`);
-
-            const wynik = await wywolajAPI(prompt);
-            if (wynik) dodajWiadomoscDoOkna('AI', wynik);
+            const promptUzytkownika = `Sporządź projekt aktu prawnego na podstawie poniższych wytycznych:\n\nResort: ${wybraneMinisterstwo}\nTytuł: ${tytul}\nZakres i założenia: ${opis}`;
+            wywolajGeminiAPI(promptSystemowy, promptUzytkownika);
         }
 
-        async function wyslijPytanieGemini() {
+        function wyslijPytanieGemini() {
             const input = document.getElementById('userInput');
-            const tekst = input.value.trim();
-            if (!tekst) return;
+            const zapytanie = input.value;
 
-            dodajWiadomoscDoOkna('Ty', tekst);
-            input.value = '';
+            if (!zapytanie.trim()) return;
 
-            const wynik = await wywolajAPI(tekst);
-            if (wynik) dodajWiadomoscDoOkna('AI', wynik);
+            input.value = "";
+            const promptSystemowy = `Jesteś asystentem legislacyjnym LexCorp Legislator v2.10. Pomagasz w modyfikacji, tworzeniu i ocenie aktów prawnych zgodnie z polską techniką prawodawczą.`;
+            wywolajGeminiAPI(promptSystemowy, zapytanie);
         }
 
         function skopiujOstatniTekst() {
             if (!ostatniaOdpowiedz) {
-                alert("Brak tekstu do skopiowania.");
+                alert("Brak wygenerowanej treści do skopiowania.");
                 return;
             }
             navigator.clipboard.writeText(ostatniaOdpowiedz);
-            alert("Skopiowano projekt aktu legislacyjnego do schowka.");
+            alert("Pomyślnie skopiowano projekt aktu do schowka.");
         }
 
-        // Startup
-        inicjalizujMinisterstwa();
+        // Inicjalizacja przy ładowaniu strony
+        window.onload = () => {
+            inicjalizujMinisterstwa();
+        };
     </script>
 </body>
 </html>
