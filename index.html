@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LexCorp Legislator | DeepSeek Zintegrowany</title>
+    <title>LexCorp Legislator | Gemini Zintegrowany</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .glass {
@@ -19,9 +19,9 @@
             color: #f3f4f6;
         }
         .glass-input:focus {
-            border-color: rgba(56, 189, 248, 0.7);
+            border-color: rgba(59, 130, 246, 0.7);
             outline: none;
-            box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
         }
         @keyframes gradientBG {
             0% { background-position: 0% 50%; }
@@ -29,7 +29,7 @@
             100% { background-position: 0% 50%; }
         }
         .animated-bg {
-            background: linear-gradient(-45deg, #030712, #0f172a, #0c192c, #06233d);
+            background: linear-gradient(-45deg, #030712, #0f172a, #172554, #1e3a8a);
             background-size: 400% 400%;
             animation: gradientBG 20s ease infinite;
         }
@@ -39,24 +39,24 @@
         ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.3); }
     </style>
 </head>
-<body class="animated-bg text-gray-100 min-h-screen flex flex-col font-sans selection:bg-sky-500 selection:text-white">
+<body class="animated-bg text-gray-100 min-h-screen flex flex-col font-sans selection:bg-blue-500 selection:text-white">
 
     <!-- Efekty tła -->
-    <div class="fixed top-[-10%] left-[-10%] w-[45vw] h-[45vw] bg-sky-600/15 rounded-full blur-[130px] pointer-events-none"></div>
-    <div class="fixed bottom-[-10%] right-[-10%] w-[45vw] h-[45vw] bg-blue-600/15 rounded-full blur-[130px] pointer-events-none"></div>
+    <div class="fixed top-[-10%] left-[-10%] w-[45vw] h-[45vw] bg-blue-600/15 rounded-full blur-[130px] pointer-events-none"></div>
+    <div class="fixed bottom-[-10%] right-[-10%] w-[45vw] h-[45vw] bg-indigo-600/15 rounded-full blur-[130px] pointer-events-none"></div>
 
     <!-- Nagłówek -->
     <header class="border-b border-white/10 bg-slate-950/50 sticky top-0 z-50 backdrop-blur-xl">
         <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
             <div class="flex items-center space-x-3">
-                <div class="bg-gradient-to-tr from-sky-600 to-blue-500 p-2.5 rounded-2xl text-white font-bold shadow-lg shadow-sky-500/25 border border-white/20">🏛️</div>
+                <div class="bg-gradient-to-tr from-blue-600 to-indigo-500 p-2.5 rounded-2xl text-white font-bold shadow-lg shadow-blue-500/25 border border-white/20">🏛️</div>
                 <div class="flex items-end space-x-2">
-                    <span class="text-xl font-extrabold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-sky-400 via-blue-300 to-cyan-400">LexCorp Legislator</span>
+                    <span class="text-xl font-extrabold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-300 to-sky-400">LexCorp Legislator</span>
                     <span class="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">API Aktywne</span>
                 </div>
             </div>
             <div class="flex items-center space-x-2">
-                <button onclick="zmienTryb('sprawdzarka')" id="btnSprawdzarka" class="text-xs bg-sky-600 text-white px-4 py-2 rounded-xl transition cursor-pointer font-medium shadow-md shadow-sky-600/30">Sprawdzarka ZTP</button>
+                <button onclick="zmienTryb('sprawdzarka')" id="btnSprawdzarka" class="text-xs bg-blue-600 text-white px-4 py-2 rounded-xl transition cursor-pointer font-medium shadow-md shadow-blue-600/30">Sprawdzarka ZTP</button>
                 <button onclick="zmienTryb('kreator')" id="btnKreator" class="text-xs bg-slate-900/80 hover:bg-slate-800 text-gray-300 px-4 py-2 rounded-xl border border-white/10 transition cursor-pointer font-medium">Kreator Aktów</button>
             </div>
         </div>
@@ -80,10 +80,10 @@
                         <option value="Rozporządzenie" class="bg-slate-900">Rozporządzenie</option>
                     </select>
                 </div>
-                <textarea id="trescDoSprawdzenia" placeholder="Wklej tutaj treść aktu, którą DeepSeek ma przeanalizować pod kątem ZTP, wskazać artykuły do zmiany i poprawić..." class="glass-input w-full flex-grow p-4 rounded-2xl text-xs font-mono transition resize-none shadow-inner leading-relaxed mb-4"></textarea>
+                <textarea id="trescDoSprawdzenia" placeholder="Wklej tutaj treść aktu, którą Gemini ma przeanalizować pod kątem ZTP, wskazać artykuły do zmiany i poprawić..." class="glass-input w-full flex-grow p-4 rounded-2xl text-xs font-mono transition resize-none shadow-inner leading-relaxed mb-4"></textarea>
                 <div class="pt-3 border-t border-white/10 flex justify-between items-center">
                     <span class="text-[11px] text-gray-400">Analiza autonomiczna AI.</span>
-                    <button onclick="uruchomAudytDeepSeek()" class="bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500 text-white font-medium px-5 py-2.5 rounded-xl text-xs shadow-lg shadow-sky-600/30 transition cursor-pointer border border-sky-400/20">
+                    <button onclick="uruchomAudytGemini()" class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-medium px-5 py-2.5 rounded-xl text-xs shadow-lg shadow-blue-600/30 transition cursor-pointer border border-blue-400/20">
                         ⚡ Przeprowadź Audyt ZTP
                     </button>
                 </div>
@@ -104,7 +104,7 @@
                 <textarea id="kreatorOpis" placeholder="Opisz co akt ma regulować, jakie cele osiągnąć lub jakie przepisy zmienić..." class="glass-input w-full flex-grow p-4 rounded-2xl text-xs font-mono transition resize-none shadow-inner leading-relaxed mb-4"></textarea>
                 <div class="pt-3 border-t border-white/10 flex justify-between items-center">
                     <span class="text-[11px] text-gray-400">Generowanie profesjonalnego projektu od zera.</span>
-                    <button onclick="generujAktDeepSeek()" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-medium px-5 py-2.5 rounded-xl text-xs shadow-lg shadow-emerald-600/30 transition cursor-pointer border border-emerald-400/20">
+                    <button onclick="generujAktGemini()" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-medium px-5 py-2.5 rounded-xl text-xs shadow-lg shadow-emerald-600/30 transition cursor-pointer border border-emerald-400/20">
                         ✨ Utwórz Projekt Aktu
                     </button>
                 </div>
@@ -115,7 +115,7 @@
         <!-- Prawy panel: Odpowiedź i Schowek -->
         <section class="lg:col-span-6 glass rounded-3xl p-6 flex flex-col h-[calc(100vh-130px)]">
             <div class="flex justify-between items-center mb-3 border-b border-white/10 pb-3">
-                <h2 class="text-sm font-bold text-sky-300 tracking-wide flex items-center space-x-2">
+                <h2 class="text-sm font-bold text-blue-300 tracking-wide flex items-center space-x-2">
                     <span>🤖</span> <span>Raport i Projekt AI</span>
                 </h2>
                 <button onclick="skopiujOstatniTekst()" class="text-[11px] bg-slate-800 hover:bg-slate-700 text-cyan-300 px-3 py-1 rounded-lg border border-cyan-500/20 transition cursor-pointer">
@@ -127,14 +127,14 @@
             <div id="wynikiKontener" class="flex-grow overflow-y-auto space-y-3 pr-2 mb-4 text-xs font-mono">
                 <div class="bg-slate-900/60 p-4 rounded-2xl border border-white/5 text-gray-300 leading-relaxed">
                     👋 Klucz API został pomyślnie zintegrowany z aplikacją.<br><br>
-                    Wklej projekt ustawy lub uchwały po lewej stronie i kliknij <strong class="text-sky-400">"Przeprowadź Audyt ZTP"</strong> lub skorzystaj z Kreatora, aby AI przeanalizowało strukturę, wskazało konkretne artykuły do zmiany i wygenerowało w pełni poprawny akt prawny.
+                    Wklej projekt ustawy lub uchwały po lewej stronie i kliknij <strong class="text-blue-400">"Przeprowadź Audyt ZTP"</strong> lub skorzystaj z Kreatora, aby AI przeanalizowało strukturę, wskazało konkretne artykuły do zmiany i wygenerowało w pełni poprawny akt prawny.
                 </div>
             </div>
 
             <!-- Pasek czatu -->
             <div class="flex space-x-2 pt-2 border-t border-white/10">
-                <input type="text" id="userInput" onkeydown="if(event.key==='Enter') wyslijPytanieDeepSeek()" placeholder="Napisz do AI (np. 'Zmień art. 1, aby dopisać...')..." class="glass-input flex-grow px-4 py-3 rounded-2xl text-xs transition shadow-inner">
-                <button onclick="wyslijPytanieDeepSeek()" class="bg-sky-600 hover:bg-sky-500 text-white px-4 py-3 rounded-2xl text-xs font-semibold transition cursor-pointer shadow-md">
+                <input type="text" id="userInput" onkeydown="if(event.key==='Enter') wyslijPytanieGemini()" placeholder="Napisz do AI (np. 'Zmień art. 1, aby dopisać...')..." class="glass-input flex-grow px-4 py-3 rounded-2xl text-xs transition shadow-inner">
+                <button onclick="wyslijPytanieGemini()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-3 rounded-2xl text-xs font-semibold transition cursor-pointer shadow-md">
                     Wyślij
                 </button>
             </div>
@@ -144,7 +144,7 @@
 
     <!-- Skrypt z wbudowanym kluczem API -->
     <script>
-        const API_KEY = "sk-354f55a7ccdc43d2a8894c44f5b62f44";
+        const API_KEY = "AQ.Ab8RN6KoCiu6evIvJ1qAkq5dcquqN7MkXQOU8m1nqrRED-CDfg";
         let ostatniaOdpowiedz = "";
         let historiaKonwersacji = [];
 
@@ -155,12 +155,12 @@
             const pK = document.getElementById('panelKreatora');
 
             if (tryb === 'sprawdzarka') {
-                btnS.className = "text-xs bg-sky-600 text-white px-4 py-2 rounded-xl transition cursor-pointer font-medium shadow-md shadow-sky-600/30";
+                btnS.className = "text-xs bg-blue-600 text-white px-4 py-2 rounded-xl transition cursor-pointer font-medium shadow-md shadow-blue-600/30";
                 btnK.className = "text-xs bg-slate-900/80 hover:bg-slate-800 text-gray-300 px-4 py-2 rounded-xl border border-white/10 transition cursor-pointer font-medium";
                 pS.classList.remove('hidden');
                 pK.classList.add('hidden');
             } else {
-                btnK.className = "text-xs bg-sky-600 text-white px-4 py-2 rounded-xl transition cursor-pointer font-medium shadow-md shadow-sky-600/30";
+                btnK.className = "text-xs bg-blue-600 text-white px-4 py-2 rounded-xl transition cursor-pointer font-medium shadow-md shadow-blue-600/30";
                 btnS.className = "text-xs bg-slate-900/80 hover:bg-slate-800 text-gray-300 px-4 py-2 rounded-xl border border-white/10 transition cursor-pointer font-medium";
                 pK.classList.remove('hidden');
                 pS.classList.add('hidden');
@@ -172,8 +172,8 @@
             const div = document.createElement('div');
             
             if (nadawca === 'AI') {
-                div.className = "bg-sky-950/30 border border-sky-500/20 p-4 rounded-2xl text-sky-100 leading-relaxed shadow-lg";
-                div.innerHTML = `<div class="font-bold text-sky-400 mb-2">🤖 Ekspert Legislacyjny AI:</div><div class="whitespace-pre-wrap">${tresc}</div>`;
+                div.className = "bg-blue-950/30 border border-blue-500/20 p-4 rounded-2xl text-blue-100 leading-relaxed shadow-lg";
+                div.innerHTML = `<div class="font-bold text-blue-400 mb-2">🤖 Ekspert Legislacyjny AI:</div><div class="whitespace-pre-wrap">${tresc}</div>`;
                 ostatniaOdpowiedz = tresc;
             } else {
                 div.className = "bg-slate-900/80 border border-white/10 p-3.5 rounded-2xl text-gray-200 ml-6 leading-relaxed";
@@ -185,46 +185,44 @@
         }
 
         async function wywolajAPI(promptTekst) {
-            historiaKonwersacji.push({ role: "user", content: promptTekst });
+            historiaKonwersacji.push({ role: "user", parts: [{ text: promptTekst }] });
+
+            const payload = {
+                system_instruction: {
+                    parts: [{ text: "Jesteś wybitnym ekspertem ds. legislacji oraz Zasad Techniki Prawodawczej (ZTP). Analizujesz projekty ustaw, uchwał i rozporządzeń, wyłapujesz błędy, precyzyjnie wskazujesz konkretne artykuły lub paragrafy do zmiany oraz przygotowujesz pełny, skorygowany tekst prawny gotowy do skopiowania w przejrzystym formacie." }]
+                },
+                contents: historiaKonwersacji
+            };
 
             try {
-                const response = await fetch("https://api.deepseek.com/chat/completions", {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`, {
                     method: "POST",
                     headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${API_KEY}`
+                        "Content-Type": "application/json"
                     },
-                    body: JSON.stringify({
-                        model: "deepseek-chat",
-                        messages: [
-                            {
-                                role: "system", 
-                                content: "Jesteś wybitnym ekspertem ds. legislacji oraz Zasad Techniki Prawodawczej (ZTP). Analizujesz projekty ustaw, uchwał i rozporządzeń, wyłapujesz błędy, precyzyjnie wskazujesz konkretne artykuły lub paragrafy do zmiany oraz przygotowujesz pełny, skorygowany tekst prawny gotowy do skopiowania w przejrzystym formacie."
-                            },
-                            ...historiaKonwersacji
-                        ],
-                        stream: false
-                    })
+                    body: JSON.stringify(payload)
                 });
 
                 const data = await response.json();
                 
                 if (data.error) {
                     alert("Błąd API: " + data.error.message);
+                    historiaKonwersacji.pop();
                     return null;
                 }
 
-                const odpowiedzAI = data.choices[0].message.content;
-                historiaKonwersacji.push({ role: "assistant", content: odpowiedzAI });
+                const odpowiedzAI = data.candidates[0].content.parts[0].text;
+                historiaKonwersacji.push({ role: "model", parts: [{ text: odpowiedzAI }] });
                 return odpowiedzAI;
 
             } catch (error) {
                 alert("Błąd połączenia z serwerem API: " + error.message);
+                historiaKonwersacji.pop();
                 return null;
             }
         }
 
-        async function uruchomAudytDeepSeek() {
+        async function uruchomAudytGemini() {
             const tresc = document.getElementById('trescDoSprawdzenia').value.trim();
             const rodzaj = document.getElementById('rodzajAktuDoSprawdzenia').value;
 
@@ -243,7 +241,7 @@
             }
         }
 
-        async function generujAktDeepSeek() {
+        async function generujAktGemini() {
             const rodzaj = document.getElementById('rodzajTworzonegoAktu').value;
             const tytul = document.getElementById('kreatorTytul').value.trim() || "o zmianie przepisów";
             const opis = document.getElementById('kreatorOpis').value.trim();
@@ -263,7 +261,7 @@
             }
         }
 
-        async function wyslijPytanieDeepSeek() {
+        async function wyslijPytanieGemini() {
             const input = document.getElementById('userInput');
             const tekst = input.value.trim();
             if (!tekst) return;
