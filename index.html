@@ -85,6 +85,7 @@
     <div id="modalPrivacy" class="fixed inset-0 z-[150] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 hidden">
         <div class="glass-panel p-6 sm:p-8 rounded-3xl max-w-lg w-full border border-blue-500/30 shadow-2xl space-y-6 relative glow-effect max-h-[90vh] flex flex-col">
             
+            <!-- Nagłówek Modalu -->
             <div class="flex items-center justify-between border-b border-white/10 pb-4 shrink-0">
                 <div class="flex items-center space-x-3">
                     <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-xl shadow-lg shadow-blue-500/30">
@@ -100,6 +101,7 @@
                 </button>
             </div>
 
+            <!-- Treść Polityki (Przewijana) -->
             <div class="space-y-3.5 text-xs text-slate-300 font-sans leading-relaxed overflow-y-auto pr-1 flex-grow">
                 
                 <div class="bg-slate-900/60 p-4 rounded-2xl border border-white/5 space-y-1.5 transition-all hover:border-blue-500/20">
@@ -140,6 +142,7 @@
 
             </div>
 
+            <!-- Stopka Modalu -->
             <div class="pt-2 shrink-0">
                 <button onclick="zamknijPrywatnosc()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs py-3.5 rounded-xl transition-all shadow-lg shadow-blue-600/30">
                     Zatwierdź i Zamknij
@@ -174,9 +177,10 @@
         </div>
     </header>
 
-    <!-- GŁÓWNA PRZESTRZEŃ ROBOCZA (SPRAWDZARKA) -->
+    <!-- GŁÓWNA PRZESTRZEŃ ROBOCZA (WYŁĄCZNIE AUDYTOR) -->
     <main class="max-w-[1700px] mx-auto px-4 sm:px-6 py-6 flex-grow w-full grid grid-cols-1 lg:grid-cols-12 gap-6 h-[calc(100vh-4rem)]">
         
+        <!-- Edytor / Wklejanie Ustawy -->
         <section class="lg:col-span-7 flex flex-col h-full min-h-0">
             <div class="glass-panel rounded-2xl p-5 flex flex-col h-full relative overflow-hidden">
                 <div class="flex justify-between items-center pb-3 border-b border-white/5">
@@ -207,6 +211,7 @@
             </div>
         </section>
 
+        <!-- Konsola Wyników -->
         <section class="lg:col-span-5 flex flex-col h-full min-h-0">
             <div class="glass-panel rounded-2xl p-5 flex flex-col h-full relative overflow-hidden">
                 <div class="flex justify-between items-center pb-3 border-b border-white/5">
@@ -248,11 +253,9 @@
 
             if (!rawNick) return;
 
-            // Sprawdzanie czy podany nick zawiera frazę z czarnej listy
             const jestZablokowany = czarnaLista.some(zabranaFraza => nickLower.includes(zabranaFraza));
 
             if (jestZablokowany) {
-                // Wyświetlenie komunikatu i efekty blokady
                 alertBox.classList.remove('hidden');
                 authBox.classList.add('border-red-500/50', 'shadow-red-500/20');
                 authIcon.className = "w-16 h-16 rounded-2xl bg-gradient-to-tr from-red-600 to-rose-700 flex items-center justify-center text-3xl mx-auto shadow-lg shadow-red-500/30 border border-white/10";
@@ -266,11 +269,10 @@
                     alertText.innerText = '⛔ BRAK DOSTĘPU - OSOBA WSKAZANA NA LIŚCIE ZASTRZEŻONEJ';
                 }
 
-                // KLUCZOWE: Zatrzymujemy wykonywanie funkcji! Oknomodalne logowania NIE zostanie schowane.
+                // Przerywa funkcję i Zostawia aktywną nakładkę logowania (#authGate)
                 return;
             }
 
-            // Jeśli użytkownik jest czysty:
             alertBox.classList.add('hidden');
             document.getElementById('authGate').classList.add('hidden');
         }
